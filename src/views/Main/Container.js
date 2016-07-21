@@ -3,16 +3,15 @@ import { Jumbotron } from 'react-bootstrap'
 import styles from './styles.module.css'
 
 export class Container extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-    // __GAPI_KEY__
+  static contextTypes = {
+    router: T.object
   }
 
   render() {
     let children = null;
     if (this.props.children) {
       children = React.cloneElement(this.props.children, {
-        router: this.context.router
+        auth: this.props.route.auth //sends auth instance to children
       })
     }
 
@@ -25,10 +24,6 @@ export class Container extends React.Component {
       </Jumbotron>
     )
   }
-}
-
-Container.contextTypes = {
-  router: T.object
 }
 
 export default Container;
