@@ -1,12 +1,27 @@
 import { EventEmitter } from 'events'
 import { isTokenExpired } from './jwtHelper'
 import Auth0Lock from 'auth0-lock'
+import LogoImg from 'images/centify-logo.png'
 
 export default class AuthService extends EventEmitter {
   constructor(clientId, domain) {
     super()
+    this.domain = domain
     // Configure Auth0
-    this.lock = new Auth0Lock(clientId, domain, {})
+    this.lock = new Auth0Lock(clientId, domain, {
+      theme: {
+        logo: LogoImg,
+        primaryColor: "green"
+      },
+      additionalSignUpFields: [{
+        name: "address",                              // required
+        placeholder: "enter your address",            // required
+        validator: function(value) {                  // optional
+          // only accept addresses with more than 10 chars
+          return value.length > 10;
+        }
+      }]
+    })
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', this._doAuthentication.bind(this))
     // Add callback for lock `authorization_error` event
@@ -55,6 +70,21 @@ export default class AuthService extends EventEmitter {
     // Retrieves the profile data from localStorage
     const profile = localStorage.getItem('profile')
     return profile ? JSON.parse(localStorage.profile) : {}
+  }
+
+  updateProfile(userId, data){
+    const headers = {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + this.getToken()
+    }
+    return fetch(`https://${this.domain}/api/v2/users/${userId}`, {
+      method: 'PATCH',
+      headers: headers,
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(newProfile => this.setProfile(newProfile))
   }
 
   setToken(idToken){
