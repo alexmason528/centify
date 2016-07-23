@@ -34,7 +34,7 @@ export class Home extends React.Component {
     return (
       <div className={styles.root}>
         <h2>Home</h2>
-        <ProfileDetails profile={profile}></ProfileDetails>
+        <ProfileDetails profile={profile} logout={this.logout.bind(this)}></ProfileDetails>
         <ProfileEdit profile={profile} auth={this.props.auth}></ProfileEdit>
         <Button onClick={this.logout.bind(this)}>Logout</Button>
       </div>
