@@ -17,6 +17,8 @@ const src     = join(root, 'src');
 const modules = join(root, 'node_modules');
 const dest    = join(root, 'dist');
 
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 var config = getConfig({
   isDev: isDev,
   in: join(src, 'app.js'),
@@ -55,7 +57,8 @@ const defines =
   });
 
 config.plugins = [
-  new webpack.DefinePlugin(defines)
+  new webpack.DefinePlugin(defines),
+  new ExtractTextPlugin('font-awesome.css')
 ].concat(config.plugins);
 // END ENV variables
 
@@ -87,25 +90,16 @@ config.module.loaders.push({
   loader: 'style-loader!css-loader'
 },
 {
-  test: /font-awesome\.css$/,
-  include: [modules],
-  loader: 'style!css?sourceMap'
+  test: /\.css$/,
+  loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
 },
 {
-  test: /fontawesome-webfont\.woff(\?v=\d+\.\d+\.\d+)?$/,
-  loader: "url?limit=10000&mimetype=application/font-woff"
-}, {
-  test: /fontawesome-webfont\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-  loader: "url?limit=10000&mimetype=application/font-woff"
-}, {
-  test: /fontawesome-webfont\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-  loader: "url?limit=10000&mimetype=application/octet-stream"
-}, {
-  test: /fontawesome-webfont\.eot(\?v=\d+\.\d+\.\d+)?$/,
-  loader: "file"
-}, {
-  test: /fontawesome-webfont\.svg(\?v=\d+\.\d+\.\d+)?$/,
-  loader: "url?limit=10000&mimetype=image/svg+xml"
+  test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+  loader: 'url-loader?limit=10000&mimetype=application/font-woff'
+},
+{
+  test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+  loader: 'file-loader'
 }
 )
 

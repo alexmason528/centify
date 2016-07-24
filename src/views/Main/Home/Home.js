@@ -5,8 +5,8 @@ import ProfileDetails from 'components/Profile/ProfileDetails'
 import ProfileEdit from 'components/Profile/ProfileEdit'
 import styles from './styles.module.css'
 
-import images from 'images/centify-logo.png';
-import FontAwesome from 'react-fontawesome'
+import images from 'images/centify-logo.png'
+import {Icon} from 'react-fa'
 
 export class Home extends React.Component {
   static contextTypes = {
@@ -64,7 +64,7 @@ export class Home extends React.Component {
             </li>
             <li class="chat-wrapper">
               <a href="#">
-                <FontAwesome name="comment-o" />
+                <Icon name="comment-o" />
               </a>
             </li>
           </ul>
