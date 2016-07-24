@@ -85,7 +85,29 @@ config.module.loaders.push({
   test: /bootstrap\.css$/,
   include: [modules],
   loader: 'style-loader!css-loader'
-})
+},
+{
+  test: /font-awesome\.css$/,
+  include: [modules],
+  loader: 'style!css?sourceMap'
+},
+{
+  test: /fontawesome-webfont\.woff(\?v=\d+\.\d+\.\d+)?$/,
+  loader: "url?limit=10000&mimetype=application/font-woff"
+}, {
+  test: /fontawesome-webfont\.woff2(\?v=\d+\.\d+\.\d+)?$/,
+  loader: "url?limit=10000&mimetype=application/font-woff"
+}, {
+  test: /fontawesome-webfont\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+  loader: "url?limit=10000&mimetype=application/octet-stream"
+}, {
+  test: /fontawesome-webfont\.eot(\?v=\d+\.\d+\.\d+)?$/,
+  loader: "file"
+}, {
+  test: /fontawesome-webfont\.svg(\?v=\d+\.\d+\.\d+)?$/,
+  loader: "url?limit=10000&mimetype=image/svg+xml"
+}
+)
 
 // postcss
 config.postcss = [].concat([

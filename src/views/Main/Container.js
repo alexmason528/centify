@@ -18,9 +18,8 @@ export class Container extends React.Component {
 
     return (
       <Jumbotron>
-        <h2 className={styles.mainTitle}>
-          <img src={LogoImg} />
-        </h2>
+        <div className={styles.logoArea}>
+        </div>
         {children}
       </Jumbotron>
     )

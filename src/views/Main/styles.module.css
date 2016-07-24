@@ -35,3 +35,19 @@
 .mainTitle{
   text-align: center;
 }
+
+.logoArea {
+  width: 225px;
+  min-height: 60px;
+  float: left;
+  background-image: url('../../images/centify-logo.png');
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 767px) {
+  .logoArea {
+    background-position: left top;
+    background-image: url('../../images/centify-logo-holder.png');
+    background-size: 60px 60px;
+  }
+}
