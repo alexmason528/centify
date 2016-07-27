@@ -47,22 +47,22 @@ export class Home extends React.Component {
         <div className="pull-right">
           <ul className="info-menu list-inline">
             <li className="profile-wrapper">
-              <a href="#" data-toggle="dropdown" class="toggle">
-                <img src="http://jaybabani.com/complete-admin/v2.0/preview/data/profile/profile-socialmedia.jpg" alt="user-image" class="img-circle img-inline" />
+              <a href="#" data-toggle="dropdown" className="toggle">
+                <img src="http://jaybabani.com/complete-admin/v2.0/preview/data/profile/profile-socialmedia.jpg" alt="user-image" className="img-circle img-inline" />
                 <span>John<i className="fa fa-angle-down"></i></span>
               </a>
             </li>
-            <li class="question-wrapper">
+            <li className="question-wrapper">
               <a href="#">
                 <Glyphicon glyph="question-sign" />
               </a>
             </li>
-            <li class="settings-wrapper">
+            <li className="settings-wrapper">
               <a href="#">
                 <Glyphicon glyph="cog" />
               </a>
             </li>
-            <li class="chat-wrapper">
+            <li className="chat-wrapper">
               <a href="#">
                 <Icon name="comment-o" />
               </a>
