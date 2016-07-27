@@ -6,17 +6,14 @@
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-
-    font-size: 16px;
 }
 
 body {
   color: var(--dark);
-  font-weight: lighter;
-  font: 400 15px/22px 'Open Sans', 'Helvetica Neue', Sans-serif;
-  font-smoothing: antialiased;
+  font-size: inherit;
+  font-family: inherit;
+  line-height: inherit;
   padding: 0;
   margin: 0;
 }

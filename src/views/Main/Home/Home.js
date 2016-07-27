@@ -4,6 +4,7 @@ import AuthService from 'utils/AuthService'
 import ProfileDetails from 'components/Profile/ProfileDetails'
 import ProfileEdit from 'components/Profile/ProfileEdit'
 import styles from './styles.module.css'
+import {Button as LDButton} from 'react-lightning-design-system'
 
 import images from 'images/centify-logo.png'
 import {Icon} from 'react-fa'
@@ -70,6 +71,7 @@ export class Home extends React.Component {
           </ul>
           
         </div>
+        <LDButton type='brand'>Brand</LDButton>
       </div>
     )
   }

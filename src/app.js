@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'font-awesome/css/font-awesome.css'
+import '@salesforce-ux/design-system/assets/styles/salesforce-lightning-design-system.css'
 import './app.css'
 
 import App from 'containers/App/App'
