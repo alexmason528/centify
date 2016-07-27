@@ -1,8 +1,7 @@
 {
-  "name": "auth0-react-sample",
+  "name": "centify-management-console",
   "version": "1.0.0",
-  "description": "A minimal reactJS sample application showing auth0 integration",
-  "repository": "https://github.com/auth0-samples/auth0-react-sample",
+  "description": "Centify management console",
   "license": "MIT",
   "scripts": {
     "start": "cross-env NODE_ENV=development hjs-dev-server",

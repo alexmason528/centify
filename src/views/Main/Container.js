@@ -1,7 +1,7 @@
 import React, { PropTypes as T } from 'react'
-import { Jumbotron } from 'react-bootstrap'
 import styles from './styles.module.css'
-import LogoImg from 'images/centify-logo.png'
+import Header from 'components/Header/Header';
+import SideNav from 'components/SideNav/SideNav';
 
 export class Container extends React.Component {
   static contextTypes = {
@@ -9,6 +9,12 @@ export class Container extends React.Component {
   }
 
   render() {
+    const avatarStyle = {
+      width: 50,
+      height: 'auto',
+      marginRight: 10,
+    }
+
     let children = null;
     if (this.props.children) {
       children = React.cloneElement(this.props.children, {
@@ -17,11 +23,20 @@ export class Container extends React.Component {
     }
 
     return (
-      <Jumbotron>
-        <div className={styles.logoArea}>
+      <div className="app-container">
+        <Header/>
+        <div className={styles.sideNavigation + ' slds-float--left'}>
+          <div className="slds-p-left--large slds-p-large--large slds-p-top--medium slds-p-bottom--xx-large">
+            <img src="http://jaybabani.com/complete-admin/v2.0/preview/data/profile/profile-socialmedia.jpg" 
+              alt="user-image" className="img-circle img-inline" style={avatarStyle}/>
+            John Smith
+          </div>
+          <SideNav/>
         </div>
-        {children}
-      </Jumbotron>
+        <div className={styles.content}>
+          {children}
+        </div>
+      </div>
     )
   }
 }
