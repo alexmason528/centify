@@ -1,12 +1,12 @@
 import React from 'react'
 import styles from './styles.module.css'
 
-const Home = () => {
+const Dashes = () => {
   return (
     <div className={styles.root}>
-      Main page here
+      Dashes page
     </div>
   )
 }
 
-export default Home;
+export default Dashes;
