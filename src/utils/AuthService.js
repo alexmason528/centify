@@ -13,14 +13,21 @@ export default class AuthService extends EventEmitter {
         logo: LogoImg,
         primaryColor: "green"
       },
-      additionalSignUpFields: [{
+      auth: {
+        params: {scope: 'openid centifyOrgId centifyUserId centifyLicense'},
+        redirect: true,
+        redirectUrl: "http://localhost:3000/#/auth0-callback",
+        responseType: "token",
+        sso: true
+      },
+      /*additionalSignUpFields: [{
         name: "address",                              // required
         placeholder: "enter your address",            // required
         validator: function(value) {                  // optional
           // only accept addresses with more than 10 chars
           return value.length > 10;
         }
-      }]
+      }]*/
     })
     // Add callback for lock `authenticated` event
     this.lock.on('authenticated', this._doAuthentication.bind(this))
@@ -69,7 +76,7 @@ export default class AuthService extends EventEmitter {
   getProfile(){
     // Retrieves the profile data from localStorage
     const profile = localStorage.getItem('profile')
-    return profile ? JSON.parse(localStorage.profile) : {}
+    return profile ? JSON.parse(profile) : {}
   }
 
   updateProfile(userId, data){

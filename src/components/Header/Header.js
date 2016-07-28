@@ -4,7 +4,7 @@ import {Glyphicon} from 'react-bootstrap'
 import logoImage from 'images/centify-logo.png'
 import {Icon} from 'react-fa'
 
-const Header = () => {
+const Header = ({ profile }) => {
   const logoStyle = {
     height: 40,
     width: 'auto'
@@ -39,9 +39,9 @@ const Header = () => {
             </li>
             <li className="profile-wrapper">
               <a href="#" data-toggle="dropdown" className="toggle">
-                <img src="http://jaybabani.com/complete-admin/v2.0/preview/data/profile/profile-socialmedia.jpg" 
+                <img src={profile.picture_thumbnail}
                   alt="user-image" className="img-circle img-inline" style={avatarStyle}/>
-                <span>John <i className="fa fa-angle-down"></i></span>
+                <span>{profile.name} <i className="fa fa-angle-down"></i></span>
               </a>
             </li>
           </ul>

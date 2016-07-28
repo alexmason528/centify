@@ -1,9 +1,2 @@
 @import url("../../styles/base.css");
 @import url("../../styles/queries.css");
-
-.sideNavigation {
-  width: 250px;
-}
-.content {
-  margin-left: 250px;
-}

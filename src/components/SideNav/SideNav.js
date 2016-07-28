@@ -6,7 +6,7 @@ import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
 import { Icon } from 'react-fa'
 
-const SideNav = () => {
+const SideNav = ({ routeName }) => {
   const logoStyle = {
     height: 40,
     width: 'auto'
@@ -19,10 +19,10 @@ const SideNav = () => {
   return (
     <div className="slds-grid slds-grid--vertical">
       <ul className="slds-navigation-list--vertical slds-has-block-links--space">
-        <li className="slds-is-active"><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
+        <li className={routeName == 'home' ? "slds-is-active" : ""}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
           <Icon fixedWidth name="dashboard"/> Dashboard
         </Link></li>
-        <li><Link to="/dashes"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
+        <li className={routeName == 'dashes' ? "slds-is-active" : ""}><Link to="/dashes"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
           <Icon fixedWidth name="flag-checkered"/> Dashes
         </Link></li>
         <li><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">

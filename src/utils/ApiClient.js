@@ -1,25 +1,18 @@
 import superagent from 'superagent';
+
 const config = {
-  domain: 'https://centify.api­docs.io/',
-  version: 'v1'
+  domain: 'https://api.centify.com',
 }
 
 const methods = ['get', 'post', 'put', 'patch', 'del'];
 
 function formatUrl(path) {
   const adjustedPath = path[0] !== '/' ? '/' + path : path;
-  if (__SERVER__) {
-    // Prepend host and port of the Host server to the path.
-    let res = config.domain + config.version;
-    res += adjustedPath;
-    return res;
-  }
-  // Prepend `/api` to relative URL, to proxy to API server.
-  return adjustedPath;
+  return config.domain + adjustedPath;
 }
 
 export default class ApiClient {
-  constructor(req) {
+  constructor() {
     methods.forEach((method) =>
       this[method] = (path, { params, data } = {}) => new Promise((resolve, reject) => {
         const request = superagent[method](formatUrl(path));
@@ -28,9 +21,12 @@ export default class ApiClient {
           request.query(params);
         }
 
-        if (__SERVER__ && req.get('cookie')) {
-          request.set('cookie', req.get('cookie'));
+        const id_token = localStorage.getItem('id_token')
+        if (id_token) {
+          request.set('Authorization', 'Bearer ' + id_token)
         }
+        request.set('Accept', 'application/json')
+        request.set('Content-Type', 'application/json')
 
         if (data) {
           request.send(data);
