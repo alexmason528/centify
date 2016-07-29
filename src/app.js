@@ -7,7 +7,6 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import createStore from 'redux/create';
 import ApiClient from 'utils/ApiClient';
 
-import 'bootstrap/dist/css/bootstrap.css'
 import 'font-awesome/css/font-awesome.css'
 import '@salesforce-ux/design-system/assets/styles/salesforce-lightning-design-system.css'
 import './app.css'

@@ -1,5 +1,5 @@
 import React, { PropTypes as T } from 'react'
-import {ButtonToolbar, Button} from 'react-bootstrap'
+import { Button } from 'react-lightning-design-system'
 import AuthService from 'utils/AuthService'
 import styles from './styles.module.css'
 
@@ -18,9 +18,9 @@ export class Login extends React.Component {
     return (
       <div className={styles.root}>
         <h2>Login</h2>
-        <ButtonToolbar className={styles.toolbar}>
-          <Button bsStyle="primary" onClick={auth.login.bind(this)}>Login</Button>
-        </ButtonToolbar>
+        <div className={styles.toolbar}>
+          <Button type="primary" onClick={auth.login.bind(this)}>Login</Button>
+        </div>
       </div>
     )
   }

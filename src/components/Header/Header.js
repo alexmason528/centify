@@ -1,6 +1,5 @@
 import React, { PropTypes as T } from 'react'
 import styles from './styles.module.css'
-import {Glyphicon} from 'react-bootstrap'
 import logoImage from 'images/centify-logo.png'
 import {Icon} from 'react-fa'
 
@@ -22,25 +21,25 @@ const Header = ({ profile }) => {
         </div>
         <div className="pull-right">
           <ul className="info-menu list-inline">
-            <li className="question-wrapper">
+            <li className={styles.rightSideIcons}>
               <a href="#">
                 <Icon name="question-circle" />
               </a>
             </li>
-            <li className="settings-wrapper">
+            <li className={styles.rightSideIcons}>
               <a href="#">
                 <Icon name="cog" />
               </a>
             </li>
-            <li className="chat-wrapper">
+            <li className={styles.rightSideIcons}>
               <a href="#">
                 <Icon name="comment-o" />
               </a>
             </li>
-            <li className="profile-wrapper">
+            <li className={styles.profileMenu}>
               <a href="#" data-toggle="dropdown" className="toggle">
                 <img src={profile.picture_thumbnail}
-                  alt="user-image" className="img-circle img-inline" style={avatarStyle}/>
+                  alt="user-image" className="slds-avatar--circle" style={avatarStyle}/>
                 <span>{profile.name} <i className="fa fa-angle-down"></i></span>
               </a>
             </li>

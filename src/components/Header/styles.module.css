@@ -1,3 +1,15 @@
 .headerLogo {
   flex-grow: 1;
 }
+
+.rightSideIcons {
+  display: inline-block;
+  font-size: 18px;
+}
+.rightSideIcons:not(:last-child) {
+  margin-right: 15px;
+}
+
+.profileMenu {
+  display: inline-block;
+}

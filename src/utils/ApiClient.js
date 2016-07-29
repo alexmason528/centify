@@ -7,6 +7,9 @@ const config = {
 const methods = ['get', 'post', 'put', 'patch', 'del'];
 
 function formatUrl(path) {
+  if (path.substr(0, 4).toLowerCase() == 'http') {
+    return path;
+  }
   const adjustedPath = path[0] !== '/' ? '/' + path : path;
   return config.domain + adjustedPath;
 }

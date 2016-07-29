@@ -1,5 +1,4 @@
 import React, { PropTypes as T } from 'react'
-import { Glyphicon } from 'react-bootstrap'
 import { Link } from 'react-router'
 
 import styles from './styles.module.css'

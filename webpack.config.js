@@ -85,18 +85,19 @@ cssloader.test = new RegExp(`^(?!.*(module|bootstrap)).*${cssloader.test.source}
 cssloader.loader = newloader.loader
 
 config.module.loaders.push({
-  // test: /bootstrap\.css$/,
   test: /(font-awesome\.css|design-system\.css|bootstrap\.css)$/,
   include: [modules],
   loader: 'style-loader!css-loader'
 },
-/*{
-  test: /(font-awesome\.css|design-system\.css|bootstrap\.css)$/,
+{
+  test: /\.css$/,
+  exclude: /(font-awesome\.css|design-system\.css|bootstrap\.css)$/,
   include: [modules],
-  loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
-},*/
+  loader: 'style-loader!css-loader'
+},
 {
   test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?/,
+  include: [modules],
   loader: 'url'
 },
 {
