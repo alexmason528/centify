@@ -14,6 +14,7 @@ import 'rc-slider/assets/index.css'
 
 import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
+import { formatDate2 } from 'utils/FormatDate'
 
 class DashForm extends Component {
 
@@ -23,13 +24,12 @@ class DashForm extends Component {
     )
   }
 
-  themeSelect = (name) => {
+  themeSelect = () => {
     return (
       <div className="slds-form-element">
         <div className="slds-form-element__control">
           <div className="slds-select_container">
-            <Field name={name} component="select" className="slds-select">
-              <option value="">- Select Type -</option>
+            <Field name={"Type"} component="select" className="slds-select">
               <option value='OverTheLine'>Over the Line</option>
               <option value='TugOfWar'>Tug of War</option>
               <option value='Timebomb'>Time Bomb</option>
@@ -40,13 +40,12 @@ class DashForm extends Component {
     )
   }
 
-  metricSelect = (name) => {
+  metricSelect = () => {
     return (
       <div className="slds-form-element">
         <div className="slds-form-element__control">
           <div className="slds-select_container">
-            <Field name={name} component="select" className="slds-select">
-              <option value="">- Select Metric -</option>
+            <Field name={"MeasureType"} component="select" className="slds-select">
               <option value="Deal">Deal</option>
               <option value="Call">Call</option>
               <option value="Email">Email</option>
@@ -80,10 +79,9 @@ class DashForm extends Component {
   }
 
   dateInput = (props) => {
-    const {value, ...otherProps} = props
-    const dateValue = value ? value : new Date().toString()
+    // const dateValue = value ? value : formatDate2()
     return (
-      <DateInput value={dateValue} {...otherProps} includeTime/>
+      <DateInput {...props.input} includeTime/>
     )
   }
 
@@ -96,6 +94,24 @@ class DashForm extends Component {
     }
     return (
       <Input type="text" {...props.input} style={durationInputStyle}/>
+    )
+  }
+
+  rewardTypeSelect = () => {
+    return (
+      <div className="slds-form-element">
+        <div className="slds-form-element__control">
+          <div className="slds-select_container">
+            <Field name={"RewardType"} component="select" className="slds-select">
+              <option value="">- Select Reward Type -</option>
+              <option value="All over the line">All participants must be over the line to win the reward</option>
+              <option value="Any over the line">Any participants over the line to win the reward</option>
+              <option value="One reward only">Only one winner</option>
+              <option value="Multiple reward positions">Specify the rewards for each winning position</option>
+            </Field>
+          </div>
+        </div>
+      </div>
     )
   }
 
@@ -179,7 +195,7 @@ class DashForm extends Component {
                   <h2 className={styles.fieldTitle}>Step 1 - Select Theme</h2>
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={2}>
-                  {this.themeSelect("Type")}
+                  {this.themeSelect()}
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
               </Row>
@@ -192,7 +208,7 @@ class DashForm extends Component {
                   What is the metric?
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={2}>
-                  {this.metricSelect("MeasureType")}
+                  {this.metricSelect()}
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={2}></Col>
                 <Col padded cols={6} className="slds-m-top--medium">
@@ -227,42 +243,7 @@ class DashForm extends Component {
                   <h2 className={styles.fieldTitle}>Step 4 - Set the Keywords</h2>
                 </Col>
                 <Col padded cols={6} colsMedium={4}>
-                  <div className="slds-form-element slds-m-bottom--xxx-small">
-                    <div className="slds-form-element__control">
-                      <label className="slds-checkbox">
-                        <Field component="input" type="checkbox" name="allOverTheLine"/>
-                        <span className="slds-checkbox--faux"></span>
-                        <span className="slds-form-element__label">All participants must be over the line to win the reward</span>
-                      </label>
-                    </div>
-                  </div>
-                  <div className="slds-form-element slds-m-bottom--xxx-small">
-                    <div className="slds-form-element__control">
-                      <label className="slds-checkbox">
-                        <Field component="input" type="checkbox" name="anyOverTheLine"/>
-                        <span className="slds-checkbox--faux"></span>
-                        <span className="slds-form-element__label">Any participants over the line to win the reward</span>
-                      </label>
-                    </div>
-                  </div>
-                  <div className="slds-form-element slds-m-bottom--xxx-small">
-                    <div className="slds-form-element__control">
-                      <label className="slds-checkbox">
-                        <Field component="input" type="checkbox" name="oneRewardOnly"/>
-                        <span className="slds-checkbox--faux"></span>
-                        <span className="slds-form-element__label">Only one winner</span>
-                      </label>
-                    </div>
-                  </div>
-                  <div className="slds-form-element slds-m-bottom--xxx-small">
-                    <div className="slds-form-element__control">
-                      <label className="slds-checkbox">
-                        <Field component="input" type="checkbox" name="multipleRewards"/>
-                        <span className="slds-checkbox--faux"></span>
-                        <span className="slds-form-element__label">Specify the rewards for each winning position</span>
-                      </label>
-                    </div>
-                  </div>
+                  {this.rewardTypeSelect()}
                 </Col>
                 <Col padded cols={6} colsMedium={2}>
                   <table>
@@ -279,7 +260,7 @@ class DashForm extends Component {
                 </Col>
                 <Col padded cols={6} className="slds-m-top--small">
                   What is the reward amount?
-                  <Field name="rewardAmount" component={this.rewardInput}/>
+                  <Field name="RewardAmount" component={this.rewardInput}/>
                 </Col>
                 <Col padded cols={6}>
                   {this.rewardList()}

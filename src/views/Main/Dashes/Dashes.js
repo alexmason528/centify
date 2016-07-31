@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Button } from 'react-lightning-design-system'
 import { Link } from 'react-router'
+import { formatDate } from 'utils/FormatDate'
 
 import styles from './styles.module.css'
 import hoc from './hoc'
@@ -17,30 +18,6 @@ class Dashes extends Component {
 
   changeFilter = (filter) => {
     this.props.filterDashes(filter)
-  }
-
-  format2Digits(n) {
-    return n > 10 ? n : '0' + n
-  }
-
-  formatDate(date) {
-    const _date = new Date(date)
-    const monthNames = [
-      "January", "February", "March",
-      "April", "May", "June", "July",
-      "August", "September", "October",
-      "November", "December"
-    ]
-    let formattedDate = ''
-    const day = _date.getDate()
-    const monthIndex = _date.getMonth()
-    const year = _date.getFullYear()
-    formattedDate = day + ' ' + monthNames[monthIndex] + ', ' + year
-    formattedDate += ' '
-    formattedDate += this.format2Digits(_date.getHours()) + ':'
-    formattedDate += this.format2Digits(_date.getMinutes()) + ':'
-    formattedDate += this.format2Digits(_date.getSeconds())
-    return formattedDate
   }
 
   editDash = (dashId) => {
@@ -92,8 +69,8 @@ class Dashes extends Component {
           <tbody>
             {dashesList.map((dash) => {
               const id = dash.get('Id')
-              const startDate = this.formatDate(dash.get('StartsAt'));
-              const endDate = this.formatDate(dash.get('EndsAt'));
+              const startDate = formatDate(dash.get('StartsAt'));
+              const endDate = formatDate(dash.get('EndsAt'));
               return filter == '' || dash.get('Status') == filter ?
                 (<tr key={id} onClick={this.editDash.bind(this, id)}>
                   <th title={dash.get('Name')} data-label="Name">

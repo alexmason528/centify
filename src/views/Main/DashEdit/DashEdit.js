@@ -4,6 +4,7 @@ import { Button } from 'react-lightning-design-system'
 import styles from './styles.module.css'
 import hoc from './hoc'
 import DashForm from 'components/DashForm/DashForm'
+import { formatDate2 } from 'utils/FormatDate'
 
 class DashEdit extends Component {
 
@@ -18,7 +19,7 @@ class DashEdit extends Component {
   }
 
   initialValues() {
-    return {
+    /*return {
       "Description" : null,
       "ImageURL" : null,
       "IsTeamDash" : true,
@@ -48,10 +49,23 @@ class DashEdit extends Component {
       },
       "IsBash" : "True",
       "DashIdAssociatedToBash" : "",
+    }*/
+    return {
+      Name : "",
+      Type : "OverTheLine",
+      MeasureType : "Deal",
+      MeasureValue : 0,
+      StartsAt: formatDate2(),
+      EndsAt: formatDate2(),
+      durationDays : 0,
+      durationHours : 0,
+      RewardType : "All over the line",
+      RewardAmount : 0,
     }
   }
 
   onSubmit(model) {
+    console.log(model);return;
     const profile = auth.getProfile()
     const data = {
       ...model
@@ -63,7 +77,7 @@ class DashEdit extends Component {
     const { currentDash } = this.props
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
-        <DashForm onSubmit={(model) => console.log(model)} initialValues={this.initialValues()}/>
+        <DashForm onSubmit={(model) => this.onSubmit(model)} initialValues={this.initialValues()}/>
       </div>
     )
   }
