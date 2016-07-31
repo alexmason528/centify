@@ -5,7 +5,7 @@ import {
   Grid, Row, Col,
   Select, Option,
   Input, DateInput,
-  Checkbox,
+  Checkbox, CheckboxGroup,
   Button,
   Container,
 } from 'react-lightning-design-system'
@@ -17,23 +17,47 @@ import logoImage from 'images/centify-logo.png'
 
 class DashForm extends Component {
 
-  themeSelect = (props) => {
+  nameInput = (props) => {
     return (
-      <Select defaultValue={ 1 } required>
-        <Option value={ 1 }>Over the line</Option>
-        <Option value={ 2 }>The Race</Option>
-        <Option value={ 3 }>Countdown</Option>
-      </Select>
+      <Input type="text" {...props.input}/>
     )
   }
 
-  metricSelect = (props) => {
+  themeSelect = (name) => {
     return (
-      <Select defaultValue={ 1 } required>
-        <Option value={ 1 }>Over the line</Option>
-        <Option value={ 2 }>The Race</Option>
-        <Option value={ 3 }>Countdown</Option>
-      </Select>
+      <div className="slds-form-element">
+        <div className="slds-form-element__control">
+          <div className="slds-select_container">
+            <Field name={name} component="select" className="slds-select">
+              <option value="">- Select Type -</option>
+              <option value='OverTheLine'>Over the Line</option>
+              <option value='TugOfWar'>Tug of War</option>
+              <option value='Timebomb'>Time Bomb</option>
+            </Field>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  metricSelect = (name) => {
+    return (
+      <div className="slds-form-element">
+        <div className="slds-form-element__control">
+          <div className="slds-select_container">
+            <Field name={name} component="select" className="slds-select">
+              <option value="">- Select Metric -</option>
+              <option value="Deal">Deal</option>
+              <option value="Call">Call</option>
+              <option value="Email">Email</option>
+              <option value="Meeting">Meeting</option>
+              <option value="Lead">Lead</option>
+              <option value="Account">Account</option>
+              <option value="TrailingRevenueComp">Trailing Revenue Comp</option>
+            </Field>
+          </div>
+        </div>
+      </div>
     )
   }
 
@@ -49,15 +73,17 @@ class DashForm extends Component {
         <span>What is the target value (use slider to set)? </span>
         <Input type="text" value={value} readOnly style={valueStyle}/>
         <div className="slds-p-top--medium">
-          <Slider min={0} max={100} step={1} defaultValue={20} value={value} onChange={props.input.onChange} />
+          <Slider min={0} max={100} step={1} {...props.input}/>
         </div>
       </div>
     )
   }
 
   dateInput = (props) => {
+    const {value, ...otherProps} = props
+    const dateValue = value ? value : new Date().toString()
     return (
-      <DateInput defaultValue={new Date().toString()} defaultOpened={false} includeTime/>
+      <DateInput value={dateValue} {...otherProps} includeTime/>
     )
   }
 
@@ -69,7 +95,7 @@ class DashForm extends Component {
       marginRight: 6,
     }
     return (
-      <Input type="text" defaultValue={value} style={durationInputStyle}/>
+      <Input type="text" {...props.input} style={durationInputStyle}/>
     )
   }
 
@@ -81,7 +107,7 @@ class DashForm extends Component {
       marginLeft: 20,
     }
     return (
-      <Input type="text" defaultValue={value} style={rewardInputStyle}/>
+      <Input type="text" {...props.input} style={rewardInputStyle}/>
     )
   }
 
@@ -124,6 +150,13 @@ class DashForm extends Component {
 
   render() {
     const { handleSubmit, pristine, reset, submitting } = this.props;
+    const optionsContainerStyle = {
+      overflow: 'auto',
+      padding: 15,
+      border: '1px solid #d8dde6',
+      borderRadius: 3,
+      height: 150
+    }
     return (
       <form onSubmit={handleSubmit}>
         <Grid>
@@ -132,10 +165,21 @@ class DashForm extends Component {
 
               <Row cols={6} className="slds-m-top--large">
                 <Col padded cols={6} className="slds-m-bottom--small">
+                  <h2 className={styles.fieldTitle}>Enter Dash name</h2>
+                </Col>
+                <Col padded cols={6} colsSmall={3} colsMedium={2}>
+                  <Field name="Name" component={this.nameInput}/>
+                </Col>
+                <Col padded cols={6} colsSmall={3} colsMedium={4}>
+                </Col>
+              </Row>
+
+              <Row cols={6} className="slds-m-top--xx-large">
+                <Col padded cols={6} className="slds-m-bottom--small">
                   <h2 className={styles.fieldTitle}>Step 1 - Select Theme</h2>
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={2}>
-                  <Field name="theme" component={this.themeSelect}/>
+                  {this.themeSelect("Type")}
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
               </Row>
@@ -148,11 +192,11 @@ class DashForm extends Component {
                   What is the metric?
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={2}>
-                  <Field name="metric" component={this.metricSelect}/>
+                  {this.metricSelect("MeasureType")}
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={2}></Col>
                 <Col padded cols={6} className="slds-m-top--medium">
-                  <Field name="goal" component={this.goalSlider}/>
+                  <Field name="MeasureValue" component={this.goalSlider}/>
                 </Col>
               </Row>
 
@@ -163,11 +207,11 @@ class DashForm extends Component {
                 </Col>
                 <Col padded cols={6} colsMedium={2}>
                   <div className="slds-m-bottom--x-small">Start Date & Time</div>
-                  <Field name="startsAt" component={this.dateInput}/>
+                  <Field name="StartsAt" component={this.dateInput}/>
                 </Col>
                 <Col padded cols={6} colsMedium={2}>
                   <div className="slds-m-bottom--x-small">End Date & Time</div>
-                  <Field name="endsAt" component={this.dateInput}/>
+                  <Field name="EndsAt" component={this.dateInput}/>
                 </Col>
                 <Col padded cols={6} colsMedium={2}>
                   <div className="slds-m-bottom--x-small">Calculated Duration</div>
@@ -249,7 +293,7 @@ class DashForm extends Component {
                 <Col padded cols={6}>
                   <div className="slds-m-bottom--small">Select one or more Todos for this dash</div>
                   <Checkbox className="slds-m-bottom--x-small" label='Select all'/>
-                  <div style={{ overflow: 'auto', padding: 15, border: '1px solid #f6f6f7', borderRadius: 3, height: 150 }}>
+                  <div style={optionsContainerStyle}>
                     <Checkbox className="slds-m-bottom--x-small" label='1. Opportunities that have been "pushed" multiple times'/>
                     <Checkbox className="slds-m-bottom--x-small" label="2. Opportunities that are older than specified period"/>
                     <Checkbox className="slds-m-bottom--x-small" label="3. Opportunities stuck in a particular status"/>
@@ -268,7 +312,7 @@ class DashForm extends Component {
                     <div className="slds-float--left">10 items - Last updated 07/28/2016 at 22:10</div>
                     <div className="slds-float--right"><Button type="brand">Select Users</Button></div>
                   </div>
-                  <div style={{ overflow: 'auto', padding: 15, border: '1px solid #f6f6f7', borderRadius: 3, height: 150 }}>
+                  <div style={optionsContainerStyle}>
                     <Select className="slds-m-bottom--x-small" defaultValue={ 1 } required style={{ maxWidth: 300 }}>
                       <Option value={ 1 }>User 1</Option>
                       <Option value={ 2 }>User 2</Option>
@@ -292,7 +336,7 @@ class DashForm extends Component {
                 <Col padded>
                   <div style={{ textAlign: 'right' }}>
                     <Button type="neutral">Cancel</Button>
-                    <Button type="brand">Save Dash</Button>
+                    <button type="submit" className="slds-button slds-button--brand">Save Dash</button>
                   </div>
                 </Col>
               </Row>

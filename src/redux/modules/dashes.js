@@ -17,6 +17,9 @@ import {
   DASHES_SINGLE_GET_REWARDS,
   DASHES_SINGLE_GET_REWARDS_SUCCESS,
   DASHES_SINGLE_GET_REWARDS_FAIL,
+  DASHES_CREATE,
+  DASHES_CREATE_SUCCESS,
+  DASHES_CREATE_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
@@ -39,11 +42,11 @@ export default function dashes(state = initialState, action) {
     case DASHES_FILTER:
       return state.set('filter', action.filter)
     case DASHES_SINGLE_GET_SUCCESS:
-      return state.set('currentDash', action.result)
+      return state.set('currentDash', Immutable.fromJS(action.result))
     case DASHES_SINGLE_GET_PARTICIPANTS_SUCCESS:
-      return state.setIn(['currentDash', 'Participants'], action.result)
+      return state.setIn(['currentDash', 'Participants'], Immutable.fromJS(action.result))
     case DASHES_SINGLE_GET_REWARDS_SUCCESS:
-      return state.setIn(['currentDash', 'Rewards'], action.result)
+      return state.setIn(['currentDash', 'Rewards'], Immutable.fromJS(action.result))
     default:
       return state
   }
@@ -63,7 +66,7 @@ export function filterDashes(status) {
   }
 }
 
-export function _getDash(orgId, dashId) {
+function _getDash(orgId, dashId) {
   return {
     types: [DASHES_SINGLE_GET, DASHES_SINGLE_GET_SUCCESS, DASHES_SINGLE_GET_FAIL],
     promise: (client) => client.get(`/v1/${orgId}/dashes/${dashId}`)
@@ -92,6 +95,27 @@ export function getDash(orgId, dashId) {
       .then((res)=> {
         dispatch(getDashParticipants(res.Participants.href));
         dispatch(getDashRewards(res.Rewards.href));
+      })
+      .catch(res => {
+        throw new SubmissionError({ _error: res.error });
+      });
+  };
+}
+
+function _createDash(orgId, data) {
+  return {
+    types: [DASHES_CREATE, DASHES_CREATE_SUCCESS, DASHES_CREATE_FAIL],
+    promise: (client) => client.post(`/v1/${orgId}/dashes`, data)
+  }
+}
+
+export function createDash(orgId, data) {
+  return dispatch => {
+    return dispatch(
+        _createDash(orgId, dashId)
+      )
+      .then((res)=> {
+        dispatch(push('/dashes'))
       })
       .catch(res => {
         throw new SubmissionError({ _error: res.error });
