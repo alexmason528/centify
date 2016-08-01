@@ -1,5 +1,6 @@
-import { push } from 'react-router-redux';
-import Immutable from 'immutable';
+import { push } from 'react-router-redux'
+import Immutable from 'immutable'
+import {SubmissionError} from 'redux-form'
 
 import {
   INIT,
@@ -20,12 +21,19 @@ import {
   DASHES_CREATE,
   DASHES_CREATE_SUCCESS,
   DASHES_CREATE_FAIL,
+  DASHES_UPDATE,
+  DASHES_UPDATE_SUCCESS,
+  DASHES_UPDATE_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
   list: [],
   filter: '',
   currentDash: {},
+  loading: false,
+  loadingParticipants: false,
+  loadingRewards: false,
+  loadingTodos: false,
 })
 
 export default function dashes(state = initialState, action) {
@@ -34,19 +42,64 @@ export default function dashes(state = initialState, action) {
     case REDUX_INIT:
       return state
     case DASHES_LIST_SUCCESS:
-      return state.withMutations((map)=> {
+      return state.withMutations((map) => {
         const dashes = action.result ? action.result : []
         map.set('list', Immutable.fromJS(dashes))
         map.set('filter', '')
       })
     case DASHES_FILTER:
       return state.set('filter', action.filter)
+    /* Single dash */
+    case DASHES_SINGLE_GET:
+      return state.withMutations((map) => {
+        map.set('currentDash', Immutable.fromJS({}))
+        map.set('loading', true)
+        map.set('loadingParticipants', true)
+        map.set('loadingRewards', true)
+        map.set('loadingTodos', true)
+      })
     case DASHES_SINGLE_GET_SUCCESS:
-      return state.set('currentDash', Immutable.fromJS(action.result))
+      return state.withMutations((map) => {
+        map.set('currentDash', Immutable.fromJS(action.result))
+        map.set('loading', false)
+      })
+    case DASHES_SINGLE_GET_FAIL:
+      return state.withMutations((map) => {
+        map.set('currentDash', Immutable.fromJS({}))
+        map.set('loading', false)
+      })
+    /* Single dash - participants */
+    case DASHES_SINGLE_GET_PARTICIPANTS:
+      return state.withMutations((map) => {
+        map.setIn(['currentDash', 'Participants'], Immutable.fromJS({}))
+        map.set('loadingParticipants', true)
+      })
     case DASHES_SINGLE_GET_PARTICIPANTS_SUCCESS:
-      return state.setIn(['currentDash', 'Participants'], Immutable.fromJS(action.result))
+      return state.withMutations((map) => {
+        map.setIn(['currentDash', 'Participants'], Immutable.fromJS(action.result))
+        map.set('loadingParticipants', false)
+      })
+    case DASHES_SINGLE_GET_PARTICIPANTS_FAIL:
+      return state.withMutations((map) => {
+        map.setIn(['currentDash', 'Participants'], Immutable.fromJS({}))
+        map.set('loadingParticipants', false)
+      })
+    /* Single dash - rewards */
+    case DASHES_SINGLE_GET_REWARDS:
+      return state.withMutations((map) => {
+        map.setIn(['currentDash', 'Rewards'], Immutable.fromJS({}))
+        map.set('loadingRewards', true)
+      })
     case DASHES_SINGLE_GET_REWARDS_SUCCESS:
-      return state.setIn(['currentDash', 'Rewards'], Immutable.fromJS(action.result))
+      return state.withMutations((map) => {
+        map.setIn(['currentDash', 'Rewards'], Immutable.fromJS(action.result))
+        map.set('loadingRewards', false)
+      })
+    case DASHES_SINGLE_GET_REWARDS_FAIL:
+      return state.withMutations((map) => {
+        map.setIn(['currentDash', 'Rewards'], Immutable.fromJS({}))
+        map.set('loadingRewards', false)
+      })
     default:
       return state
   }
@@ -93,32 +146,53 @@ export function getDash(orgId, dashId) {
         _getDash(orgId, dashId)
       )
       .then((res)=> {
-        dispatch(getDashParticipants(res.Participants.href));
-        dispatch(getDashRewards(res.Rewards.href));
+        dispatch(getDashParticipants(res.Participants.href))
+        dispatch(getDashRewards(res.Rewards.href))
       })
       .catch(res => {
-        throw new SubmissionError({ _error: res.error });
-      });
-  };
-}
-
-function _createDash(orgId, data) {
-  return {
-    types: [DASHES_CREATE, DASHES_CREATE_SUCCESS, DASHES_CREATE_FAIL],
-    promise: (client) => client.post(`/v1/${orgId}/dashes`, data)
+        throw new SubmissionError({ _error: res.error })
+      })
   }
 }
 
-export function createDash(orgId, data) {
+function _createDash(orgId, model) {
+  return {
+    types: [DASHES_CREATE, DASHES_CREATE_SUCCESS, DASHES_CREATE_FAIL],
+    promise: (client) => client.post(`/v1/${orgId}/dashes`, { data: model })
+  }
+}
+
+export function createDash(orgId, model) {
   return dispatch => {
     return dispatch(
-        _createDash(orgId, dashId)
+        _createDash(orgId, model)
       )
       .then((res)=> {
         dispatch(push('/dashes'))
       })
       .catch(res => {
-        throw new SubmissionError({ _error: res.error });
-      });
-  };
+        throw new SubmissionError({ _error: res.error })
+      })
+  }
+}
+
+function _updateDash(orgId, dashId, model) {
+  return {
+    types: [DASHES_UPDATE, DASHES_UPDATE_SUCCESS, DASHES_UPDATE_FAIL],
+    promise: (client) => client.put(`/v1/${orgId}/dashes/${dashId}`, { data: model })
+  }
+}
+
+export function updateDash(orgId, dashId, model) {
+  return dispatch => {
+    return dispatch(
+        _updateDash(orgId, dashId, model)
+      )
+      .then((res)=> {
+        dispatch(push('/dashes'))
+      })
+      .catch(res => {
+        throw new SubmissionError({ _error: res.error })
+      })
+  }
 }

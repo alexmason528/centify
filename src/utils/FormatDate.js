@@ -1,8 +1,8 @@
-function format2Digits(n) {
+export function format2Digits(n) {
   return n >= 10 ? n : '0' + n
 }
 
-export function formatDate(date = null) {
+export function formatDate(date = null, includeTime = true) {
   const _date = date ? new Date(date) : new Date()
   const monthNames = [
     "January", "February", "March",
@@ -14,15 +14,17 @@ export function formatDate(date = null) {
   const monthIndex = _date.getMonth()
   const year = _date.getFullYear()
   let formattedDate = ''
-  formattedDate += day + ' ' + monthNames[monthIndex] + ', ' + year
-  formattedDate += ' '
-  formattedDate += format2Digits(_date.getHours()) + ':'
-  formattedDate += format2Digits(_date.getMinutes()) + ':'
-  formattedDate += format2Digits(_date.getSeconds())
+  formattedDate += monthNames[monthIndex] + ' ' + day + ', ' + year
+  if (includeTime) {
+    formattedDate += ' '
+    formattedDate += format2Digits(_date.getHours()) + ':'
+    formattedDate += format2Digits(_date.getMinutes()) + ':'
+    formattedDate += format2Digits(_date.getSeconds())
+  }
   return formattedDate
 }
 
-export function formatDate2(date = null) {
+export function formatDate2(date = null, includeTime = true) {
   const _date = date ? new Date(date) : new Date()
   const day = _date.getDate()
   const month = _date.getMonth()
@@ -30,8 +32,11 @@ export function formatDate2(date = null) {
   let formattedDate = ''
   formattedDate += format2Digits(month) + '/'
   formattedDate += format2Digits(day) + '/'
-  formattedDate += year + ' '
-  formattedDate += format2Digits(_date.getHours()) + ':'
-  formattedDate += format2Digits(_date.getMinutes())
+  formattedDate += year
+  if (includeTime) {
+    formattedDate += ' '
+    formattedDate += format2Digits(_date.getHours()) + ':'
+    formattedDate += format2Digits(_date.getMinutes())
+  }
   return formattedDate
 }

@@ -1,0 +1,20 @@
+.dateInputClass {
+  position: relative;
+}
+
+.datepicker {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 10px;
+  background: #fff;
+  padding: 15px;
+  z-index: 100;
+  border: 1px solid #d8dde6;
+  border-radius: 3px;
+  display: none;
+}
+
+.datepickerVisible {
+  display: block !important;
+}

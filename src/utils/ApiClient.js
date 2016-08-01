@@ -1,7 +1,7 @@
 import superagent from 'superagent';
 
 const config = {
-  domain: 'https://api.centify.com',
+  domain: 'https://staging-api.centify.com',
 }
 
 const methods = ['get', 'post', 'put', 'patch', 'del'];

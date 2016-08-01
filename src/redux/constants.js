@@ -17,3 +17,6 @@ export const DASHES_SINGLE_GET_REWARDS_FAIL = 'centify/dashes/SINGLE_GET_REWARDS
 export const DASHES_CREATE = 'centify/dashes/CREATE'
 export const DASHES_CREATE_SUCCESS = 'centify/dashes/CREATE_SUCCESS'
 export const DASHES_CREATE_FAIL = 'centify/dashes/CREATE_FAIL'
+export const DASHES_UPDATE = 'centify/dashes/UPDATE'
+export const DASHES_UPDATE_SUCCESS = 'centify/dashes/UPDATE_SUCCESS'
+export const DASHES_UPDATE_FAIL = 'centify/dashes/UPDATE_FAIL'

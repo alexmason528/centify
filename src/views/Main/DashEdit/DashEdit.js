@@ -19,62 +19,84 @@ class DashEdit extends Component {
   }
 
   initialValues() {
-    /*return {
-      "Description" : null,
-      "ImageURL" : null,
-      "IsTeamDash" : true,
-      "Type" : "OverTheLine",
-      "GameType" : "RocketLaunch",
-      "TargetThreshold" : 0,
-      "QualifyingThreshold" : 0,
-      "VelocityAccelTimePeriod" : "string",
-      "ScoreFormula" : "string",
-      "ScoreUnits" : "string",
-      "IsPublic" : "true",
-      "RewardType" : "All over the line",
-      "AreRewardsShared" : "true",
-      "AreTeamRewardsShared" : "true",
-      "StartsAt" : new Date().toString(),
-      "EndsAt" : new Date().toString(),
-      "MinimumParticipants" : 1,
-      "MinimumUsersInTeam" : 1,
-      "Measure" : {
-        "Name" : "string",
-        "EventType" : "Deal",
-        "FilterCondition" : "string",
-        "CalcMethod" : "Sum|Count",
-        "SumFields" : "string",
-        "Units" : "string",
-        "Value" : 0,
-      },
-      "IsBash" : "True",
-      "DashIdAssociatedToBash" : "",
-    }*/
-    return {
-      Name : "",
-      Type : "OverTheLine",
-      MeasureType : "Deal",
-      MeasureValue : 0,
-      StartsAt: formatDate2(),
-      EndsAt: formatDate2(),
-      durationDays : 0,
-      durationHours : 0,
-      RewardType : "All over the line",
-      RewardAmount : 0,
+    const { currentDash } = this.props
+    if (currentDash.get('Id')) {
+      return {
+        Name : currentDash.get('Name'),
+        Type : currentDash.get('Type'),
+        MeasureType : currentDash.getIn(['Measure', 'EventType'], ''),
+        MeasureValue : currentDash.getIn(['Measure', 'Value'], 0),
+        StartsAt: currentDash.get('StartsAt'),
+        EndsAt: currentDash.get('EndsAt'),
+        // durationDays : 0,
+        // durationHours : 0,
+        RewardType : "All over the line",
+        RewardAmount : 0,
+        rewards: [],
+        participants: [],
+        todos: [],
+      }
+    } else {
+      return {
+        Name : "",
+        Type : "OverTheLine",
+        MeasureType : "Deal",
+        MeasureValue : 0,
+        StartsAt: formatDate2(),
+        EndsAt: formatDate2(),
+        // durationDays : 0,
+        // durationHours : 0,
+        RewardType : "All over the line",
+        RewardAmount : 0,
+        rewards: [],
+        participants: [],
+        todos: [],
+      }
     }
   }
 
-  onSubmit(model) {
-    console.log(model);return;
+  onSubmit = (model) => {
+    const auth = this.props.auth
     const profile = auth.getProfile()
+    const { rewards, participants, todos, ...modelData } = model
     const data = {
-      ...model
+      Description : "",
+      ImageURL : "",
+      IsTeamDash : false,
+      GameType : "RocketLaunch",
+      TargetThreshold : 300,
+      QualifyingThreshold : 3,
+      VelocityAccelTimePeriod : "month",
+      ScoreFormula : "",
+      ScoreUnits : "string",
+      IsPublic : false,
+      AreRewardsShared : false,
+      AreTeamRewardsShared : false,
+      MinimumParticipants : 1,
+      MinimumUsersInTeam : 1,
+      Measure : {
+        Name : "string",
+        EventType : model.MeasureType,
+        FilterCondition : "string",
+        CalcMethod : "Sum",
+        SumFields : "string",
+        Units : "string",
+        "Value": 0,
+      },
+      IsBash : false,
+      DashIdAssociatedToBash : null,
+      ...modelData
     }
-    this.props.createDash(profile.centifyOrgId)
+    this.props.updateDash(profile.centifyOrgId, this.props.params.dashId, data)
   }
 
   render() {
-    const { currentDash } = this.props
+    const { currentDash, loading, loadingParticipants, loadingRewards } = this.props
+    if (loading || loadingParticipants || loadingRewards) {
+      return (
+        <div>Loading...</div>
+      )
+    }
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
         <DashForm onSubmit={(model) => this.onSubmit(model)} initialValues={this.initialValues()}/>

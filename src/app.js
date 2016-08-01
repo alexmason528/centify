@@ -14,7 +14,7 @@ import './app.css'
 import makeRoutes from './routes'
 
 const client = new ApiClient();
-const store = createStore(hashHistory, client, window.__data);
+const store = createStore(hashHistory, client);
 const history = syncHistoryWithStore(hashHistory, store);
 const routes = makeRoutes()
 

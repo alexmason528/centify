@@ -6,6 +6,7 @@ import LayoutContainer from './LayoutContainer/LayoutContainer'
 import Home from './Home/Home'
 import Login from './Login/Login'
 import Dashes from './Dashes/Dashes'
+import DashCreate from './DashCreate/DashCreate'
 import DashEdit from './DashEdit/DashEdit'
 
 const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__);
@@ -27,7 +28,7 @@ export const makeMainRoutes = () => {
       <Route component={LayoutContainer} onEnter={requireAuth}>
         <Route path="home" component={Home} />
         <Route path="dashes" component={Dashes} />
-        <Route path="dashes/new" component={DashEdit} />
+        <Route path="dashes/new" component={DashCreate} />
         <Route path="dashes/:dashId" component={DashEdit} />
       </Route>
 

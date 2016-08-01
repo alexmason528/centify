@@ -4,13 +4,15 @@ import {Icon} from 'react-fa'
 import { 
   Grid, Row, Col,
   Select, Option,
-  Input, DateInput,
+  Input,
   Checkbox, CheckboxGroup,
   Button,
   Container,
 } from 'react-lightning-design-system'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
+
+import DateInput from 'components/DateInput/DateInput'
 
 import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
@@ -61,7 +63,8 @@ class DashForm extends Component {
   }
 
   goalSlider = (props) => {
-    const value = props.input.value ? props.input.value : 0
+    const {value, ...otherProps} = props.input
+    const _value = value ? value : 0
     const valueStyle = {
       display: 'inline-block',
       width: 100,
@@ -70,18 +73,17 @@ class DashForm extends Component {
     return (
       <div>
         <span>What is the target value (use slider to set)? </span>
-        <Input type="text" value={value} readOnly style={valueStyle}/>
+        <Input type="text" value={_value} readOnly style={valueStyle}/>
         <div className="slds-p-top--medium">
-          <Slider min={0} max={100} step={1} {...props.input}/>
+          <Slider min={0} max={100} step={1} value={_value} {...otherProps}/>
         </div>
       </div>
     )
   }
 
   dateInput = (props) => {
-    // const dateValue = value ? value : formatDate2()
     return (
-      <DateInput {...props.input} includeTime/>
+      <DateInput {...props.input}/>
     )
   }
 
@@ -158,14 +160,30 @@ class DashForm extends Component {
   }
 
   todoList = (props) => {
+    const optionsContainerStyle = {
+      overflow: 'auto',
+      padding: 15,
+      border: '1px solid #d8dde6',
+      borderRadius: 3,
+      height: 150
+    }
     return (
       <div>
+        <div className="slds-m-bottom--small">Select one or more Todos for this dash</div>
+        <Checkbox className="slds-m-bottom--x-small" label='Select all'/>
+        <div style={optionsContainerStyle}>
+          <Checkbox className="slds-m-bottom--x-small" label='1. Opportunities that have been "pushed" multiple times'/>
+          <Checkbox className="slds-m-bottom--x-small" label="2. Opportunities that are older than specified period"/>
+          <Checkbox className="slds-m-bottom--x-small" label="3. Opportunities stuck in a particular status"/>
+          <Checkbox className="slds-m-bottom--x-small" label="4. Opportunities that close soon without activities"/>
+          <Checkbox className="slds-m-bottom--x-small" label="5. etc."/>
+        </div>
       </div>
     )
   }
 
   render() {
-    const { handleSubmit, pristine, reset, submitting } = this.props;
+    const { handleSubmit, submitting } = this.props
     const optionsContainerStyle = {
       overflow: 'auto',
       padding: 15,
@@ -230,11 +248,13 @@ class DashForm extends Component {
                   <Field name="EndsAt" component={this.dateInput}/>
                 </Col>
                 <Col padded cols={6} colsMedium={2}>
+                  {/*
                   <div className="slds-m-bottom--x-small">Calculated Duration</div>
                   <div>
                     <Field name="durationDays" component={this.inlineInput}/> Days&nbsp;&nbsp;&nbsp;
                     <Field name="durationHours" component={this.inlineInput}/> Hours
                   </div>
+                  */}
                 </Col>
               </Row>
 
@@ -272,15 +292,7 @@ class DashForm extends Component {
                   <h2 className={styles.fieldTitle}>Step 5 - Select the Todos</h2>
                 </Col>
                 <Col padded cols={6}>
-                  <div className="slds-m-bottom--small">Select one or more Todos for this dash</div>
-                  <Checkbox className="slds-m-bottom--x-small" label='Select all'/>
-                  <div style={optionsContainerStyle}>
-                    <Checkbox className="slds-m-bottom--x-small" label='1. Opportunities that have been "pushed" multiple times'/>
-                    <Checkbox className="slds-m-bottom--x-small" label="2. Opportunities that are older than specified period"/>
-                    <Checkbox className="slds-m-bottom--x-small" label="3. Opportunities stuck in a particular status"/>
-                    <Checkbox className="slds-m-bottom--x-small" label="4. Opportunities that close soon without activities"/>
-                    <Checkbox className="slds-m-bottom--x-small" label="5. etc."/>
-                  </div>
+                  <Field name="Todos" component={this.todoList}/>
                 </Col>
               </Row>
 
@@ -317,7 +329,7 @@ class DashForm extends Component {
                 <Col padded>
                   <div style={{ textAlign: 'right' }}>
                     <Button type="neutral">Cancel</Button>
-                    <button type="submit" className="slds-button slds-button--brand">Save Dash</button>
+                    <button type="submit" className="slds-button slds-button--brand" disabled={submitting}>Save Dash</button>
                   </div>
                 </Col>
               </Row>
@@ -335,4 +347,4 @@ class DashForm extends Component {
 
 export default reduxForm({
   form: 'DashForm'
-})(DashForm);
+})(DashForm)
