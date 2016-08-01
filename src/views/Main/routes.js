@@ -22,15 +22,15 @@ export const makeMainRoutes = () => {
     <Route path="/" component={Container} auth={auth}>
       <IndexRedirect to="/home" />
       <Route path="login" component={Login} />
-      <Route path="auth0-callback" />
+      <Route path="access_token=:token" component={Login} /> //to prevent router errors
+
       <Route component={LayoutContainer} onEnter={requireAuth}>
         <Route path="home" component={Home} />
         <Route path="dashes" component={Dashes} />
         <Route path="dashes/new" component={DashEdit} />
         <Route path="dashes/:dashId" component={DashEdit} />
-
-        <Route path="access_token=:token" component={Login} /> //to prevent router errors
       </Route>
+
     </Route>
   )
 }

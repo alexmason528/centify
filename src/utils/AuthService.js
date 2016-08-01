@@ -16,7 +16,7 @@ export default class AuthService extends EventEmitter {
       auth: {
         params: {scope: 'openid centifyOrgId centifyUserId centifyLicense'},
         redirect: true,
-        redirectUrl: "http://localhost:3000/#/auth0-callback",
+        redirectUrl: "http://localhost:3000",
         responseType: "token",
         sso: true
       },
@@ -38,6 +38,8 @@ export default class AuthService extends EventEmitter {
   }
 
   _doAuthentication(authResult){
+    console.log('authResult') ///
+    console.log(authResult) ///
     // Saves the user token
     this.setToken(authResult.idToken)
     // Async loads the user profile data
