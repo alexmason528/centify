@@ -1,6 +1,8 @@
 export const INIT = '@@INIT'
 export const REDUX_INIT = '@@redux/INIT'
 
+/* Dashes module */
+
 export const DASHES_LIST = 'centify/dashes/LIST'
 export const DASHES_LIST_SUCCESS = 'centify/dashes/LIST_SUCCESS'
 export const DASHES_LIST_FAIL = 'centify/dashes/LIST_FAIL'
@@ -34,3 +36,9 @@ export const DASHES_PARTICIPANT_CREATE_FAIL = 'centify/dashes/participant/CREATE
 export const DASHES_PARTICIPANT_UPDATE = 'centify/dashes/participant/UPDATE'
 export const DASHES_PARTICIPANT_UPDATE_SUCCESS = 'centify/dashes/participant/UPDATE_SUCCESS'
 export const DASHES_PARTICIPANT_UPDATE_FAIL = 'centify/dashes/participant/UPDATE_FAIL'
+
+/* Users module */
+
+export const USERS_GET_LIST = 'centify/dashes/SINGLE_GET_USERS'
+export const USERS_GET_LIST_SUCCESS = 'centify/dashes/SINGLE_GET_USERS_SUCCESS'
+export const USERS_GET_LIST_FAIL = 'centify/dashes/SINGLE_GET_USERS_FAIL'

@@ -9,10 +9,16 @@ import { formatDate2 } from 'utils/formatter'
 class DashEdit extends Component {
 
   componentDidMount() {
-    if (this.props.params.dashId) {
-      const auth = this.props.auth
-      if (auth) {
-        const profile = auth.getProfile()
+    const auth = this.props.auth
+    if (auth) {
+      const profile = auth.getProfile()
+      // Get users
+      const { users, loadingUsers, loadedUsers } = this.props
+      if (!loadedUsers) {
+        this.props.getUsers(profile.centifyOrgId)
+      }
+      // Get dash
+      if (this.props.params.dashId) {
         this.props.getDash(profile.centifyOrgId, this.props.params.dashId)
       }
     }
@@ -93,15 +99,15 @@ class DashEdit extends Component {
   }
 
   render() {
-    const { currentDash, loading, loadingParticipants, loadingRewards } = this.props
-    if (loading || loadingParticipants || loadingRewards) {
+    const { loading, loadingParticipants, loadingRewards, loadingUsers, users } = this.props
+    if (loading || loadingParticipants || loadingRewards || loadingUsers) {
       return (
         <div>Loading...</div>
       )
     }
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
-        <DashForm onSubmit={(model) => this.onSubmit(model)} initialValues={this.initialValues()}/>
+        <DashForm onSubmit={(model) => this.onSubmit(model)} initialValues={this.initialValues()} users={users} />
       </div>
     )
   }

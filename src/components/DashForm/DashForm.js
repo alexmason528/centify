@@ -210,6 +210,7 @@ class DashForm extends Component {
       borderRadius: 3,
       height: 150
     }
+    const users = this.props.users
     const { value, onChange } = props.input
     const participants = value ? JSON.parse(value) : []
     console.log(participants)
@@ -246,9 +247,11 @@ class DashForm extends Component {
                   participants[index].saveStatus = 2
                   onChange(JSON.stringify(participants))
                 }}>
-                <Option value={ 1 }>User 1</Option>
-                <Option value={ 2 }>User 2</Option>
-                <Option value={ 3 }>User 3</Option>
+                {
+                  users.map(user => (
+                    <Option value={user.get('Id')}>{user.get('DisplayName')}</Option>
+                  ))
+                }
               </Select>
             ))
           }

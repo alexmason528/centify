@@ -8,6 +8,18 @@ import { formatDate2 } from 'utils/formatter'
 
 class DashCreate extends Component {
 
+  componentDidMount() {
+    const auth = this.props.auth
+    if (auth) {
+      const profile = auth.getProfile()
+      // Get users
+      const { users, loadingUsers, loadedUsers } = this.props
+      if (!loadedUsers) {
+        this.props.getUsers(profile.centifyOrgId)
+      }
+    }
+  }
+
   initialValues() {
     return {
       Name : "",
@@ -62,10 +74,15 @@ class DashCreate extends Component {
   }
 
   render() {
-    const { currentDash } = this.props
+    const { loading, loadingParticipants, loadingRewards, loadingUsers, users } = this.props
+    if (loading || loadingParticipants || loadingRewards || loadingUsers) {
+      return (
+        <div>Loading...</div>
+      )
+    }
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
-        <DashForm onSubmit={(model) => this.onSubmit(model)} initialValues={this.initialValues()}/>
+        <DashForm onSubmit={(model) => this.onSubmit(model)} initialValues={this.initialValues()} users={users} />
       </div>
     )
   }
