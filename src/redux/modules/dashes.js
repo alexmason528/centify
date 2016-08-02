@@ -38,6 +38,13 @@ import {
   DASHES_PARTICIPANT_UPDATE,
   DASHES_PARTICIPANT_UPDATE_SUCCESS,
   DASHES_PARTICIPANT_UPDATE_FAIL,
+
+  DASHES_TODO_CREATE,
+  DASHES_TODO_CREATE_SUCCESS,
+  DASHES_TODO_CREATE_FAIL,
+  DASHES_TODO_UPDATE,
+  DASHES_TODO_UPDATE_SUCCESS,
+  DASHES_TODO_UPDATE_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
@@ -47,7 +54,6 @@ const initialState = Immutable.fromJS({
   loading: false,
   loadingParticipants: false,
   loadingRewards: false,
-  loadingTodos: false,
 })
 
 export default function dashes(state = initialState, action) {
@@ -70,7 +76,6 @@ export default function dashes(state = initialState, action) {
         map.set('loading', true)
         map.set('loadingParticipants', true)
         map.set('loadingRewards', true)
-        map.set('loadingTodos', true)
       })
     case DASHES_SINGLE_GET_SUCCESS:
       return state.withMutations((map) => {
@@ -173,7 +178,7 @@ export function getDash(orgId, dashId) {
   }
 }
 
-/* Create/update rewards and participants of a dash */
+/* Create/update rewards, participants, and todos of a dash */
 
 export function createReward(orgId, dashId, model) {
   return {
@@ -203,6 +208,20 @@ export function updateParticipant(orgId, dashId, participantId, model) {
   }
 }
 
+export function createTodo(orgId, dashId, model) {
+  return {
+    types: [DASHES_TODO_CREATE, DASHES_TODO_CREATE_SUCCESS, DASHES_TODO_CREATE_FAIL],
+    promise: (client) => client.post(`/v1/${orgId}/dashes/${dashId}/todos`, { data: model })
+  }
+}
+
+export function deleteTodo(orgId, dashId, todoId) {
+  return {
+    types: [DASHES_TODO_CREATE, DASHES_TODO_CREATE_SUCCESS, DASHES_TODO_CREATE_FAIL],
+    promise: (client) => client.delete(`/v1/${orgId}/dashes/${dashId}/todos/${todoId}`)
+  }
+}
+
 /* Create/update dash */
 
 function updateRewards(dispatch, orgId, dashId, rewards) {
@@ -227,6 +246,17 @@ function updateParticipants(dispatch, orgId, dashId, participants) {
   })
 }
 
+function updateTodos(dispatch, orgId, dashId, todos) {
+  todos.forEach((todo) => {
+    const { selected, existed, ...todoData } = todo
+    if (selected && !existed) {
+      dispatch(createTodo(orgId, dashId, todoData))
+    } else if (!selected && existed) {
+      dispatch(deleteTodo(orgId, dashId, todo.Id))
+    }
+  })
+}
+
 function _createDash(orgId, model) {
   return {
     types: [DASHES_CREATE, DASHES_CREATE_SUCCESS, DASHES_CREATE_FAIL],
@@ -241,8 +271,9 @@ export function createDash(orgId, model) {
         _createDash(orgId, modelData)
       )
       .then((res)=> {
-        // updateRewards(dispatch, orgId, res.Id, JSON.parse(rewards))
-        // updateParticipants(dispatch, orgId, res.Id, JSON.parse(participants))
+        // updateRewards(dispatch, orgId, res.Id, rewards)
+        // updateParticipants(dispatch, orgId, res.Id, participants)
+        // updateTodos(dispatch, orgId, res.Id, todos)
         dispatch(push('/dashes'))
       })
       .catch(res => {
@@ -260,9 +291,12 @@ function _updateDash(orgId, dashId, model) {
 
 export function updateDash(orgId, dashId, model) {
   const { rewards, participants, todos, ...modelData } = model
+  console.log('update dash')
+  console.log(model)
   return dispatch => {
-    updateRewards(dispatch, orgId, dashId, JSON.parse(rewards))
-    // updateParticipants(dispatch, orgId, dashId, JSON.parse(participants))
+    updateRewards(dispatch, orgId, dashId, rewards)
+    updateParticipants(dispatch, orgId, dashId, participants)
+    updateTodos(dispatch, orgId, dashId, todos)
     return dispatch(
         _updateDash(orgId, dashId, modelData)
       )

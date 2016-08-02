@@ -17,6 +17,11 @@ class DashCreate extends Component {
       if (!loadedUsers) {
         this.props.getUsers(profile.centifyOrgId)
       }
+      // Get todos
+      const { getTodos, loadedTodos } = this.props
+      if (!loadedTodos) {
+        getTodos(profile.centifyOrgId)
+      }
     }
   }
 
@@ -38,10 +43,25 @@ class DashCreate extends Component {
     }
   }
 
+  todosList = (todoValues) => {
+    const list = []
+    const { todos } = this.props
+    todoValues.map((todoValue, index) => {
+      const todoData = todos.get(index).toJS()
+      const todo = { 
+        selected: todoValue.value,
+        existed: todoValue.existed,
+        ...todoData
+      }
+      list.push(todo)
+    })
+    return list
+  }
+
   onSubmit = (model) => {
     const auth = this.props.auth
     const profile = auth.getProfile()
-    const { MeasureType, MeasureValue, ...modelData } = model
+    const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model
     const data = {
       Description : "",
       ImageURL : "",
@@ -68,6 +88,9 @@ class DashCreate extends Component {
       },
       IsBash : false,
       DashIdAssociatedToBash : null,
+      rewards: JSON.parse(rewards),
+      participants: JSON.parse(participants),
+      todos: this.todosList(JSON.parse(todos)),
       ...modelData
     }
     this.props.createDash(profile.centifyOrgId, data)
@@ -82,7 +105,11 @@ class DashCreate extends Component {
     }
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
-        <DashForm onSubmit={(model) => this.onSubmit(model)} initialValues={this.initialValues()} users={users} />
+        <DashForm
+          onSubmit={(model) => this.onSubmit(model)}
+          initialValues={this.initialValues()}
+          users={users}
+          todos={todos} />
       </div>
     )
   }

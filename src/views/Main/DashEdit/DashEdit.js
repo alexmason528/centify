@@ -13,9 +13,14 @@ class DashEdit extends Component {
     if (auth) {
       const profile = auth.getProfile()
       // Get users
-      const { users, loadingUsers, loadedUsers } = this.props
+      const { getUsers, loadedUsers } = this.props
       if (!loadedUsers) {
-        this.props.getUsers(profile.centifyOrgId)
+        getUsers(profile.centifyOrgId)
+      }
+      // Get todos
+      const { getTodos, loadedTodos } = this.props
+      if (!loadedTodos) {
+        getTodos(profile.centifyOrgId)
       }
       // Get dash
       if (this.props.params.dashId) {
@@ -29,6 +34,7 @@ class DashEdit extends Component {
     if (currentDash.get('Id')) {
       const _rewards = currentDash.get('Rewards')
       const _participants = currentDash.get('Participants')
+      const _todos = currentDash.get('ToDos')
       return {
         Name : currentDash.get('Name'),
         Type : currentDash.get('Type'),
@@ -42,7 +48,7 @@ class DashEdit extends Component {
         RewardAmount : 0,
         rewards: JSON.stringify(_rewards ? _rewards : []),
         participants: JSON.stringify(_participants ? _participants : []),
-        todos: null,
+        todos: JSON.stringify(_todos ? _todos : []),
       }
     } else {
       return {
@@ -63,10 +69,25 @@ class DashEdit extends Component {
     }
   }
 
+  todosList = (todoValues) => {
+    const list = []
+    const { todos } = this.props
+    todoValues.map((todoValue, index) => {
+      const todoData = todos.get(index).toJS()
+      const todo = { 
+        selected: todoValue.value,
+        existed: todoValue.existed,
+        ...todoData
+      }
+      list.push(todo)
+    })
+    return list
+  }
+
   onSubmit = (model) => {
     const auth = this.props.auth
     const profile = auth.getProfile()
-    const { MeasureType, MeasureValue, ...modelData } = model
+    const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model
     const data = {
       Description : "",
       ImageURL : "",
@@ -93,21 +114,28 @@ class DashEdit extends Component {
       },
       IsBash : false,
       DashIdAssociatedToBash : null,
+      rewards: JSON.parse(rewards),
+      participants: JSON.parse(participants),
+      todos: this.todosList(JSON.parse(todos)),
       ...modelData
     }
     this.props.updateDash(profile.centifyOrgId, this.props.params.dashId, data)
   }
 
   render() {
-    const { loading, loadingParticipants, loadingRewards, loadingUsers, users } = this.props
-    if (loading || loadingParticipants || loadingRewards || loadingUsers) {
+    const { loading, loadingParticipants, loadingRewards, loadingTodos, loadingUsers, users, todos } = this.props
+    if (loading || loadingParticipants || loadingRewards || loadingTodos || loadingUsers) {
       return (
         <div>Loading...</div>
       )
     }
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
-        <DashForm onSubmit={(model) => this.onSubmit(model)} initialValues={this.initialValues()} users={users} />
+        <DashForm
+          onSubmit={(model) => this.onSubmit(model)}
+          initialValues={this.initialValues()}
+          users={users}
+          todos={todos} />
       </div>
     )
   }

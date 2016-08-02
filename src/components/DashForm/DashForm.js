@@ -21,6 +21,14 @@ import { formatDate2 } from 'utils/formatter'
 
 class DashForm extends Component {
 
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      selectedAllTodos: false
+    }
+  }
+
   nameInput = (props) => {
     return (
       <Input type="text" {...props.input}/>
@@ -162,7 +170,9 @@ class DashForm extends Component {
                         <Input type='number' defaultValue={reward.EstimatedRewardAmount} onChange={(e) => {
                           rewards[index].EstimatedRewardAmount = e.currentTarget.value
                           rewards[index].MaximumRewardAmount = e.currentTarget.value
-                          rewards[index].saveStatus = 2
+                          if (rewards[index].saveStatus == 0) {
+                            rewards[index].saveStatus = 2
+                          }
                           onChange(JSON.stringify(rewards))
                         }}/>
                       </td>
@@ -183,20 +193,50 @@ class DashForm extends Component {
       padding: 15,
       border: '1px solid #d8dde6',
       borderRadius: 3,
-      height: 150
+      height: 200
     }
     const { value, onChange } = props.input
+    const { selectedAllTodos } = this.state
     const todos = value ? JSON.parse(value) : []
+    const allTodos = this.props.todos
     return (
       <div>
         <div className="slds-m-bottom--small">Select one or more Todos for this dash</div>
-        <Checkbox className="slds-m-bottom--x-small" label='Select all'/>
+        <Checkbox
+          className="slds-m-bottom--x-small"
+          label='Select all'
+          checked={selectedAllTodos}
+          onClick={() => {
+            const selectedAll = !selectedAllTodos
+            for(let i = 0; i < allTodos.size; i++) {
+              todos[i] = todos[i] ? todos[i] : { value: false, existed: false }
+              todos[i].value = selectedAll
+            }
+            this.setState({
+              selectedAllTodos: selectedAll
+            })
+            onChange(JSON.stringify(todos))
+          }} />
         <div style={optionsContainerStyle}>
-          <Checkbox className="slds-m-bottom--x-small" label='1. Opportunities that have been "pushed" multiple times'/>
-          <Checkbox className="slds-m-bottom--x-small" label="2. Opportunities that are older than specified period"/>
-          <Checkbox className="slds-m-bottom--x-small" label="3. Opportunities stuck in a particular status"/>
-          <Checkbox className="slds-m-bottom--x-small" label="4. Opportunities that close soon without activities"/>
-          <Checkbox className="slds-m-bottom--x-small" label="5. etc."/>
+          {
+            allTodos.map((todo, index) => (
+              <Checkbox
+                key={index}
+                className="slds-m-bottom--x-small"
+                label={(index + 1) + '. ' + todo.get('Name')}
+                checked={todos[index] && !!todos[index].value}
+                onClick={() => {
+                  todos[index] = todos[index] ? todos[index] : { value: false, existed: false }
+                  todos[index].value = !todos[index].value
+                  if (!todos[index].value) {
+                    this.setState({
+                      selectedAllTodos: false
+                    })
+                  }
+                  onChange(JSON.stringify(todos))
+                }}/>
+            ))
+          }
         </div>
       </div>
     )
@@ -208,12 +248,11 @@ class DashForm extends Component {
       padding: 15,
       border: '1px solid #d8dde6',
       borderRadius: 3,
-      height: 150
+      height: 200
     }
     const users = this.props.users
     const { value, onChange } = props.input
     const participants = value ? JSON.parse(value) : []
-    console.log(participants)
     return (
       <div>
         <div className="slds-clearfix slds-m-bottom--small">
@@ -222,9 +261,9 @@ class DashForm extends Component {
             <Button type="brand" onClick={() => {
               participants.push( {
                 Type: "User",
-                DisplayName: "string",
+                DisplayName: users.get(0).get('DisplayName'),
                 Users: [{
-                  UserId: "1", /// user id here
+                  UserId: users.get(0).get('Id'),
                 }],
                 saveStatus: 1,  // 0: saved, 1: new, 2: modified
               })
@@ -238,18 +277,20 @@ class DashForm extends Component {
               <Select
                 key={index}
                 className="slds-m-bottom--x-small"
-                defaultValue={ participant.Users[0].UserId } 
+                defaultValue={participant.Users[0].UserId} 
                 required
                 style={{ maxWidth: 300 }}
                 onChange={(e) => {
                   participants[index].Users[0].UserId = e.currentTarget.value
-                  participants[index].Users[0].UserId = e.currentTarget.value
-                  participants[index].saveStatus = 2
+                  participants[index].DisplayName = ""
+                  if (participants[index].saveStatus == 0) {
+                    participants[index].saveStatus = 2
+                  }
                   onChange(JSON.stringify(participants))
                 }}>
                 {
-                  users.map(user => (
-                    <Option value={user.get('Id')}>{user.get('DisplayName')}</Option>
+                  users.map((user, index) => (
+                    <Option key={index} value={user.get('Id')}>{user.get('DisplayName')}</Option>
                   ))
                 }
               </Select>

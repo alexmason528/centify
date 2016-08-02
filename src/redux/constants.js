@@ -37,8 +37,21 @@ export const DASHES_PARTICIPANT_UPDATE = 'centify/dashes/participant/UPDATE'
 export const DASHES_PARTICIPANT_UPDATE_SUCCESS = 'centify/dashes/participant/UPDATE_SUCCESS'
 export const DASHES_PARTICIPANT_UPDATE_FAIL = 'centify/dashes/participant/UPDATE_FAIL'
 
+export const DASHES_TODO_CREATE = 'centify/dashes/todo/CREATE'
+export const DASHES_TODO_CREATE_SUCCESS = 'centify/dashes/todo/CREATE_SUCCESS'
+export const DASHES_TODO_CREATE_FAIL = 'centify/dashes/todo/CREATE_FAIL'
+export const DASHES_TODO_UPDATE = 'centify/dashes/todo/UPDATE'
+export const DASHES_TODO_UPDATE_SUCCESS = 'centify/dashes/todo/UPDATE_SUCCESS'
+export const DASHES_TODO_UPDATE_FAIL = 'centify/dashes/todo/UPDATE_FAIL'
+
 /* Users module */
 
 export const USERS_GET_LIST = 'centify/dashes/SINGLE_GET_USERS'
 export const USERS_GET_LIST_SUCCESS = 'centify/dashes/SINGLE_GET_USERS_SUCCESS'
 export const USERS_GET_LIST_FAIL = 'centify/dashes/SINGLE_GET_USERS_FAIL'
+
+/* ToDos module */
+
+export const TODOS_GET_LIST = 'centify/dashes/SINGLE_GET_TODOS'
+export const TODOS_GET_LIST_SUCCESS = 'centify/dashes/SINGLE_GET_TODOS_SUCCESS'
+export const TODOS_GET_LIST_FAIL = 'centify/dashes/SINGLE_GET_TODOS_FAIL'
