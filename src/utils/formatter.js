@@ -2,6 +2,24 @@ export function format2Digits(n) {
   return n >= 10 ? n : '0' + n
 }
 
+export function nth(n) {
+  const m = n % 10
+  const t = n / 10
+  if (t == 1) {
+    return 'th'
+  }
+  if (m == 1) {
+    return 'st'
+  }
+  if (m == 2) {
+    return 'nd'
+  }
+  if (m == 3) {
+    return 'rd'
+  }
+  return 'th'
+}
+
 export function formatDate(date = null, includeTime = true) {
   const _date = date ? new Date(date) : new Date()
   const monthNames = [

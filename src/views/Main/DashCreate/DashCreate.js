@@ -4,7 +4,7 @@ import { Button } from 'react-lightning-design-system'
 import styles from './styles.module.css'
 import hoc from './hoc'
 import DashForm from 'components/DashForm/DashForm'
-import { formatDate2 } from 'utils/FormatDate'
+import { formatDate2 } from 'utils/formatter'
 
 class DashCreate extends Component {
 
@@ -20,22 +20,22 @@ class DashCreate extends Component {
       // durationHours : 0,
       RewardType : "All over the line",
       RewardAmount : 0,
-      rewards: [],
-      participants: [],
-      todos: [],
+      rewards: null,
+      participants: null,
+      todos: null,
     }
   }
 
   onSubmit = (model) => {
     const auth = this.props.auth
     const profile = auth.getProfile()
-    const { rewards, participants, todos, ...modelData } = model
+    const { MeasureType, MeasureValue, ...modelData } = model
     const data = {
       Description : "",
       ImageURL : "",
       IsTeamDash : false,
       GameType : "RocketLaunch",
-      TargetThreshold : 300,
+      TargetThreshold : model.MeasureValue,
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : "month",
       ScoreFormula : "",

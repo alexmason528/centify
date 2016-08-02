@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Button } from 'react-lightning-design-system'
 import { Link } from 'react-router'
-import { formatDate } from 'utils/FormatDate'
+import { formatDate } from 'utils/formatter'
 
 import styles from './styles.module.css'
 import hoc from './hoc'

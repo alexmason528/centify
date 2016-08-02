@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
-import { Field, reduxForm } from 'redux-form'
-import {Icon} from 'react-fa'
+import { connect } from 'react-redux'
+import { Field, reduxForm, formValueSelector } from 'redux-form'
+import { Icon } from 'react-fa'
 import { 
   Grid, Row, Col,
   Select, Option,
@@ -16,7 +17,7 @@ import DateInput from 'components/DateInput/DateInput'
 
 import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
-import { formatDate2 } from 'utils/FormatDate'
+import { formatDate2 } from 'utils/formatter'
 
 class DashForm extends Component {
 
@@ -75,7 +76,7 @@ class DashForm extends Component {
         <span>What is the target value (use slider to set)? </span>
         <Input type="text" value={_value} readOnly style={valueStyle}/>
         <div className="slds-p-top--medium">
-          <Slider min={0} max={100} step={1} value={_value} {...otherProps}/>
+          <Slider min={0} max={5000} step={1} value={_value} {...otherProps}/>
         </div>
       </div>
     )
@@ -104,7 +105,7 @@ class DashForm extends Component {
       <div className="slds-form-element">
         <div className="slds-form-element__control">
           <div className="slds-select_container">
-            <Field name={"RewardType"} component="select" className="slds-select">
+            <Field name="RewardType" component="select" className="slds-select">
               <option value="">- Select Reward Type -</option>
               <option value="All over the line">All participants must be over the line to win the reward</option>
               <option value="Any over the line">Any participants over the line to win the reward</option>
@@ -130,26 +131,43 @@ class DashForm extends Component {
   }
 
   rewardList = (props) => {
+    const { value, onChange } = props.input
+    const rewards = value ? JSON.parse(value) : []
     return (
       <div className="slds-m-top--medium">
-        <Button type="brand">Add Reward</Button>
+        <Button type="brand" onClick={() => {
+          rewards.push({
+            Type: "Cash",
+            Description: "",
+            Position: rewards.length + 1,
+            EstimatedRewardAmount: 0,
+            MaximumRewardAmount: 0,
+            ExternalURL: "",
+            Formula: "",
+            saveStatus: 1,  // 0: saved, 1: new, 2: modified
+          })
+          onChange(JSON.stringify(rewards))
+        }}>Add Reward</Button>
         <div className="slds-card slds-m-top--medium">
           <div className="slds-card__body">
             <div className="slds-card__body--inner slds-p-vertical--medium">
               <table>
                 <tbody>
-                  <tr>
-                    <td className="slds-p-right--medium" style={{ width: '100%' }}><Input type="text" value={1} readOnly/></td>
-                    <td style={{ minWidth: 150 }}><Input type='number' value={200}/></td>
-                  </tr>
-                  <tr>
-                    <td className="slds-p-right--medium"><Input type="text" value={2} readOnly/></td>
-                    <td><Input type='number' value={150}/></td>
-                  </tr>
-                  <tr>
-                    <td className="slds-p-right--medium"><Input type="text" value={3} readOnly/></td>
-                    <td><Input type='number' value={100}/></td>
-                  </tr>
+                  {rewards.map((reward, index) => (
+                    <tr key={index}>
+                      <td className="slds-p-right--medium slds-p-bottom--small" style={{ width: '100%' }}>
+                        <Input type="text" value={reward.Position} readOnly/>
+                      </td>
+                      <td className="slds-p-bottom--small" style={{ minWidth: 150 }}>
+                        <Input type='number' defaultValue={reward.EstimatedRewardAmount} onChange={(e) => {
+                          rewards[index].EstimatedRewardAmount = e.currentTarget.value
+                          rewards[index].MaximumRewardAmount = e.currentTarget.value
+                          rewards[index].saveStatus = 2
+                          onChange(JSON.stringify(rewards))
+                        }}/>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
@@ -183,7 +201,7 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting } = this.props
+    const { handleSubmit, submitting, RewardTypeValue } = this.props
     const optionsContainerStyle = {
       overflow: 'auto',
       padding: 15,
@@ -279,11 +297,15 @@ class DashForm extends Component {
                   </table>
                 </Col>
                 <Col padded cols={6} className="slds-m-top--small">
-                  What is the reward amount?
-                  <Field name="RewardAmount" component={this.rewardInput}/>
-                </Col>
-                <Col padded cols={6}>
-                  {this.rewardList()}
+                  {
+                    RewardTypeValue == 'Multiple reward positions' ?
+                    <Field name="rewards" component={this.rewardList} />
+                    :
+                    <div>
+                      What is the reward amount?
+                      <Field name="RewardAmount" component={this.rewardInput} />
+                    </div>
+                  }
                 </Col>
               </Row>
 
@@ -292,7 +314,7 @@ class DashForm extends Component {
                   <h2 className={styles.fieldTitle}>Step 5 - Select the Todos</h2>
                 </Col>
                 <Col padded cols={6}>
-                  <Field name="Todos" component={this.todoList}/>
+                  <Field name="todos" component={this.todoList}/>
                 </Col>
               </Row>
 
@@ -304,7 +326,7 @@ class DashForm extends Component {
                   <div className="slds-clearfix slds-m-bottom--small">
                     <div className="slds-float--left">10 items - Last updated 07/28/2016 at 22:10</div>
                     <div className="slds-float--right"><Button type="brand">Select Users</Button></div>
-                  </div>
+                  </div> 
                   <div style={optionsContainerStyle}>
                     <Select className="slds-m-bottom--x-small" defaultValue={ 1 } required style={{ maxWidth: 300 }}>
                       <Option value={ 1 }>User 1</Option>
@@ -345,6 +367,18 @@ class DashForm extends Component {
 
 }
 
-export default reduxForm({
+let _DashForm = reduxForm({
   form: 'DashForm'
 })(DashForm)
+
+const selector = formValueSelector('DashForm')
+_DashForm = connect(
+  state => {
+    const RewardTypeValue = selector(state, 'RewardType')
+    return {
+      RewardTypeValue
+    }
+  }
+)(_DashForm)
+
+export default _DashForm

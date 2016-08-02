@@ -4,7 +4,7 @@ import {
 } from 'react-lightning-design-system'
 
 import styles from './styles.module.css'
-import { formatDate, format2Digits } from 'utils/FormatDate'
+import { formatDate, format2Digits } from 'utils/formatter'
 
 class DateInput extends Component {
 

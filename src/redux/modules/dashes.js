@@ -24,6 +24,20 @@ import {
   DASHES_UPDATE,
   DASHES_UPDATE_SUCCESS,
   DASHES_UPDATE_FAIL,
+
+  DASHES_REWARD_CREATE,
+  DASHES_REWARD_CREATE_SUCCESS,
+  DASHES_REWARD_CREATE_FAIL,
+  DASHES_REWARD_UPDATE,
+  DASHES_REWARD_UPDATE_SUCCESS,
+  DASHES_REWARD_UPDATE_FAIL,
+
+  DASHES_PARTICIPANT_CREATE,
+  DASHES_PARTICIPANT_CREATE_SUCCESS,
+  DASHES_PARTICIPANT_CREATE_FAIL,
+  DASHES_PARTICIPANT_UPDATE,
+  DASHES_PARTICIPANT_UPDATE_SUCCESS,
+  DASHES_PARTICIPANT_UPDATE_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
@@ -105,6 +119,8 @@ export default function dashes(state = initialState, action) {
   }
 }
 
+/* Get dashes list */
+
 export function getDashesList(orgId, status, owner_id) {
   return {
     types: [DASHES_LIST, DASHES_LIST_SUCCESS, DASHES_LIST_FAIL],
@@ -118,6 +134,8 @@ export function filterDashes(status) {
     filter: status,
   }
 }
+
+/* Get single dash */
 
 function _getDash(orgId, dashId) {
   return {
@@ -155,6 +173,60 @@ export function getDash(orgId, dashId) {
   }
 }
 
+/* Create/update rewards and participants of a dash */
+
+export function createReward(orgId, dashId, model) {
+  return {
+    types: [DASHES_REWARD_CREATE, DASHES_REWARD_CREATE_SUCCESS, DASHES_REWARD_CREATE_FAIL],
+    promise: (client) => client.post(`/v1/${orgId}/dashes/${dashId}/rewards`, { data: model })
+  }
+}
+
+export function updateReward(orgId, dashId, rewardId, model) {
+  return {
+    types: [DASHES_REWARD_CREATE, DASHES_REWARD_CREATE_SUCCESS, DASHES_REWARD_CREATE_FAIL],
+    promise: (client) => client.post(`/v1/${orgId}/dashes/${dashId}/rewards/${rewardId}`, { data: model })
+  }
+}
+
+export function createParticipant(orgId, dashId, model) {
+  return {
+    types: [DASHES_PARTICIPANT_CREATE, DASHES_PARTICIPANT_CREATE_SUCCESS, DASHES_PARTICIPANT_CREATE_FAIL],
+    promise: (client) => client.post(`/v1/${orgId}/dashes/${dashId}/participants`, { data: model })
+  }
+}
+
+export function updateParticipant(orgId, dashId, participantId, model) {
+  return {
+    types: [DASHES_PARTICIPANT_CREATE, DASHES_PARTICIPANT_CREATE_SUCCESS, DASHES_PARTICIPANT_CREATE_FAIL],
+    promise: (client) => client.post(`/v1/${orgId}/dashes/${dashId}/participants/${participantId}`, { data: model })
+  }
+}
+
+/* Create/update dash */
+
+function updateRewards(dispatch, orgId, dashId, rewards) {
+  rewards.forEach((reward) => {
+    const { saveStatus, ...rewardData } = reward
+    if (reward.saveStatus == 1) {
+      dispatch(createReward(orgId, dashId, rewardData))
+    } else if (reward.saveStatus == 2) {
+      dispatch(updateReward(orgId, dashId, reward.Id, rewardData))
+    }
+  })
+}
+
+function updateParticipants(dispatch, orgId, dashId, participants) {
+  participants.forEach((participant) => {
+    const { saveStatus, ...participantData } = participant
+    if (participant.saveStatus == 1) {
+      dispatch(createParticipant(orgId, dashId, participantData))
+    } else if (participant.saveStatus == 2) {
+      dispatch(updateParticipant(orgId, dashId, participant.Id, participantData))
+    }
+  })
+}
+
 function _createDash(orgId, model) {
   return {
     types: [DASHES_CREATE, DASHES_CREATE_SUCCESS, DASHES_CREATE_FAIL],
@@ -163,11 +235,14 @@ function _createDash(orgId, model) {
 }
 
 export function createDash(orgId, model) {
+  const { rewards, participants, todos, ...modelData } = model
   return dispatch => {
     return dispatch(
-        _createDash(orgId, model)
+        _createDash(orgId, modelData)
       )
       .then((res)=> {
+        // updateRewards(dispatch, orgId, res.Id, JSON.parse(rewards))
+        // updateParticipants(dispatch, orgId, res.Id, JSON.parse(participants))
         dispatch(push('/dashes'))
       })
       .catch(res => {
@@ -184,9 +259,12 @@ function _updateDash(orgId, dashId, model) {
 }
 
 export function updateDash(orgId, dashId, model) {
+  const { rewards, participants, todos, ...modelData } = model
   return dispatch => {
+    updateRewards(dispatch, orgId, dashId, JSON.parse(rewards))
+    // updateParticipants(dispatch, orgId, dashId, JSON.parse(participants))
     return dispatch(
-        _updateDash(orgId, dashId, model)
+        _updateDash(orgId, dashId, modelData)
       )
       .then((res)=> {
         dispatch(push('/dashes'))
