@@ -185,6 +185,8 @@ class DashForm extends Component {
       borderRadius: 3,
       height: 150
     }
+    const { value, onChange } = props.input
+    const todos = value ? JSON.parse(value) : []
     return (
       <div>
         <div className="slds-m-bottom--small">Select one or more Todos for this dash</div>
@@ -200,8 +202,7 @@ class DashForm extends Component {
     )
   }
 
-  render() {
-    const { handleSubmit, submitting, RewardTypeValue } = this.props
+  participantList = (props) => {
     const optionsContainerStyle = {
       overflow: 'auto',
       padding: 15,
@@ -209,6 +210,55 @@ class DashForm extends Component {
       borderRadius: 3,
       height: 150
     }
+    const { value, onChange } = props.input
+    const participants = value ? JSON.parse(value) : []
+    console.log(participants)
+    return (
+      <div>
+        <div className="slds-clearfix slds-m-bottom--small">
+          <div className="slds-float--left">{participants.length} participants</div>
+          <div className="slds-float--right">
+            <Button type="brand" onClick={() => {
+              participants.push( {
+                Type: "User",
+                DisplayName: "string",
+                Users: [{
+                  UserId: "1", /// user id here
+                }],
+                saveStatus: 1,  // 0: saved, 1: new, 2: modified
+              })
+              onChange(JSON.stringify(participants))
+            }}>Add User</Button>
+          </div>
+        </div> 
+        <div style={optionsContainerStyle}>
+          {
+            participants.map((participant, index) => (
+              <Select
+                key={index}
+                className="slds-m-bottom--x-small"
+                defaultValue={ participant.Users[0].UserId } 
+                required
+                style={{ maxWidth: 300 }}
+                onChange={(e) => {
+                  participants[index].Users[0].UserId = e.currentTarget.value
+                  participants[index].Users[0].UserId = e.currentTarget.value
+                  participants[index].saveStatus = 2
+                  onChange(JSON.stringify(participants))
+                }}>
+                <Option value={ 1 }>User 1</Option>
+                <Option value={ 2 }>User 2</Option>
+                <Option value={ 3 }>User 3</Option>
+              </Select>
+            ))
+          }
+        </div>
+      </div>
+    )
+  }
+
+  render() {
+    const { handleSubmit, submitting, RewardTypeValue } = this.props
     return (
       <form onSubmit={handleSubmit}>
         <Grid>
@@ -314,7 +364,7 @@ class DashForm extends Component {
                   <h2 className={styles.fieldTitle}>Step 5 - Select the Todos</h2>
                 </Col>
                 <Col padded cols={6}>
-                  <Field name="todos" component={this.todoList}/>
+                  <Field name="todos" component={this.todoList} />
                 </Col>
               </Row>
 
@@ -323,27 +373,7 @@ class DashForm extends Component {
                   <h2 className={styles.fieldTitle}>Step 6 - Add the Participants</h2>
                 </Col>
                 <Col padded cols={6}>
-                  <div className="slds-clearfix slds-m-bottom--small">
-                    <div className="slds-float--left">10 items - Last updated 07/28/2016 at 22:10</div>
-                    <div className="slds-float--right"><Button type="brand">Select Users</Button></div>
-                  </div> 
-                  <div style={optionsContainerStyle}>
-                    <Select className="slds-m-bottom--x-small" defaultValue={ 1 } required style={{ maxWidth: 300 }}>
-                      <Option value={ 1 }>User 1</Option>
-                      <Option value={ 2 }>User 2</Option>
-                      <Option value={ 3 }>User 3</Option>
-                    </Select>
-                    <Select className="slds-m-bottom--x-small" defaultValue={ 1 } required style={{ maxWidth: 300 }}>
-                      <Option value={ 1 }>User 1</Option>
-                      <Option value={ 2 }>User 2</Option>
-                      <Option value={ 3 }>User 3</Option>
-                    </Select>
-                    <Select className="slds-m-bottom--x-small" defaultValue={ 1 } required style={{ maxWidth: 300 }}>
-                      <Option value={ 1 }>User 1</Option>
-                      <Option value={ 2 }>User 2</Option>
-                      <Option value={ 3 }>User 3</Option>
-                    </Select>
-                  </div>
+                  <Field name="participants" component={this.participantList} />
                 </Col>
               </Row>
 
@@ -374,9 +404,8 @@ let _DashForm = reduxForm({
 const selector = formValueSelector('DashForm')
 _DashForm = connect(
   state => {
-    const RewardTypeValue = selector(state, 'RewardType')
     return {
-      RewardTypeValue
+      RewardTypeValue: selector(state, 'RewardType')
     }
   }
 )(_DashForm)
