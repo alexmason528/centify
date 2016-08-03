@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import { Button } from 'react-lightning-design-system'
 import { Link } from 'react-router'
-import { formatDate } from 'utils/formatter'
 
+import { formatDate } from 'utils/formatter'
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import styles from './styles.module.css'
 import hoc from './hoc'
 
@@ -12,7 +13,10 @@ class Dashes extends Component {
     const auth = this.props.auth
     if (auth) {
       const profile = auth.getProfile()
-      this.props.getDashesList(profile.centifyOrgId)
+      const { loadedList, getDashesList } = this.props
+      if (!loadedList) {
+        getDashesList(profile.centifyOrgId)
+      }
     }
   }
 
@@ -25,7 +29,12 @@ class Dashes extends Component {
   }
 
   render() {
-    const { dashesList, filter } = this.props
+    const { dashesList, filter, loadingList } = this.props
+    if (loadingList) {
+      return (
+        <LoadingSpinner/>
+      )
+    }
     return (
       <div className={styles.root + ' slds-m-horizontal--medium slds-m-vertical--medium'}>
         <div className="slds-m-top--medium">

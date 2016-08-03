@@ -6,6 +6,8 @@ import { getDashesList, filterDashes } from 'redux/modules/dashes';
 const mapStateToProps = ({ dashes }) => ({
   dashesList: dashes.get('list'),
   filter: dashes.get('filter'),
+  loadingList: dashes.get('loadingList'),
+  loadedList: dashes.get('loadedList'),
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

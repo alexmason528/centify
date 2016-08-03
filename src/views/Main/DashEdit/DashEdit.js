@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Button } from 'react-lightning-design-system'
 
-import styles from './styles.module.css'
-import hoc from './hoc'
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import DashForm from 'components/DashForm/DashForm'
 import { formatDate2 } from 'utils/formatter'
+import styles from './styles.module.css'
+import hoc from './hoc'
 
 class DashEdit extends Component {
 
@@ -29,6 +30,35 @@ class DashEdit extends Component {
     }
   }
 
+  getTodosArrayFromList = (todos) => {
+    const allTodos = this.props.todos
+    if (!allTodos) {
+      return []
+    }
+    const todoValues = []
+    for(let i = 0; i < allTodos.size; i++) {
+      todoValues.push({
+        value: false,
+        existed: false,
+      })
+    }
+    todos.forEach((todo) => {
+      let n = -1
+      allTodos.map((a_todo, index) => {
+        if (todo.get('ToDoId') == a_todo.get('Id')) {
+          n = index
+        }
+      })
+      if (n >= 0) {
+        todoValues[n] = {
+          value: true,
+          existed: true,
+        }
+      }
+    })
+    return todoValues
+  }
+
   initialValues() {
     const { currentDash } = this.props
     if (currentDash.get('Id')) {
@@ -48,7 +78,7 @@ class DashEdit extends Component {
         RewardAmount : 0,
         rewards: JSON.stringify(_rewards ? _rewards : []),
         participants: JSON.stringify(_participants ? _participants : []),
-        todos: JSON.stringify(_todos ? _todos : []),
+        todos: JSON.stringify(this.getTodosArrayFromList(_todos ? _todos : [])),
       }
     } else {
       return {
@@ -73,11 +103,11 @@ class DashEdit extends Component {
     const list = []
     const { todos } = this.props
     todoValues.map((todoValue, index) => {
-      const todoData = todos.get(index).toJS()
+      const todoData = todos.get(index)
       const todo = { 
         selected: todoValue.value,
         existed: todoValue.existed,
-        ...todoData
+        ToDoId: todoData.get('Id')
       }
       list.push(todo)
     })
@@ -114,9 +144,9 @@ class DashEdit extends Component {
       },
       IsBash : false,
       DashIdAssociatedToBash : null,
-      rewards: JSON.parse(rewards),
-      participants: JSON.parse(participants),
-      todos: this.todosList(JSON.parse(todos)),
+      rewards: rewards ? JSON.parse(rewards) : [],
+      participants: participants ? JSON.parse(participants) : [],
+      todos: todos ? this.todosList(JSON.parse(todos)) : [],
       ...modelData
     }
     this.props.updateDash(profile.centifyOrgId, this.props.params.dashId, data)
@@ -126,7 +156,7 @@ class DashEdit extends Component {
     const { loading, loadingParticipants, loadingRewards, loadingTodos, loadingUsers, users, todos } = this.props
     if (loading || loadingParticipants || loadingRewards || loadingTodos || loadingUsers) {
       return (
-        <div>Loading...</div>
+        <LoadingSpinner/>
       )
     }
     return (

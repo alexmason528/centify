@@ -4,7 +4,7 @@ import { getDash, createDash } from 'redux/modules/dashes';
 import { getUsers } from 'redux/modules/users'
 import { getTodos } from 'redux/modules/todos'
 
-const mapStateToProps = ({ dashes, users }) => ({
+const mapStateToProps = ({ dashes, users, todos }) => ({
   // dashes
   currentDash: dashes.get('currentDash'),
   // users

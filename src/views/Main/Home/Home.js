@@ -1,10 +1,12 @@
 import React from 'react'
+
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import styles from './styles.module.css'
 
 const Home = () => {
   return (
     <div className={styles.root}>
-      Main page here
+      Home page here
     </div>
   )
 }

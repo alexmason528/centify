@@ -42,13 +42,15 @@ import {
   DASHES_TODO_CREATE,
   DASHES_TODO_CREATE_SUCCESS,
   DASHES_TODO_CREATE_FAIL,
-  DASHES_TODO_UPDATE,
-  DASHES_TODO_UPDATE_SUCCESS,
-  DASHES_TODO_UPDATE_FAIL,
+  DASHES_TODO_REMOVE,
+  DASHES_TODO_REMOVE_SUCCESS,
+  DASHES_TODO_REMOVE_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
   list: [],
+  loadedList: false,
+  loadingList: false,
   filter: '',
   currentDash: {},
   loading: false,
@@ -61,11 +63,20 @@ export default function dashes(state = initialState, action) {
     case INIT:
     case REDUX_INIT:
       return state
+    case DASHES_LIST:
+      return state.set('loadingList', true)
     case DASHES_LIST_SUCCESS:
       return state.withMutations((map) => {
         const dashes = action.result ? action.result : []
         map.set('list', Immutable.fromJS(dashes))
         map.set('filter', '')
+        map.set('loadingList', false)
+        map.set('loadedList', true)
+      })
+    case DASHES_LIST_FAIL:
+      return state.withMutations((map) => {
+        map.set('loadingList', false)
+        map.set('loadedList', false)
       })
     case DASHES_FILTER:
       return state.set('filter', action.filter)
@@ -119,6 +130,9 @@ export default function dashes(state = initialState, action) {
         map.setIn(['currentDash', 'Rewards'], Immutable.fromJS({}))
         map.set('loadingRewards', false)
       })
+    case DASHES_CREATE_SUCCESS:
+    case DASHES_UPDATE_SUCCESS:
+      return state.set('loadedList', false)
     default:
       return state
   }
@@ -168,7 +182,7 @@ export function getDash(orgId, dashId) {
     return dispatch(
         _getDash(orgId, dashId)
       )
-      .then((res)=> {
+      .then((res) => {
         dispatch(getDashParticipants(res.Participants.href))
         dispatch(getDashRewards(res.Rewards.href))
       })
@@ -204,7 +218,7 @@ export function createParticipant(orgId, dashId, model) {
 export function updateParticipant(orgId, dashId, participantId, model) {
   return {
     types: [DASHES_PARTICIPANT_CREATE, DASHES_PARTICIPANT_CREATE_SUCCESS, DASHES_PARTICIPANT_CREATE_FAIL],
-    promise: (client) => client.post(`/v1/${orgId}/dashes/${dashId}/participants/${participantId}`, { data: model })
+    promise: (client) => client.put(`/v1/${orgId}/dashes/${dashId}/participants/${participantId}`, { data: model })
   }
 }
 
@@ -217,7 +231,7 @@ export function createTodo(orgId, dashId, model) {
 
 export function deleteTodo(orgId, dashId, todoId) {
   return {
-    types: [DASHES_TODO_CREATE, DASHES_TODO_CREATE_SUCCESS, DASHES_TODO_CREATE_FAIL],
+    types: [DASHES_TODO_REMOVE, DASHES_TODO_REMOVE_SUCCESS, DASHES_TODO_REMOVE_FAIL],
     promise: (client) => client.delete(`/v1/${orgId}/dashes/${dashId}/todos/${todoId}`)
   }
 }
@@ -270,7 +284,7 @@ export function createDash(orgId, model) {
     return dispatch(
         _createDash(orgId, modelData)
       )
-      .then((res)=> {
+      .then((res) => {
         // updateRewards(dispatch, orgId, res.Id, rewards)
         // updateParticipants(dispatch, orgId, res.Id, participants)
         // updateTodos(dispatch, orgId, res.Id, todos)
@@ -291,8 +305,6 @@ function _updateDash(orgId, dashId, model) {
 
 export function updateDash(orgId, dashId, model) {
   const { rewards, participants, todos, ...modelData } = model
-  console.log('update dash')
-  console.log(model)
   return dispatch => {
     updateRewards(dispatch, orgId, dashId, rewards)
     updateParticipants(dispatch, orgId, dashId, participants)
@@ -300,7 +312,7 @@ export function updateDash(orgId, dashId, model) {
     return dispatch(
         _updateDash(orgId, dashId, modelData)
       )
-      .then((res)=> {
+      .then(() => {
         dispatch(push('/dashes'))
       })
       .catch(res => {

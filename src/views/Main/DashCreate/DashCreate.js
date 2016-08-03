@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Button } from 'react-lightning-design-system'
 
-import styles from './styles.module.css'
-import hoc from './hoc'
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import DashForm from 'components/DashForm/DashForm'
 import { formatDate2 } from 'utils/formatter'
+import styles from './styles.module.css'
+import hoc from './hoc'
 
 class DashCreate extends Component {
 
@@ -47,11 +48,11 @@ class DashCreate extends Component {
     const list = []
     const { todos } = this.props
     todoValues.map((todoValue, index) => {
-      const todoData = todos.get(index).toJS()
+      const todoData = todos.get(index)
       const todo = { 
         selected: todoValue.value,
         existed: todoValue.existed,
-        ...todoData
+        ToDoId: todoData.get('Id')
       }
       list.push(todo)
     })
@@ -88,19 +89,19 @@ class DashCreate extends Component {
       },
       IsBash : false,
       DashIdAssociatedToBash : null,
-      rewards: JSON.parse(rewards),
-      participants: JSON.parse(participants),
-      todos: this.todosList(JSON.parse(todos)),
+      rewards: rewards ? JSON.parse(rewards) : [],
+      participants: participants ? JSON.parse(participants) : [],
+      todos: todos ? this.todosList(JSON.parse(todos)) : [],
       ...modelData
     }
     this.props.createDash(profile.centifyOrgId, data)
   }
 
   render() {
-    const { loading, loadingParticipants, loadingRewards, loadingUsers, users } = this.props
-    if (loading || loadingParticipants || loadingRewards || loadingUsers) {
+    const { loading, loadingParticipants, loadingRewards, loadingUsers, loadingTodos, users, todos } = this.props
+    if (loading || loadingParticipants || loadingRewards || loadingUsers || loadingTodos) {
       return (
-        <div>Loading...</div>
+        <LoadingSpinner/>
       )
     }
     return (

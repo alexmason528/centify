@@ -13,11 +13,11 @@ import {
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 
+import { formatDate2 } from 'utils/formatter'
 import DateInput from 'components/DateInput/DateInput'
-
 import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
-import { formatDate2 } from 'utils/formatter'
+
 
 class DashForm extends Component {
 
@@ -151,7 +151,7 @@ class DashForm extends Component {
             EstimatedRewardAmount: 0,
             MaximumRewardAmount: 0,
             ExternalURL: "",
-            Formula: "",
+            Formula: "{}",
             saveStatus: 1,  // 0: saved, 1: new, 2: modified
           })
           onChange(JSON.stringify(rewards))
@@ -168,8 +168,8 @@ class DashForm extends Component {
                       </td>
                       <td className="slds-p-bottom--small" style={{ minWidth: 150 }}>
                         <Input type='number' defaultValue={reward.EstimatedRewardAmount} onChange={(e) => {
-                          rewards[index].EstimatedRewardAmount = e.currentTarget.value
-                          rewards[index].MaximumRewardAmount = e.currentTarget.value
+                          rewards[index].EstimatedRewardAmount = parseInt(e.currentTarget.value)
+                          rewards[index].MaximumRewardAmount = parseInt(e.currentTarget.value)
                           if (rewards[index].saveStatus == 0) {
                             rewards[index].saveStatus = 2
                           }
@@ -261,7 +261,7 @@ class DashForm extends Component {
             <Button type="brand" onClick={() => {
               participants.push( {
                 Type: "User",
-                DisplayName: users.get(0).get('DisplayName'),
+                DisplayName: "",
                 Users: [{
                   UserId: users.get(0).get('Id'),
                 }],

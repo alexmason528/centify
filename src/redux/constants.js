@@ -40,9 +40,9 @@ export const DASHES_PARTICIPANT_UPDATE_FAIL = 'centify/dashes/participant/UPDATE
 export const DASHES_TODO_CREATE = 'centify/dashes/todo/CREATE'
 export const DASHES_TODO_CREATE_SUCCESS = 'centify/dashes/todo/CREATE_SUCCESS'
 export const DASHES_TODO_CREATE_FAIL = 'centify/dashes/todo/CREATE_FAIL'
-export const DASHES_TODO_UPDATE = 'centify/dashes/todo/UPDATE'
-export const DASHES_TODO_UPDATE_SUCCESS = 'centify/dashes/todo/UPDATE_SUCCESS'
-export const DASHES_TODO_UPDATE_FAIL = 'centify/dashes/todo/UPDATE_FAIL'
+export const DASHES_TODO_REMOVE = 'centify/dashes/todo/UPDATE'
+export const DASHES_TODO_REMOVE_SUCCESS = 'centify/dashes/todo/UPDATE_SUCCESS'
+export const DASHES_TODO_REMOVE_FAIL = 'centify/dashes/todo/UPDATE_FAIL'
 
 /* Users module */
 
