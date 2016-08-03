@@ -47,7 +47,7 @@ export default function dashes(state = initialState, action) {
 
 /* Get dashes list */
 
-export function getTodos(orgId, dashId) {
+export function getTodos(orgId) {
   return {
     types: [TODOS_GET_LIST, TODOS_GET_LIST_SUCCESS, TODOS_GET_LIST_FAIL],
     promise: (client) => client.get(`/v1/${orgId}/todos`)

@@ -8,6 +8,7 @@ import Login from './Login/Login'
 import Dashes from './Dashes/Dashes'
 import DashCreate from './DashCreate/DashCreate'
 import DashEdit from './DashEdit/DashEdit'
+import Todos from './Todos/Todos'
 
 const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__);
 
@@ -30,6 +31,7 @@ export const makeMainRoutes = () => {
         <Route path="dashes" component={Dashes} />
         <Route path="dashes/new" component={DashCreate} />
         <Route path="dashes/:dashId" component={DashEdit} />
+        <Route path="todos" component={Todos} />
       </Route>
 
     </Route>

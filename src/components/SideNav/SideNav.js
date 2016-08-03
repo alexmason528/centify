@@ -24,7 +24,7 @@ const SideNav = ({ routeName }) => {
         <li className={routeName == 'dashes' ? "slds-is-active" : ""}><Link to="/dashes"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
           <Icon fixedWidth name="flag-checkered"/> Dashes
         </Link></li>
-        <li><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
+        <li className={routeName == 'todos' ? "slds-is-active" : ""}><Link to="/todos"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
           <Icon fixedWidth name="hand-o-right"/> ToDos
         </Link></li>
         <li><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
