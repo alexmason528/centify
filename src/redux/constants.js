@@ -46,12 +46,15 @@ export const DASHES_TODO_REMOVE_FAIL = 'centify/dashes/todo/UPDATE_FAIL'
 
 /* Users module */
 
-export const USERS_GET_LIST = 'centify/dashes/SINGLE_GET_USERS'
-export const USERS_GET_LIST_SUCCESS = 'centify/dashes/SINGLE_GET_USERS_SUCCESS'
-export const USERS_GET_LIST_FAIL = 'centify/dashes/SINGLE_GET_USERS_FAIL'
+export const USERS_GET_IDENTITY = 'centify/users/GET_IDENTITY'
+export const USERS_GET_IDENTITY_SUCCESS = 'centify/users/GET_IDENTITY_SUCCESS'
+export const USERS_GET_IDENTITY_FAIL = 'centify/users/GET_IDENTITY_FAIL'
+export const USERS_GET_LIST = 'centify/users/GET_LIST'
+export const USERS_GET_LIST_SUCCESS = 'centify/users/GET_LIST_SUCCESS'
+export const USERS_GET_LIST_FAIL = 'centify/users/GET_LIST_FAIL'
 
 /* ToDos module */
 
-export const TODOS_GET_LIST = 'centify/dashes/SINGLE_GET_TODOS'
-export const TODOS_GET_LIST_SUCCESS = 'centify/dashes/SINGLE_GET_TODOS_SUCCESS'
-export const TODOS_GET_LIST_FAIL = 'centify/dashes/SINGLE_GET_TODOS_FAIL'
+export const TODOS_GET_LIST = 'centify/todos/SINGLE_GET'
+export const TODOS_GET_LIST_SUCCESS = 'centify/todos/SINGLE_GET_SUCCESS'
+export const TODOS_GET_LIST_FAIL = 'centify/todos/SINGLE_GET_FAIL'

@@ -38,7 +38,7 @@ const Header = ({ profile }) => {
             </li>
             <li className={styles.profileMenu}>
               <a href="#" data-toggle="dropdown" className="toggle">
-                <img src={profile.picture_thumbnail}
+                <img src={profile.avatarUrl}
                   alt="user-image" className="slds-avatar--circle" style={avatarStyle}/>
                 <span>{profile.name} <i className="fa fa-angle-down"></i></span>
               </a>

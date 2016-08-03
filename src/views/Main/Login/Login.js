@@ -1,5 +1,7 @@
 import React, { PropTypes as T } from 'react'
 import { Button } from 'react-lightning-design-system'
+
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import AuthService from 'utils/AuthService'
 import styles from './styles.module.css'
 
@@ -15,6 +17,11 @@ export class Login extends React.Component {
 
   render() {
     const { auth } = this.props
+    if (this.props.routeParams.token) {
+      return (
+        <LoadingSpinner width={100} height={500} />
+      )
+    }
     return (
       <div className={styles.root}>
         <h2>Login</h2>

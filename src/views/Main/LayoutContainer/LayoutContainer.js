@@ -1,8 +1,11 @@
 import React, { PropTypes as T } from 'react'
-import styles from './styles.module.css'
+import { Grid, Row, Col } from 'react-lightning-design-system'
+
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import Header from 'components/Header/Header'
 import SideNav from 'components/SideNav/SideNav'
-import { Grid, Row, Col } from 'react-lightning-design-system'
+import hoc from './hoc'
+import styles from './styles.module.css'
 
 export class LayoutContainer extends React.Component {
   static contextTypes = {
@@ -13,27 +16,57 @@ export class LayoutContainer extends React.Component {
     super(props, context)
   }
 
-  render() {
-    const auth = this.props.auth;
-    const routeParts = this.props.location.pathname.substr(1).split("/")
-    const routeName = routeParts[0];
+  componentDidMount() {
     const {
-      name,
-      picture_thumbnail,
-    } = auth.getProfile();
+      auth,
+    } = this.props
+    if (auth.getProfile().centifyUserId) {
+      this.getLoggedInUserIdentity()
+    } else {
+      auth.onGetProfile = this.getLoggedInUserIdentity
+    }
+  }
 
-    const headerProfileData = {
-      name,
-      picture_thumbnail,
+  getLoggedInUserIdentity = () => {
+    const {
+      auth,
+      loadedIdentity,
+    } = this.props
+    if (!loadedIdentity) {
+      const {
+        centifyOrgId,
+        centifyUserId,
+      } = auth.getProfile()
+      this.props.getUserIdentity(centifyOrgId, centifyUserId)
+    }
+  }
+
+  render() {
+    const {
+      auth,
+      identity,
+      loadedIdentity,
+    } = this.props
+
+    if (!loadedIdentity) {
+      return (
+        <LoadingSpinner width={100} height={500} />
+      )
     }
 
+    const headerProfileData = {
+      name: identity.get('DisplayName'),
+      avatarUrl: identity.get('AvatarURL'),
+    }
     const avatarStyle = {
       width: 50,
       height: 'auto',
       marginRight: 10,
     }
+    const routeParts = this.props.location.pathname.substr(1).split("/")
+    const routeName = routeParts[0]
 
-    let children = null;
+    let children = null
     if (this.props.children) {
       children = React.cloneElement(this.props.children, {
         auth: auth //sends auth instance to children
@@ -49,9 +82,9 @@ export class LayoutContainer extends React.Component {
             </Col>
             <Col cols={6} colsSmall={2} colsMedium={1}>
               <div className="slds-p-left--large slds-p-large--large slds-p-top--large slds-p-bottom--x-large">
-                <img src={picture_thumbnail}
+                <img src={headerProfileData.avatarUrl}
                   alt="user-image" className="slds-avatar--circle" style={avatarStyle}/>
-                {name}
+                {headerProfileData.name}
               </div>
               <SideNav routeName={routeName}/>
             </Col>
@@ -65,4 +98,4 @@ export class LayoutContainer extends React.Component {
   }
 }
 
-export default LayoutContainer;
+export default hoc(LayoutContainer)

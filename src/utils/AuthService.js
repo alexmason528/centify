@@ -37,7 +37,7 @@ export default class AuthService extends EventEmitter {
     this.login = this.login.bind(this)
   }
 
-  _doAuthentication(authResult){
+  _doAuthentication(authResult) {
     // Saves the user token
     this.setToken(authResult.idToken)
     // Async loads the user profile data
@@ -46,11 +46,14 @@ export default class AuthService extends EventEmitter {
         console.log('Error loading the Profile', error)
       } else {
         this.setProfile(profile)
+        if (this.onGetProfile) {
+          this.onGetProfile()
+        }
       }
     })
   }
 
-  _authorizationError(error){
+  _authorizationError(error) {
     // Unexpected authentication error
     console.log('Authentication Error', error)
   }
@@ -60,26 +63,26 @@ export default class AuthService extends EventEmitter {
     this.lock.show()
   }
 
-  loggedIn(){
+  loggedIn() {
     // Checks if there is a saved token and it's still valid
     const token = this.getToken()
     return !!token && !isTokenExpired(token)
   }
 
-  setProfile(profile){
+  setProfile(profile) {
     // Saves profile data to localStorage
     localStorage.setItem('profile', JSON.stringify(profile))
     // Triggers profile_updated event to update the UI
     this.emit('profile_updated', profile)
   }
 
-  getProfile(){
+  getProfile() {
     // Retrieves the profile data from localStorage
     const profile = localStorage.getItem('profile')
     return profile ? JSON.parse(profile) : {}
   }
 
-  updateProfile(userId, data){
+  updateProfile(userId, data) {
     const headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -94,17 +97,17 @@ export default class AuthService extends EventEmitter {
     .then(newProfile => this.setProfile(newProfile))
   }
 
-  setToken(idToken){
+  setToken(idToken) {
     // Saves user token to localStorage
     localStorage.setItem('id_token', idToken)
   }
 
-  getToken(){
+  getToken() {
     // Retrieves the user token from localStorage
     return localStorage.getItem('id_token')
   }
 
-  logout(){
+  logout() {
     // Clear user token and profile data from localStorage
     localStorage.removeItem('id_token');
     localStorage.removeItem('profile');

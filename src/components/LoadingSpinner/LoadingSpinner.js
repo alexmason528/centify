@@ -1,13 +1,13 @@
 import React from 'react'
 
-const LoadingSpinner = () => {
+const LoadingSpinner = ({ width, height }) => {
   const bgStyle = {
     backgroundColor: '#fff'
   }
   const containerStyle = {
     position: 'relative',
-    height: 500,
-    width: '90%',
+    height: height ? height : 500,
+    width: width ? width + '%' : '90%',
   }
   return (
     <div style={bgStyle}>
