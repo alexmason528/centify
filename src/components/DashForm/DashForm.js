@@ -206,8 +206,8 @@ class DashForm extends Component {
           className="slds-m-bottom--x-small"
           label='Select all'
           checked={selectedAllTodos}
-          onClick={() => {
-            const selectedAll = !selectedAllTodos
+          onChange={(e) => {
+            const selectedAll = e.currentTarget.checked
             for(let i = 0; i < allTodos.size; i++) {
               todos[i] = todos[i] ? todos[i] : { value: false, existed: false }
               todos[i].value = selectedAll
@@ -225,9 +225,9 @@ class DashForm extends Component {
                 className="slds-m-bottom--x-small"
                 label={(index + 1) + '. ' + todo.get('Name')}
                 checked={todos[index] && !!todos[index].value}
-                onClick={() => {
+                onChange={(e) => {
                   todos[index] = todos[index] ? todos[index] : { value: false, existed: false }
-                  todos[index].value = !todos[index].value
+                  todos[index].value = e.currentTarget.checked
                   if (!todos[index].value) {
                     this.setState({
                       selectedAllTodos: false

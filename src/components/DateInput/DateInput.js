@@ -12,7 +12,7 @@ class DateInput extends Component {
     super(props)
 
     this.state = {
-      date: this.props.defaultValue ? new Date(this.props.defaultValue) : null,
+      date: this.props.value ? new Date(this.props.value) : null,
       datepickerVisible: false
     }
   }

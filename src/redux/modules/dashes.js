@@ -285,9 +285,9 @@ export function createDash(orgId, model) {
         _createDash(orgId, modelData)
       )
       .then((res) => {
-        // updateRewards(dispatch, orgId, res.Id, rewards)
-        // updateParticipants(dispatch, orgId, res.Id, participants)
-        // updateTodos(dispatch, orgId, res.Id, todos)
+        updateRewards(dispatch, orgId, res.Id, rewards)
+        updateParticipants(dispatch, orgId, res.Id, participants)
+        updateTodos(dispatch, orgId, res.Id, todos)
         dispatch(push('/dashes'))
       })
       .catch(res => {
