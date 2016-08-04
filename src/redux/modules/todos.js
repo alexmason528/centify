@@ -8,6 +8,9 @@ import {
   TODOS_GET_LIST,
   TODOS_GET_LIST_SUCCESS,
   TODOS_GET_LIST_FAIL,
+  TODOS_UPDATE,
+  TODOS_UPDATE_SUCCESS,
+  TODOS_UPDATE_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
@@ -24,7 +27,7 @@ export default function dashes(state = initialState, action) {
     /* Todos - get list */
     case TODOS_GET_LIST:
       return state.withMutations((map) => {
-        map.set('todos', Immutable.fromJS({}))
+        map.set('todos', Immutable.fromJS([]))
         map.set('loadingTodos', true)
         map.set('loadedTodos', false)
       })
@@ -36,10 +39,15 @@ export default function dashes(state = initialState, action) {
       })
     case TODOS_GET_LIST_FAIL:
       return state.withMutations((map) => {
-        map.set('todos', Immutable.fromJS({}))
+        map.set('todos', Immutable.fromJS([]))
         map.set('loadingTodos', false)
         map.set('loadedTodos', false)
       })
+    /* Update todo */
+    case TODOS_UPDATE_SUCCESS:
+      const index = action.data.index
+      const todo = action.data.model
+      return state.setIn(['todos', index], todo)
     default:
       return state
   }
@@ -51,5 +59,16 @@ export function getTodos(orgId) {
   return {
     types: [TODOS_GET_LIST, TODOS_GET_LIST_SUCCESS, TODOS_GET_LIST_FAIL],
     promise: (client) => client.get(`/v1/${orgId}/todos`)
+  }
+}
+
+export function updateTodo(orgId, todoId, model, index) {
+  return {
+    types: [TODOS_UPDATE, TODOS_UPDATE_SUCCESS, TODOS_UPDATE_FAIL],
+    promise: (client) => client.put(`/v1/${orgId}/todos/${todoId}`, { data: model }),
+    data: {
+      model,
+      index,
+    }
   }
 }

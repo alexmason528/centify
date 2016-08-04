@@ -10,7 +10,8 @@ const mapStateToProps = ({ todos }) => ({
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  getTodos
+  getTodos,
+  updateTodo,
 }, dispatch)
 
 export default (container) => connect(

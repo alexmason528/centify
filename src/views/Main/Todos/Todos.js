@@ -21,7 +21,8 @@ class Todos extends Component {
   }
 
   render() {
-    const { todos, loadedTodos, loadingTodos } = this.props
+    const { todos, loadedTodos, loadingTodos, updateTodo, auth } = this.props
+    const profile = auth.getProfile()
     if (loadingTodos) {
       return (
         <LoadingSpinner/>
@@ -60,16 +61,22 @@ class Todos extends Component {
             </tr>
           </thead>
           <tbody>
-            {todos.map((todo) => {
+            {todos.map((todo, index) => {
               const id = todo.get('Id')
               const name = todo.get('Name')
               const category = todo.get('Category')
               const type = todo.get('Type')
               const desc = todo.get('Description')
+              const status = todo.get('Status')
               return (
                 <tr key={id}>
                   <td data-label="Toggle" style={tdStyle}>
-                    <Checkbox/>
+                    <Checkbox
+                      checked={status ? true : false}
+                      onChange={(e) => {
+                        todo.set('Status', e.currentTarget.checked ? 1 : 0)
+                        updateTodo(profile.centifyOrgId, id, todo, index)
+                      }} />
                   </td>
                   <td title={name} data-label="Name">
                     <div className="slds-truncate">{name}</div>

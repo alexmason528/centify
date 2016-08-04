@@ -49,7 +49,7 @@ export default function users(state = initialState, action) {
     /* Get users list */
     case USERS_GET_LIST:
       return state.withMutations((map) => {
-        map.set('users', Immutable.fromJS({}))
+        map.set('users', Immutable.fromJS([]))
         map.set('loadedUsers', false)
         map.set('loadingUsers', true)
       })
@@ -61,7 +61,7 @@ export default function users(state = initialState, action) {
       })
     case USERS_GET_LIST_FAIL:
       return state.withMutations((map) => {
-        map.set('users', Immutable.fromJS({}))
+        map.set('users', Immutable.fromJS([]))
         map.set('loadedUsers', false)
         map.set('loadingUsers', false)
       })
