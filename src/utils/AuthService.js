@@ -4,7 +4,7 @@ import Auth0Lock from 'auth0-lock'
 import LogoImg from 'images/centify-logo.png'
 
 export default class AuthService extends EventEmitter {
-  constructor(clientId, domain) {
+  constructor(clientId, domain, redirectUrl) {
     super()
     this.domain = domain
     // Configure Auth0
@@ -16,7 +16,7 @@ export default class AuthService extends EventEmitter {
       auth: {
         params: {scope: 'openid centifyOrgId centifyUserId centifyLicense'},
         redirect: true,
-        redirectUrl: "http://localhost:3000",
+        redirectUrl: redirectUrl,
         responseType: "token",
         sso: true
       },

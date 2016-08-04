@@ -74,7 +74,7 @@ class Todos extends Component {
                     <Checkbox
                       checked={status ? true : false}
                       onChange={(e) => {
-                        const newTodo = todo.set('Status', (e.currentTarget.checked ? 1 : 0)).delete('Records')
+                        const newTodo = todo.set('Status', !!e.currentTarget.checked).delete('Records')
                         updateTodo(profile.centifyOrgId, id, newTodo, index)
                       }} />
                   </td>

@@ -33,7 +33,24 @@ export default function dashes(state = initialState, action) {
       })
     case TODOS_GET_LIST_SUCCESS:
       return state.withMutations((map) => {
-        map.set('todos', Immutable.fromJS(action.result))
+        const todosMap = Immutable.fromJS(action.result).sort((todo1, todo2) => {
+          const todo1Name = todo1.get('Name')
+          const todo2Name = todo2.get('Name')
+          const todo1Cat = todo1.get('Category')
+          const todo2Cat = todo2.get('Category')
+          if (todo1Cat > todo2Cat) {
+            return 1
+          } else if (todo1Cat < todo2Cat) {
+            return -1
+          }
+          if (todo1Name > todo2Name) {
+            return 1
+          } else if (todo1Name < todo2Name) {
+            return -1
+          }
+          return 0
+        })
+        map.set('todos', todosMap)
         map.set('loadingTodos', false)
         map.set('loadedTodos', true)
       })
