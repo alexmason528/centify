@@ -1,7 +1,7 @@
 {
-  "name": "centify-management-console",
+  "name": "mycentify",
   "version": "1.0.0",
-  "description": "Centify management console",
+  "description": "MyCentify",
   "license": "MIT",
   "scripts": {
     "start": "cross-env NODE_ENV=development hjs-dev-server",

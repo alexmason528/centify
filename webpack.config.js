@@ -26,11 +26,11 @@ var config = getConfig({
   html: function (context) {
     return {
       'index.html': context.defaultTemplate({
-        title: 'Centify Management Console',
+        title: 'MyCentify',
         publicPath: isDev ? 'http://localhost:3000/' : '',
         meta: {
-          'name': 'Centify Management Console',
-          'description': 'Centify Management Console'
+          'name': 'MyCentify',
+          'description': 'MyCentify'
         }
       })
     }
