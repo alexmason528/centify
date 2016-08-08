@@ -41,6 +41,12 @@ export class LayoutContainer extends React.Component {
     }
   }
 
+  logout = () => {
+    const { auth } = this.props
+    auth.logout()
+    window.location.href = '/#/login'
+  }
+
   render() {
     const {
       auth,
@@ -78,7 +84,7 @@ export class LayoutContainer extends React.Component {
         <Grid>
           <Row cols={6}>
             <Col cols={6}>
-              <Header profile={headerProfileData}/>
+              <Header profile={headerProfileData} logout={this.logout}/>
             </Col>
             <Col cols={6} colsSmall={2} colsMedium={1}>
               <div className="slds-p-left--large slds-p-large--large slds-p-top--large slds-p-bottom--x-large">
