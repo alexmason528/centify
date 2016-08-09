@@ -18,6 +18,7 @@ const modules = join(root, 'node_modules');
 const dest    = join(root, 'dist');
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 var config = getConfig({
   isDev: isDev,
@@ -58,7 +59,8 @@ const defines =
 
 config.plugins = [
   new webpack.DefinePlugin(defines),
-  new ExtractTextPlugin('font-awesome.css')
+  new ExtractTextPlugin('font-awesome.css'),
+  new CopyWebpackPlugin([ { from: 'assets' } ])
 ].concat(config.plugins);
 // END ENV variables
 
@@ -84,26 +86,27 @@ config.module.loaders.push(newloader);
 cssloader.test = new RegExp(`^(?!.*(module|bootstrap)).*${cssloader.test.source}`)
 cssloader.loader = newloader.loader
 
-config.module.loaders.push({
-  test: /(font-awesome\.css|design-system\.css|bootstrap\.css)$/,
-  include: [modules],
-  loader: 'style-loader!css-loader'
-},
-{
-  test: /\.css$/,
-  exclude: /(font-awesome\.css|design-system\.css|bootstrap\.css)$/,
-  include: [modules],
-  loader: 'style-loader!css-loader'
-},
-{
-  test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?/,
-  include: [modules],
-  loader: 'url'
-},
-{
-  test: /\.(eot|svg|ttf)(\?v=\d+\.\d+\.\d+)?/,
-  loader: 'url'
-}
+config.module.loaders.push(
+  {
+    test: /(font-awesome\.css|design-system\.css|bootstrap\.css)$/,
+    include: [modules],
+    loader: 'style-loader!css-loader'
+  },
+  {
+    test: /\.css$/,
+    exclude: /(font-awesome\.css|design-system\.css|bootstrap\.css)$/,
+    include: [modules],
+    loader: 'style-loader!css-loader'
+  },
+  {
+    test: /\.woff(2)?(\?v=\d+\.\d+\.\d+)?/,
+    include: [modules],
+    loader: 'url'
+  },
+  {
+    test: /\.(eot|svg|ttf)(\?v=\d+\.\d+\.\d+)?/,
+    loader: 'url'
+  }
 )
 
 // Remove original font file loaders, this is kind of hack
