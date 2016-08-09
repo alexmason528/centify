@@ -2,8 +2,6 @@
 
 This project is for Centify and developed as a regular ReactJS application.
 
-The seed does not a contain anything related to Auth0 except the `auth0-lock` dependency in `package.json`. Instead, it will serve as a starting point for adding Auth0 to your project.
-
 ## Getting Started
 
 Run:
@@ -18,6 +16,29 @@ cp .env.example .env
 # Run
 npm start
 ```
+
+## AUTH0 Configuration
+
+.env file at the root contains auth0 client ID and domain. You must configure this file to make this app work.
+
+## Environments
+
+Currently 4 environments are set up as default.
+
+Localdev (environment for local development. Uses localhost:3000 for domain, and staging API.)
+Development
+Staging
+Production
+
+To run application in any of these environments except production (note that production environment does not allow direct running using webpack), you can use any of these commands:
+npm start (localdev)
+npm run start_dev (development)
+npm run start_stg (staging)
+
+To build, use any of these commands:
+npm run build_dev
+npm run build_stg
+npm run build_prd
 
 ## Used Libraries
 

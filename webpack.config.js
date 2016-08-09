@@ -9,8 +9,7 @@ const path    = require('path'),
 
 const getConfig = require('hjs-webpack');
 
-const isDev   = (NODE_ENV === 'localdev' || NODE_ENV === 'staging' || NODE_ENV === 'development');
-const isLocal = (NODE_ENV === 'localdev');
+const isDev   = (NODE_ENV === 'localdev');
 const isTest  = NODE_ENV === 'test';
 
 const root    = resolve(__dirname);
@@ -29,7 +28,7 @@ var config = getConfig({
     return {
       'index.html': context.defaultTemplate({
         title: 'MyCentify',
-        publicPath: isLocal ? 'http://localhost:3000/' : '',
+        publicPath: isDev ? 'http://localhost:3000/' : '',
         meta: {
           'name': 'MyCentify',
           'description': 'MyCentify'
