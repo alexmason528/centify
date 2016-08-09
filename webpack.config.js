@@ -9,8 +9,9 @@ const path    = require('path'),
 
 const getConfig = require('hjs-webpack');
 
-const isDev  = NODE_ENV === 'development';
-const isTest = NODE_ENV === 'test';
+const isDev   = (NODE_ENV === 'localdev' || NODE_ENV === 'staging' || NODE_ENV === 'development');
+const isLocal = (NODE_ENV === 'localdev');
+const isTest  = NODE_ENV === 'test';
 
 const root    = resolve(__dirname);
 const src     = join(root, 'src');
@@ -28,7 +29,7 @@ var config = getConfig({
     return {
       'index.html': context.defaultTemplate({
         title: 'MyCentify',
-        publicPath: isDev ? 'http://localhost:3000/' : '',
+        publicPath: isLocal ? 'http://localhost:3000/' : '',
         meta: {
           'name': 'MyCentify',
           'description': 'MyCentify'
@@ -41,7 +42,7 @@ var config = getConfig({
 // ENV variables
 const dotEnvVars = dotenv.config();
 const environmentEnv = dotenv.config({
-  path: join(root, 'config', `${NODE_ENV}.config.js`),
+  path: join(root, 'config', `${NODE_ENV}.config.env`),
   silent: true,
 });
 const envVariables =

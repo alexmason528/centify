@@ -1,9 +1,5 @@
 import superagent from 'superagent';
 
-const config = {
-  domain: 'https://staging-api.centify.com',
-}
-
 const methods = ['get', 'post', 'put', 'patch', 'del'];
 
 function formatUrl(path) {
@@ -11,7 +7,7 @@ function formatUrl(path) {
     return path;
   }
   const adjustedPath = path[0] !== '/' ? '/' + path : path;
-  return config.domain + adjustedPath;
+  return __API_URL__ + adjustedPath;
 }
 
 export default class ApiClient {
