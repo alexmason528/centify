@@ -24,6 +24,12 @@ import {
   DASHES_UPDATE,
   DASHES_UPDATE_SUCCESS,
   DASHES_UPDATE_FAIL,
+  DASHES_DELETE,
+  DASHES_DELETE_SUCCESS,
+  DASHES_DELETE_FAIL,
+  DASHES_CANCEL,
+  DASHES_CANCEL_SUCCESS,
+  DASHES_CANCEL_FAIL,
 
   DASHES_REWARD_CREATE,
   DASHES_REWARD_CREATE_SUCCESS,
@@ -140,10 +146,10 @@ export default function dashes(state = initialState, action) {
 
 /* Get dashes list */
 
-export function getDashesList(orgId, status, owner_id) {
+export function getDashesList(orgId) {
   return {
     types: [DASHES_LIST, DASHES_LIST_SUCCESS, DASHES_LIST_FAIL],
-    promise: (client) => client.get(`/v1/${orgId}/dashes`, { status, owner_id })
+    promise: (client) => client.get(`/v1/${orgId}/dashes`)
   }
 }
 
@@ -310,13 +316,55 @@ export function updateDash(orgId, dashId, model) {
     updateParticipants(dispatch, orgId, dashId, participants)
     updateTodos(dispatch, orgId, dashId, todos)
     return dispatch(
-        _updateDash(orgId, dashId, modelData)
-      )
-      .then(() => {
-        dispatch(push('/dashes'))
-      })
-      .catch(res => {
-        throw new SubmissionError({ _error: res.error })
-      })
+      _updateDash(orgId, dashId, modelData)
+    )
+    .then(() => {
+      dispatch(push('/dashes'))
+    })
+    .catch(res => {
+      throw new SubmissionError({ _error: res.error })
+    })
+  }
+}
+
+function _deleteDash(orgId, dashId) {
+  return {
+    types: [DASHES_DELETE, DASHES_DELETE_SUCCESS, DASHES_DELETE_FAIL],
+    promise: (client) => client.del(`/v1/${orgId}/dashes/${dashId}`)
+  }
+}
+
+export function deleteDash(orgId, dashId) {
+  return dispatch => {
+    return dispatch(
+      _deleteDash(orgId, dashId)
+    )
+    .then(() => {
+      dispatch(getDashesList(orgId))
+    })
+    .catch(res => {
+      throw new SubmissionError({ _error: res.error })
+    })
+  }
+}
+
+function _cancelDash(orgId, dashId) {
+  return {
+    types: [DASHES_CANCEL, DASHES_CANCEL_SUCCESS, DASHES_CANCEL_FAIL],
+    promise: (client) => client.put(`/v1/${orgId}/dashes/${dashId}/cancel`)
+  }
+}
+
+export function cancelDash(orgId, dashId) {
+  return dispatch => {
+    return dispatch(
+      _cancelDash(orgId, dashId)
+    )
+    .then(() => {
+      dispatch(getDashesList(orgId))
+    })
+    .catch(res => {
+      throw new SubmissionError({ _error: res.error })
+    })
   }
 }

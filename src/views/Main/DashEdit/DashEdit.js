@@ -7,6 +7,7 @@ import { formatDate2 } from 'utils/formatter'
 import styles from './styles.module.css'
 import hoc from './hoc'
 
+
 class DashEdit extends Component {
 
   componentDidMount() {

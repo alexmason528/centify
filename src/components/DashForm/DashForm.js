@@ -10,7 +10,6 @@ import {
   Checkbox, CheckboxGroup,
   Button,
   Container,
-  util,
 } from 'react-lightning-design-system'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
@@ -29,7 +28,6 @@ class DashForm extends Component {
     this.state = {
       selectedAllTodos: false
     }
-    util.setAssetRoot('')
   }
 
   nameInput = (props) => {

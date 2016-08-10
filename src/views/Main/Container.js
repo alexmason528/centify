@@ -1,6 +1,8 @@
 import React, { PropTypes as T } from 'react'
+import { util } from 'react-lightning-design-system'
 import AuthService from 'utils/AuthService'
 import styles from './styles.module.css'
+
 
 export class Container extends React.Component {
   static contextTypes = {
@@ -19,6 +21,7 @@ export class Container extends React.Component {
     props.route.auth.on('profile_updated', (newProfile) => {
       this.setState({profile: newProfile})
     })
+    util.setAssetRoot('')
   }
 
   logout(){

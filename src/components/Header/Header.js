@@ -3,6 +3,7 @@ import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
 import {Icon} from 'react-fa'
 
+
 class Header extends Component {
 
   constructor(props) {
