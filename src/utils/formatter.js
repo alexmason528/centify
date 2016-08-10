@@ -20,7 +20,7 @@ export function nth(n) {
   return 'th'
 }
 
-export function formatDate(date = null, includeTime = true) {
+export function formatDate(date = null, includeHM = true, includeSec = true) {
   const _date = date ? new Date(date) : new Date()
   const monthNames = [
     "January", "February", "March",
@@ -33,11 +33,13 @@ export function formatDate(date = null, includeTime = true) {
   const year = _date.getFullYear()
   let formattedDate = ''
   formattedDate += monthNames[monthIndex] + ' ' + day + ', ' + year
-  if (includeTime) {
+  if (includeHM) {
     formattedDate += ' '
     formattedDate += format2Digits(_date.getHours()) + ':'
-    formattedDate += format2Digits(_date.getMinutes()) + ':'
-    formattedDate += format2Digits(_date.getSeconds())
+    formattedDate += format2Digits(_date.getMinutes())
+    if (includeSec) {
+      formattedDate += ':' + format2Digits(_date.getSeconds())
+    }
   }
   return formattedDate
 }

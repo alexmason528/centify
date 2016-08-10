@@ -153,19 +153,21 @@ class DashEdit extends Component {
   }
 
   render() {
-    const { loading, loadingParticipants, loadingRewards, loadingTodos, loadingUsers, users, todos } = this.props
+    const { currentDash, loading, loadingParticipants, loadingRewards, loadingTodos, loadingUsers, users, todos } = this.props
     if (loading || loadingParticipants || loadingRewards || loadingTodos || loadingUsers) {
       return (
         <LoadingSpinner/>
       )
     }
+    const editable = currentDash.get('Status') && currentDash.get('Status').toLowerCase() == 'draft'
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
         <DashForm
           onSubmit={(model) => this.onSubmit(model)}
           initialValues={this.initialValues()}
           users={users}
-          todos={todos} />
+          todos={todos}
+          editable={editable} />
       </div>
     )
   }

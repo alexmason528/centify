@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import { Field, reduxForm, formValueSelector } from 'redux-form'
 import { Icon } from 'react-fa'
@@ -94,7 +95,7 @@ class DashForm extends Component {
 
   dateInput = (props) => {
     return (
-      <DateInput {...props.input}/>
+      <DateInput {...props.input} />
     )
   }
 
@@ -304,7 +305,7 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, RewardTypeValue } = this.props
+    const { handleSubmit, submitting, RewardTypeValue, editable } = this.props
     return (
       <form onSubmit={handleSubmit}>
         <Grid>
@@ -426,8 +427,10 @@ class DashForm extends Component {
               <Row cols={6} className="slds-m-vertical--x-large">
                 <Col padded>
                   <div style={{ textAlign: 'right' }}>
-                    <Button type="neutral">Cancel</Button>
-                    <button type="submit" className="slds-button slds-button--brand" disabled={submitting}>Save Dash</button>
+                    <Link to='/dashes' style={{ marginRight: 10, display: 'inline-block' }}>
+                      <Button type="neutral">Cancel</Button>
+                    </Link>
+                    <button type="submit" className="slds-button slds-button--brand" disabled={!editable || submitting}>Save Dash</button>
                   </div>
                 </Col>
               </Row>

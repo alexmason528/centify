@@ -12,9 +12,4 @@
   z-index: 100;
   border: 1px solid #d8dde6;
   border-radius: 3px;
-  display: none;
-}
-
-.datepickerVisible {
-  display: block !important;
 }
