@@ -9,6 +9,9 @@
     "start_stg": "cross-env NODE_ENV=staging hjs-dev-server",
     "clean": "rimraf dist",
     "build": "npm run clean && cross-env NODE_ENV=production webpack",
+    "deploy_dev": "npm run build_dev && scripts/deploy_dev.sh",
+    "deploy_stg": "npm run build_stg && scripts/deploy_stg.sh",
+    "deploy_prd": "npm run build_prd && scripts/deploy_prd.sh",
     "publish_pages": "gh-pages -d dist",
     "ghpages": "npm run build && npm run publish_pages",
     "test": "cross-env NODE_ENV=test karma start karma.conf.js",
@@ -66,7 +69,8 @@
     "transform-loader": "^0.2.3",
     "url-loader": "^0.5.7",
     "webpack": "^1.13.0",
-    "yargs": "^4.7.1"
+    "yargs": "^4.7.1",
+    "rimraf": "^2.5.4"
   },
   "dependencies": {
     "@salesforce-ux/design-system": "^2.0.2",
