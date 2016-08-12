@@ -38,17 +38,19 @@ export default class AuthService extends EventEmitter {
   }
 
   _doAuthentication(authResult) {
-    // Saves the user token
-    this.setToken(authResult.idToken)
     // Async loads the user profile data
     this.lock.getProfile(authResult.idToken, (error, profile) => {
       if (error) {
         console.log('Error loading the Profile', error)
-      } else {
+      } else if (profile.centifyUserId) {
+        // Saves the user token
+        this.setToken(authResult.idToken)
         this.setProfile(profile)
         if (this.onGetProfile) {
           this.onGetProfile()
         }
+      } else {
+        alert('Not a centify account.');
       }
     })
   }
