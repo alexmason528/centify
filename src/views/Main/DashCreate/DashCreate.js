@@ -27,13 +27,15 @@ class DashCreate extends Component {
   }
 
   initialValues() {
+    const endDate = new Date()
+    endDate.setDate(endDate.getDate() + parseInt(1))
     return {
       Name : "",
       Type : "OverTheLine",
       MeasureType : "Deal",
       MeasureValue : 0,
       StartsAt: formatDate2(),
-      EndsAt: formatDate2(),
+      EndsAt: formatDate2(endDate),
       // durationDays : 0,
       // durationHours : 0,
       RewardType : "All over the line",

@@ -47,7 +47,7 @@ export function formatDate(date = null, includeHM = true, includeSec = true) {
 export function formatDate2(date = null, includeTime = true) {
   const _date = date ? new Date(date) : new Date()
   const day = _date.getDate()
-  const month = _date.getMonth()
+  const month = _date.getMonth() + 1
   const year = _date.getFullYear()
   let formattedDate = ''
   formattedDate += format2Digits(month) + '/'
