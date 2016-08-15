@@ -50,6 +50,94 @@ class Dashes extends Component {
     }
   }
 
+  getFieldValue(dash, column) {
+    switch(column) {
+      case 'StartsAt':
+      case 'EndsAt':
+        return formatDate(dash.get(column))
+      case 'isPublic':
+      case 'isTeamDash':
+        return dash.get(column) ? 'Yes' : 'No'
+      case 'RewardsPaid':
+      case 'Winners':
+        ///
+      default:
+        return dash.get(column)
+    }
+    return ''
+  }
+
+  tableColumns(filter) {
+    if (filter == 'Upcoming') {
+      return [
+        { label: 'Name', field: 'Name' },
+        { label: 'Type', field: 'Type' },
+        { label: 'Game Type', field: 'GameType' },
+        { label: 'Team/Individual', field: 'isTeamDash' },
+        { label: 'Start Date', field: 'StartsAt' },
+        { label: 'End Date', field: 'EndsAt' },
+        { label: 'Public?', field: 'isPublic' },
+        { label: 'Min. Participants', field: 'MinimumParticipants' },
+        { label: '# Joined', field: 'ParticipantsJoined' },
+        { label: 'Est. Reward Amt.', field: 'EstimatedRewardAmount' },
+      ]
+    } else if (filter == 'Running') {
+      return [
+        { label: 'Name', field: 'Name' },
+        { label: 'Type', field: 'Type' },
+        { label: 'Game Type', field: 'GameType' },
+        { label: 'Team/Individual', field: 'isTeamDash' },
+        { label: 'Start Date', field: 'StartsAt' },
+        { label: 'End Date', field: 'EndsAt' },
+        { label: 'Public?', field: 'isPublic' },
+        { label: 'Min. Participants', field: 'MinimumParticipants' },
+        { label: '# Joined', field: 'ParticipantsJoined' },
+        { label: 'Est. Reward Amt.', field: 'EstimatedRewardAmount' },
+        { label: 'Rewards Paid', field: 'RewardsPaid' },
+        { label: 'Measure Val', field: 'MeasureValue' },
+      ]
+    } else if (filter == 'Review' || filter == 'Completed') {
+      return [
+        { label: 'Name', field: 'Name' },
+        { label: 'Type', field: 'Type' },
+        { label: 'Game Type', field: 'GameType' },
+        { label: 'Team/Individual', field: 'isTeamDash' },
+        { label: 'Start Date', field: 'StartsAt' },
+        { label: 'End Date', field: 'EndsAt' },
+        { label: 'Completed At', field: 'CompletedAt' },
+        { label: 'Public?', field: 'isPublic' },
+        { label: 'Min. Participants', field: 'MinimumParticipants' },
+        { label: '# Joined', field: 'ParticipantsJoined' },
+        { label: 'Est. Reward Amt.', field: 'EstimatedRewardAmount' },
+        { label: 'Rewards Paid', field: 'RewardsPaid' },
+        { label: 'Rewards Paid', field: 'Winners' },
+        { label: 'Measure Val', field: 'MeasureValue' },
+      ]
+    } else if (filter == 'Closed') {
+      return [
+        { label: 'Name', field: 'Name' },
+        { label: 'Type', field: 'Type' },
+        { label: 'Game Type', field: 'GameType' },
+        { label: 'Team/Individual', field: 'isTeamDash' },
+        { label: 'Start Date', field: 'StartsAt' },
+        { label: 'End Date', field: 'EndsAt' },
+        { label: 'Public?', field: 'isPublic' },
+        { label: 'Min. Participants', field: 'MinimumParticipants' },
+        { label: '# Joined', field: 'ParticipantsJoined' },
+        { label: 'Est. Reward Amt.', field: 'EstimatedRewardAmount' },
+      ]
+    } else {
+      return [
+        { label: 'Name', field: 'Name' },
+        { label: 'Type', field: 'Type' },
+        { label: 'Participants Joined', field: 'ParticipantsJoined' },
+        { label: 'Start Date', field: 'StartsAt' },
+        { label: 'End Date', field: 'EndsAt' },
+        { label: 'Status', field: 'Status' },
+      ];
+    }
+  }
+
   render() {
     const { dashesList, filter, loadingList } = this.props
     if (loadingList) {
@@ -57,15 +145,16 @@ class Dashes extends Component {
         <LoadingSpinner/>
       )
     }
+    const columns = this.tableColumns(filter)
     return (
       <div className={styles.root + ' slds-m-horizontal--medium slds-m-vertical--medium'}>
         <div className="slds-m-top--medium">
-          <Button type={filter == '' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, '')}>All</Button>
           <Button type={filter == 'Draft' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Draft')}>Draft</Button>
           <Button type={filter == 'Upcoming' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Upcoming')}>Upcoming</Button>
           <Button type={filter == 'Running' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Running')}>Running</Button>
-          <Button type={filter == 'Finalizing' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Finalizing')}>Finalizing</Button>
+          {/*<Button type={filter == 'Finalizing' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Finalizing')}>Finalizing</Button>*/}
           <Button type={filter == 'Review' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Review')}>Review</Button>
+          <Button type={filter == 'Completed' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Completed')}>Completed</Button>
           <Button type={filter == 'Closed' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Closed')}>Closed</Button>
         </div>
         <div className="slds-clearfix slds-m-vertical--x-large">
@@ -77,24 +166,11 @@ class Dashes extends Component {
         <table className="slds-table slds-table--bordered slds-table--cell-buffer">
           <thead>
             <tr className="slds-text-heading--label">
-              <th scope="col" title="Name">
-                <div className="slds-truncate">Name</div>
-              </th>
-              <th scope="col" title="Type">
-                <div className="slds-truncate">Type</div>
-              </th>
-              <th scope="col" title="Participants Joined">
-                <div className="slds-truncate">Participants Joined</div>
-              </th>
-              <th scope="col" title="Start Date">
-                <div className="slds-truncate">Start Date</div>
-              </th>
-              <th scope="col" title="End Date">
-                <div className="slds-truncate">End Date</div>
-              </th>
-              <th scope="col" title="Status">
-                <div className="slds-truncate">Status</div>
-              </th>
+              {columns.map((column, index) => (
+                <th scope="col" title={column.label} key={index}>
+                  <div className="slds-truncate">{column.label}</div>
+                </th>
+              ))}
               <th></th>
             </tr>
           </thead>
@@ -102,8 +178,6 @@ class Dashes extends Component {
             {dashesList.map((dash) => {
               const id = dash.get('Id')
               const status = dash.get('Status').toLowerCase()
-              const startDate = formatDate(dash.get('StartsAt'));
-              const endDate = formatDate(dash.get('EndsAt'));
               let menu = ''
               if (status == 'draft') {
                 menu = (<DropdownButton type='icon-border-filled' menuAlign='right' menuSize='small'>
@@ -117,24 +191,14 @@ class Dashes extends Component {
               }
               return filter == '' || dash.get('Status') == filter ?
                 (<tr key={id} onClick={this.editDash.bind(this, id)} style={{ cursor: 'pointer' }}>
-                  <th title={dash.get('Name')} data-label="Name">
-                    <div className="slds-truncate">{dash.get('Name')}</div>
-                  </th>
-                  <td title={dash.get('Type')} data-label="Type">
-                    <div className="slds-truncate">{dash.get('Type')}</div>
-                  </td>
-                  <td title={dash.get('ParticipantsJoined')} data-label="Participants Joined">
-                    <div className="slds-truncate">{dash.get('ParticipantsJoined')}</div>
-                  </td>
-                  <td title={startDate} data-label="Start Date">
-                    <div className="slds-truncate">{startDate}</div>
-                  </td>
-                  <td title={endDate} data-label="End Date">
-                    <div className="slds-truncate">{endDate}</div>
-                  </td>
-                  <td title={dash.get('Status')} data-label="Status">
-                    <div className="slds-truncate">{dash.get('Status')}</div>
-                  </td>
+                  {columns.map((column, index) => {
+                    const value = this.getFieldValue(dash, column.field)
+                    return (
+                      <td title={value} data-label={column.label} key={index}>
+                        <div className="slds-truncate">{value}</div>
+                      </td>
+                    )
+                  })}
                   <td onClick={e => e.stopPropagation()}>
                     {menu}
                   </td>
