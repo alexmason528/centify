@@ -109,6 +109,7 @@ class DashCreate extends Component {
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
         <DashForm
+          editable
           onSubmit={(model) => this.onSubmit(model)}
           initialValues={this.initialValues()}
           users={users}

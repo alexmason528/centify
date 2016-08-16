@@ -8,6 +8,12 @@ import {
   DASHES_LIST,
   DASHES_LIST_SUCCESS,
   DASHES_LIST_FAIL,
+  DASHES_LIST_ITEM_PARTICIPANTS,
+  DASHES_LIST_ITEM_PARTICIPANTS_SUCCESS,
+  DASHES_LIST_ITEM_PARTICIPANTS_FAIL,
+  DASHES_LIST_ITEM_REWARDS,
+  DASHES_LIST_ITEM_REWARDS_SUCCESS,
+  DASHES_LIST_ITEM_REWARDS_FAIL,
   DASHES_FILTER,
   DASHES_SINGLE_GET,
   DASHES_SINGLE_GET_SUCCESS,
@@ -54,10 +60,10 @@ import {
 } from '../constants'
 
 const initialState = Immutable.fromJS({
-  list: [],
+  list: {},
   loadedList: false,
   loadingList: false,
-  filter: '',
+  filter: 'Draft',
   currentDash: {},
   loading: false,
   loadingParticipants: false,
@@ -73,9 +79,11 @@ export default function dashes(state = initialState, action) {
       return state.set('loadingList', true)
     case DASHES_LIST_SUCCESS:
       return state.withMutations((map) => {
-        const dashes = action.result ? action.result : []
-        map.set('list', Immutable.fromJS(dashes))
-        map.set('filter', '')
+        const dashes = action.result ? action.result : {}
+        dashes.forEach(dash => {
+          map.setIn(['list', dash.Id], Immutable.fromJS(dash))
+        })
+        map.set('filter', 'Draft')
         map.set('loadingList', false)
         map.set('loadedList', true)
       })
@@ -84,6 +92,24 @@ export default function dashes(state = initialState, action) {
         map.set('loadingList', false)
         map.set('loadedList', false)
       })
+    case DASHES_LIST_ITEM_PARTICIPANTS_SUCCESS:
+      {
+        const dashId = action.data.dashId
+        const participants = action.result
+        return state.withMutations((map) => {
+          map.setIn(['list', dashId, 'Participants', 'items'], Immutable.fromJS(participants))
+          map.setIn(['list', dashId, 'Participants', 'loaded'], true)
+        })
+      }
+    case DASHES_LIST_ITEM_REWARDS_SUCCESS:
+      {
+        const dashId = action.data.dashId
+        const rewards = action.result
+        return state.withMutations((map) => {
+          map.setIn(['list', dashId, 'Rewards', 'items'], Immutable.fromJS(rewards))
+          map.setIn(['list', dashId, 'Rewards', 'loaded'], true)
+        })
+      }
     case DASHES_FILTER:
       return state.set('filter', action.filter)
     /* Single dash */
@@ -146,10 +172,49 @@ export default function dashes(state = initialState, action) {
 
 /* Get dashes list */
 
-export function getDashesList(orgId) {
+function _getDashesList(orgId) {
   return {
     types: [DASHES_LIST, DASHES_LIST_SUCCESS, DASHES_LIST_FAIL],
     promise: (client) => client.get(`/v1/${orgId}/dashes`)
+  }
+}
+
+export function getDashesListRewards(orgId, dashId) {
+  return {
+    types: [DASHES_LIST_ITEM_REWARDS, DASHES_LIST_ITEM_REWARDS_SUCCESS, DASHES_LIST_ITEM_REWARDS_FAIL],
+    promise: (client) => client.get(`v1/${orgId}/dashes/${dashId}/rewards`),
+    data: {
+      dashId: dashId
+    }
+  }
+}
+
+export function getDashesListParticipants(orgId, dashId) {
+  return {
+    types: [DASHES_LIST_ITEM_PARTICIPANTS, DASHES_LIST_ITEM_PARTICIPANTS_SUCCESS, DASHES_LIST_ITEM_PARTICIPANTS_FAIL],
+    promise: (client) => client.get(`v1/${orgId}/dashes/${dashId}/participants`),
+    data: {
+      dashId: dashId
+    }
+  }
+}
+
+export function getDashesList(orgId) {
+  return dispatch => {
+    return dispatch(
+      _getDashesList(orgId)
+    )
+    .then((res) => {
+      res.map(dash => {
+        if (dash.Status != 'Draft' && dash.Status != 'Closed') {
+          // dispatch(getDashesListRewards(orgId, dash.Id))
+          dispatch(getDashesListParticipants(orgId, dash.Id))
+        }
+      })
+    })
+    .catch(res => {
+      throw new SubmissionError({ _error: res.error })
+    })
   }
 }
 
