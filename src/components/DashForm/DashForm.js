@@ -10,6 +10,7 @@ import {
   Checkbox, CheckboxGroup,
   Button,
   Container,
+  Icon as LDIcon,
 } from 'react-lightning-design-system'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
@@ -254,6 +255,16 @@ class DashForm extends Component {
     }
     const participantStyle = {
       maxWidth: 450,
+      marginBottom: 15,
+    }
+    const userSelectStyle = {
+      maxWidth: 300,
+      marginRight: 10,
+      display: 'inline-block',
+    }
+    const closeIconStyle = {
+      width: 16,
+      height: 16,
     }
     const users = this.props.users
     const { value, onChange } = props.input
@@ -264,49 +275,69 @@ class DashForm extends Component {
         <div className="slds-clearfix slds-m-bottom--small">
           <div className="slds-float--left">{participants.length} participants</div>
           <div className="slds-float--right">
-            <Select
-              className="slds-m-bottom--x-small"
-              defaultValue={selectedUserIndex} 
-              required
-              style={{ maxWidth: 300 }}
-              onChange={(e) => {
-                this.setState({
-                  selectedUserIndex: e.currentTarget.selectedIndex
-                })
-              }}>
-              {
-                users.map((user, index) => (
-                  <Option key={index} value={index}>{user.get('DisplayName')}</Option>
-                ))
-              }
-            </Select>
+            <div style={userSelectStyle}>
+              <Select
+                className="slds-m-bottom--x-small"
+                defaultValue={selectedUserIndex} 
+                required
+                style={userSelectStyle}
+                onChange={(e) => {
+                  this.setState({
+                    selectedUserIndex: e.currentTarget.selectedIndex
+                  })
+                }}>
+                {
+                  users.map((user, index) => (
+                    <Option key={index} value={index}>{user.get('DisplayName')}</Option>
+                  ))
+                }
+              </Select>
+            </div>
             <Button type="brand" onClick={() => {
               const { selectedUserIndex } = this.state
-              participants.push( {
-                Type: "User",
-                DisplayName: "",
-                Name: users.get(selectedUserIndex).get('FirstName') + ' ' + users.get(selectedUserIndex).get('LastName'),
-                AvatarURL: users.get(selectedUserIndex).get('AvatarURL'),
-                Email: users.get(selectedUserIndex).get('Email'),
-                Users: [{
-                  UserId: users.get(selectedUserIndex).get('Id'),
-                }],
-                saveStatus: 1,  // 0: saved, 1: new, 2: modified
-              })
-              onChange(JSON.stringify(participants))
+              let dup = false
+              for(let i = 0; i < participants.length; i++) {
+                if (participants[i].Users[0].UserId == users.get(selectedUserIndex).get('Id')) {
+                  dup = true
+                  break
+                }
+              }
+              if (!dup) {
+                participants.push( {
+                  Type: "User",
+                  DisplayName: "",
+                  Name: users.get(selectedUserIndex).get('FirstName') + ' ' + users.get(selectedUserIndex).get('LastName'),
+                  AvatarURL: users.get(selectedUserIndex).get('AvatarURL'),
+                  Email: users.get(selectedUserIndex).get('Email'),
+                  Users: [{
+                    UserId: users.get(selectedUserIndex).get('Id'),
+                  }],
+                  saveStatus: 1,  // 0: saved, 1: new, 2: modified
+                })
+                onChange(JSON.stringify(participants))
+              }
             }}>Add User</Button>
           </div>
         </div> 
         <div style={optionsContainerStyle}>
           {
             participants.map((participant, index) => (
-              <div className="slds-tile slds-media slds-has-dividers--around-space" key={index} style={participantStyle}>
+              <div className="slds-tile slds-media" key={index} style={participantStyle}>
                 <div className="slds-media__figure">
                   <span className="slds-avatar slds-avatar--circle slds-avatar--small">
                     <img src={participant.AvatarURL} alt={participant.Name} />
                   </span>
                 </div>
                 <div className="slds-media__body">
+                  <a
+                    href="javascript:void(0)"
+                    className="slds-float--right"
+                    onClick={e => {
+                      participants.splice(index, 1)
+                      onChange(JSON.stringify(participants))
+                    }}>
+                    <LDIcon icon="close" style={closeIconStyle}/>
+                  </a>
                   <h3 className="slds-truncate" title={participant.Name}>{participant.Name}</h3>
                   <div className="slds-tile__detail slds-text-body--small">
                     <dl className="slds-dl--horizontal">
