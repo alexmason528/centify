@@ -26,7 +26,8 @@ class DashForm extends Component {
     super(props)
 
     this.state = {
-      selectedAllTodos: false
+      selectedAllTodos: false,
+      selectedUserIndex: 0,
     }
   }
 
@@ -251,20 +252,44 @@ class DashForm extends Component {
       borderRadius: 3,
       height: 200
     }
+    const participantStyle = {
+      maxWidth: 450,
+    }
     const users = this.props.users
     const { value, onChange } = props.input
     const participants = value ? JSON.parse(value) : []
+    const { selectedUserIndex } = this.state
     return (
       <div>
         <div className="slds-clearfix slds-m-bottom--small">
           <div className="slds-float--left">{participants.length} participants</div>
           <div className="slds-float--right">
+            <Select
+              className="slds-m-bottom--x-small"
+              defaultValue={selectedUserIndex} 
+              required
+              style={{ maxWidth: 300 }}
+              onChange={(e) => {
+                this.setState({
+                  selectedUserIndex: e.currentTarget.selectedIndex
+                })
+              }}>
+              {
+                users.map((user, index) => (
+                  <Option key={index} value={index}>{user.get('DisplayName')}</Option>
+                ))
+              }
+            </Select>
             <Button type="brand" onClick={() => {
+              const { selectedUserIndex } = this.state
               participants.push( {
                 Type: "User",
                 DisplayName: "",
+                Name: users.get(selectedUserIndex).get('FirstName') + ' ' + users.get(selectedUserIndex).get('LastName'),
+                AvatarURL: users.get(selectedUserIndex).get('AvatarURL'),
+                Email: users.get(selectedUserIndex).get('Email'),
                 Users: [{
-                  UserId: users.get(0).get('Id'),
+                  UserId: users.get(selectedUserIndex).get('Id'),
                 }],
                 saveStatus: 1,  // 0: saved, 1: new, 2: modified
               })
@@ -275,26 +300,26 @@ class DashForm extends Component {
         <div style={optionsContainerStyle}>
           {
             participants.map((participant, index) => (
-              <Select
-                key={index}
-                className="slds-m-bottom--x-small"
-                defaultValue={participant.Users[0].UserId} 
-                required
-                style={{ maxWidth: 300 }}
-                onChange={(e) => {
-                  participants[index].Users[0].UserId = e.currentTarget.value
-                  participants[index].DisplayName = ""
-                  if (participants[index].saveStatus == 0) {
-                    participants[index].saveStatus = 2
-                  }
-                  onChange(JSON.stringify(participants))
-                }}>
-                {
-                  users.map((user, index) => (
-                    <Option key={index} value={user.get('Id')}>{user.get('DisplayName')}</Option>
-                  ))
-                }
-              </Select>
+              <div className="slds-tile slds-media slds-has-dividers--around-space" key={index} style={participantStyle}>
+                <div className="slds-media__figure">
+                  <span className="slds-avatar slds-avatar--circle slds-avatar--small">
+                    <img src={participant.AvatarURL} alt={participant.Name} />
+                  </span>
+                </div>
+                <div className="slds-media__body">
+                  <h3 className="slds-truncate" title={participant.Name}>{participant.Name}</h3>
+                  <div className="slds-tile__detail slds-text-body--small">
+                    <dl className="slds-dl--horizontal">
+                      <dt className="slds-dl--horizontal__label" style={{ maxWidth: 50 }}>
+                        <p className="slds-truncate" title="Email">Email:</p>
+                      </dt>
+                      <dd className="slds-dl--horizontal__detail slds-tile__meta">
+                        <p className="slds-truncate" title={participant.Email}>{participant.Email}</p>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
             ))
           }
         </div>
