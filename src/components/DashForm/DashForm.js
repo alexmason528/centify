@@ -28,7 +28,7 @@ class DashForm extends Component {
 
     this.state = {
       selectedAllTodos: false,
-      selectedUserIndex: 0,
+      selectedUserId: 0,
     }
   }
 
@@ -269,36 +269,37 @@ class DashForm extends Component {
     const users = this.props.users
     const { value, onChange } = props.input
     const participants = value ? JSON.parse(value) : []
-    const { selectedUserIndex } = this.state
+    const { selectedUserId } = this.state
     return (
       <div>
         <div className="slds-clearfix slds-m-bottom--small">
-          <div className="slds-float--left">{participants.length} participants</div>
+          <div className="slds-float--left">{participants.filter(p => (!p.deleted)).length} participants</div>
           <div className="slds-float--right">
             <div style={userSelectStyle}>
               <Select
                 className="slds-m-bottom--x-small"
-                defaultValue={selectedUserIndex} 
+                defaultValue={selectedUserId} 
                 required
                 style={userSelectStyle}
                 onChange={(e) => {
                   this.setState({
-                    selectedUserIndex: e.currentTarget.selectedIndex
+                    selectedUserId: e.currentTarget.value
                   })
                 }}>
                 {
-                  users.map((user, index) => (
-                    <Option key={index} value={index}>{user.get('DisplayName')}</Option>
+                  users.valueSeq().map((user, index) => (
+                    <Option key={index} value={user.get('Id')}>{user.get('DisplayName')}</Option>
                   ))
                 }
               </Select>
             </div>
             <Button type="brand" onClick={() => {
-              const { selectedUserIndex } = this.state
-              let dup = false
+              const { selectedUserId } = this.state
+              let dup = false, dupIndex = -1
               for(let i = 0; i < participants.length; i++) {
-                if (participants[i].Users[0].UserId == users.get(selectedUserIndex).get('Id')) {
+                if (participants[i].Users[0].UserId == users.get(selectedUserId).get('Id')) {
                   dup = true
+                  dupIndex = i
                   break
                 }
               }
@@ -306,53 +307,70 @@ class DashForm extends Component {
                 participants.push( {
                   Type: "User",
                   DisplayName: "",
-                  Name: users.get(selectedUserIndex).get('FirstName') + ' ' + users.get(selectedUserIndex).get('LastName'),
-                  AvatarURL: users.get(selectedUserIndex).get('AvatarURL'),
-                  Email: users.get(selectedUserIndex).get('Email'),
+                  Name: users.get(selectedUserId).get('FirstName') + ' ' + users.get(selectedUserId).get('LastName'),
+                  AvatarURL: users.get(selectedUserId).get('AvatarURL'),
+                  Email: users.get(selectedUserId).get('Email'),
                   Users: [{
-                    UserId: users.get(selectedUserIndex).get('Id'),
+                    UserId: users.get(selectedUserId).get('Id'),
                   }],
                   saveStatus: 1,  // 0: saved, 1: new, 2: modified
                 })
+                onChange(JSON.stringify(participants))
+              } else {
+                participants[dupIndex].deleted = false
                 onChange(JSON.stringify(participants))
               }
             }}>Add User</Button>
           </div>
         </div> 
         <div style={optionsContainerStyle}>
-          {
-            participants.map((participant, index) => (
+          {participants.map((participant, index) => {
+            if (participant.deleted) {
+              return ''
+            }
+            const user = users.get(participant.Users[0].UserId)
+            const username = user.get('FirstName') + ' ' + user.get('LastName')
+            return (
               <div className="slds-tile slds-media" key={index} style={participantStyle}>
                 <div className="slds-media__figure">
                   <span className="slds-avatar slds-avatar--circle slds-avatar--small">
-                    <img src={participant.AvatarURL} alt={participant.Name} />
+                    <img src={user.get('AvatarURL')} alt={username} />
                   </span>
                 </div>
                 <div className="slds-media__body">
-                  <a
-                    href="javascript:void(0)"
-                    className="slds-float--right"
-                    onClick={e => {
-                      participants.splice(index, 1)
-                      onChange(JSON.stringify(participants))
-                    }}>
-                    <LDIcon icon="close" style={closeIconStyle}/>
-                  </a>
-                  <h3 className="slds-truncate" title={participant.Name}>{participant.Name}</h3>
+                  {
+                    this.props.editable ?
+                    <a
+                      href="javascript:void(0)"
+                      className="slds-float--right"
+                      onClick={e => {
+                        if (participants[index].saveStatus == 1) {
+                          participants.splice(index, 1)       // Remove if newly created and not saved
+                        } else {
+                          participants[index].deleted = true  // Set deleted flag
+                        }
+                        onChange(JSON.stringify(participants))
+                      }}>
+                      <LDIcon icon="close" style={closeIconStyle}/>
+                    </a>
+                    :
+                    ''
+                  }
+                  <h3 className="slds-truncate" title={username}>{username}</h3>
                   <div className="slds-tile__detail slds-text-body--small">
                     <dl className="slds-dl--horizontal">
                       <dt className="slds-dl--horizontal__label" style={{ maxWidth: 50 }}>
                         <p className="slds-truncate" title="Email">Email:</p>
                       </dt>
                       <dd className="slds-dl--horizontal__detail slds-tile__meta">
-                        <p className="slds-truncate" title={participant.Email}>{participant.Email}</p>
+                        <p className="slds-truncate" title={user.get('Email')}>{user.get('Email')}</p>
                       </dd>
                     </dl>
                   </div>
                 </div>
               </div>
-            ))
-          }
+            )
+          })}
         </div>
       </div>
     )

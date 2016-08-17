@@ -50,6 +50,9 @@ import {
   DASHES_PARTICIPANT_UPDATE,
   DASHES_PARTICIPANT_UPDATE_SUCCESS,
   DASHES_PARTICIPANT_UPDATE_FAIL,
+  DASHES_PARTICIPANT_DELETE,
+  DASHES_PARTICIPANT_DELETE_SUCCESS,
+  DASHES_PARTICIPANT_DELETE_FAIL,
 
   DASHES_TODO_CREATE,
   DASHES_TODO_CREATE_SUCCESS,
@@ -293,6 +296,13 @@ export function updateParticipant(orgId, dashId, participantId, model) {
   }
 }
 
+export function deleteParticipant(orgId, dashId, participantId) {
+  return {
+    types: [DASHES_PARTICIPANT_DELETE, DASHES_PARTICIPANT_DELETE_SUCCESS, DASHES_PARTICIPANT_DELETE_FAIL],
+    promise: (client) => client.del(`/v1/${orgId}/dashes/${dashId}/participants/${participantId}`)
+  }
+}
+
 export function createTodo(orgId, dashId, model) {
   return {
     types: [DASHES_TODO_CREATE, DASHES_TODO_CREATE_SUCCESS, DASHES_TODO_CREATE_FAIL],
@@ -323,7 +333,9 @@ function updateRewards(dispatch, orgId, dashId, rewards) {
 function updateParticipants(dispatch, orgId, dashId, participants) {
   participants.forEach((participant) => {
     const { saveStatus, ...participantData } = participant
-    if (participant.saveStatus == 1) {
+    if (participant.deleted) {
+      dispatch(deleteParticipant(orgId, dashId, participant.Id))
+    } else if (participant.saveStatus == 1) {
       dispatch(createParticipant(orgId, dashId, participantData))
     } else if (participant.saveStatus == 2) {
       dispatch(updateParticipant(orgId, dashId, participant.Id, participantData))

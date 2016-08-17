@@ -48,6 +48,9 @@ export const DASHES_PARTICIPANT_CREATE_FAIL = 'centify/dashes/participant/CREATE
 export const DASHES_PARTICIPANT_UPDATE = 'centify/dashes/participant/UPDATE'
 export const DASHES_PARTICIPANT_UPDATE_SUCCESS = 'centify/dashes/participant/UPDATE_SUCCESS'
 export const DASHES_PARTICIPANT_UPDATE_FAIL = 'centify/dashes/participant/UPDATE_FAIL'
+export const DASHES_PARTICIPANT_DELETE = 'centify/dashes/participant/DELETE'
+export const DASHES_PARTICIPANT_DELETE_SUCCESS = 'centify/dashes/participant/DELETE_SUCCESS'
+export const DASHES_PARTICIPANT_DELETE_FAIL = 'centify/dashes/participant/DELETE_FAIL'
 
 export const DASHES_TODO_CREATE = 'centify/dashes/todo/CREATE'
 export const DASHES_TODO_CREATE_SUCCESS = 'centify/dashes/todo/CREATE_SUCCESS'

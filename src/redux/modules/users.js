@@ -17,7 +17,7 @@ const initialState = Immutable.fromJS({
   identity: {},
   loadedIdentity: false,
   loadingIdentity: false,
-  users: [],
+  users: {},
   loadedUsers: false,
   loadingUsers: false,
 })
@@ -49,19 +49,22 @@ export default function users(state = initialState, action) {
     /* Get users list */
     case USERS_GET_LIST:
       return state.withMutations((map) => {
-        map.set('users', Immutable.fromJS([]))
+        map.set('users', Immutable.fromJS({}))
         map.set('loadedUsers', false)
         map.set('loadingUsers', true)
       })
     case USERS_GET_LIST_SUCCESS:
       return state.withMutations((map) => {
-        map.set('users', Immutable.fromJS(action.result))
+        const users = action.result
+        for(let i = 0; i < users.length; i++) {
+          map.setIn(['users', users[i].Id], Immutable.fromJS(users[i]))
+        }
         map.set('loadedUsers', true)
         map.set('loadingUsers', false)
       })
     case USERS_GET_LIST_FAIL:
       return state.withMutations((map) => {
-        map.set('users', Immutable.fromJS([]))
+        map.set('users', Immutable.fromJS({}))
         map.set('loadedUsers', false)
         map.set('loadingUsers', false)
       })

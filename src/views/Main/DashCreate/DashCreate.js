@@ -72,7 +72,7 @@ class DashCreate extends Component {
       GameType : "RocketLaunch",
       TargetThreshold : model.MeasureValue,
       QualifyingThreshold : 3,
-      VelocityAccelTimePeriod : "month",
+      VelocityAccelTimePeriod : 30,
       ScoreFormula : "",
       ScoreUnits : "string",
       IsPublic : false,
