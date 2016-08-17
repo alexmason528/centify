@@ -26,7 +26,7 @@ class DashCreate extends Component {
     }
   }
 
-  initialValues() {
+  initialValues() { 
     const endDate = new Date()
     endDate.setDate(endDate.getDate() + parseInt(1))
     return {

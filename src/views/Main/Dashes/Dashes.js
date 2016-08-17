@@ -66,14 +66,12 @@ class Dashes extends Component {
           const loadedParticipants = dash.getIn(['Participants', 'loaded'])
           if (loadedParticipants) {
             const participants = dash.getIn(['Participants', 'items'])
-            const targetType = dash.get('IsTeamDash') ? 'Team' : 'Individual'
             let rewardsPaid = 0
-            participants.forEach(participant => {
-              const val = participant.get('RewardAmount')
-              const amt = val ? parseInt(val) : 0
-              if (participant.get('Type') == targetType) {
-                rewardsPaid += amt
-              }
+            participants.map(participant => {
+              const users = participant.get('Users')
+              users.map(user => {
+                rewardsPaid += user.get('RewardAmount')
+              })
             })
             return rewardsPaid
           } else {
@@ -85,14 +83,14 @@ class Dashes extends Component {
           const loadedParticipants = dash.getIn(['Participants', 'loaded'])
           if (loadedParticipants) {
             const participants = dash.getIn(['Participants', 'items'])
-            const targetType = dash.get('IsTeamDash') ? 'Team' : 'Individual'
             let rewardsCount = 0
             participants.forEach(participant => {
-              const val = participant.get('RewardAmount')
-              const amt = val ? parseInt(val) : 0
-              if (participant.get('Type') == targetType && amt > 0) {
-                rewardsCount++
-              }
+              const users = participant.get('Users')
+              users.map(user => {
+                if (user.get('RewardAmount') > 0) {
+                  rewardsCount++
+                }
+              })
             })
             return rewardsCount
           } else {
