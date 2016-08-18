@@ -25,6 +25,7 @@ var config = getConfig({
   in: join(src, 'app.js'),
   out: dest,
   html: function (context) {
+    var main_css = context.stats.assetsByChunkName.main[2];
     return {
       'index.html': context.defaultTemplate({
         title: 'MyCentify',
@@ -32,7 +33,8 @@ var config = getConfig({
         meta: {
           'name': 'MyCentify',
           'description': 'MyCentify'
-        }
+        },
+        css: main_css
       })
     }
   }
