@@ -12,8 +12,8 @@
   position: relative;
 }
 .todoHelpPopover {
-  display: none;
-  position: absolute;
+  display: none !important;
+  position: absolute !important;
   left: 100%;
   top: 50%;
   margin-left: 15px;
