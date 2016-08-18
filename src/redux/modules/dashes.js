@@ -43,6 +43,9 @@ import {
   DASHES_REWARD_UPDATE,
   DASHES_REWARD_UPDATE_SUCCESS,
   DASHES_REWARD_UPDATE_FAIL,
+  DASHES_REWARD_DELETE,
+  DASHES_REWARD_DELETE_SUCCESS,
+  DASHES_REWARD_DELETE_FAIL,
 
   DASHES_PARTICIPANT_CREATE,
   DASHES_PARTICIPANT_CREATE_SUCCESS,
@@ -282,6 +285,13 @@ export function updateReward(orgId, dashId, rewardId, model) {
   }
 }
 
+export function deleteReward(orgId, dashId, rewardId) {
+  return {
+    types: [DASHES_REWARD_DELETE, DASHES_REWARD_DELETE_SUCCESS, DASHES_REWARD_DELETE_FAIL],
+    promise: (client) => client.del(`/v1/${orgId}/dashes/${dashId}/rewards/${rewardId}`)
+  }
+}
+
 export function createParticipant(orgId, dashId, model) {
   return {
     types: [DASHES_PARTICIPANT_CREATE, DASHES_PARTICIPANT_CREATE_SUCCESS, DASHES_PARTICIPANT_CREATE_FAIL],
@@ -322,7 +332,9 @@ export function deleteTodo(orgId, dashId, todoId) {
 function updateRewards(dispatch, orgId, dashId, rewards) {
   rewards.forEach((reward) => {
     const { saveStatus, ...rewardData } = reward
-    if (reward.saveStatus == 1) {
+    if (reward.deleted) {
+      dispatch(deleteReward(orgId, dashId, reward.Id))
+    } else if (reward.saveStatus == 1) {
       dispatch(createReward(orgId, dashId, rewardData))
     } else if (reward.saveStatus == 2) {
       dispatch(updateReward(orgId, dashId, reward.Id, rewardData))

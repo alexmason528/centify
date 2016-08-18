@@ -10,7 +10,6 @@ import {
   Checkbox, CheckboxGroup,
   Button,
   Container,
-  Icon as LDIcon,
 } from 'react-lightning-design-system'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
@@ -143,18 +142,21 @@ class DashForm extends Component {
   rewardList = (props) => {
     const { value, onChange } = props.input
     const rewards = value ? JSON.parse(value) : []
+    const rewardsCount = rewards.filter(reward => !reward.deleted).length
+    let rewardIndex = 0
     return (
       <div className="slds-m-top--medium">
         <Button type="brand" onClick={() => {
           rewards.push({
             Type: "Cash",
             Description: "",
-            Position: rewards.length + 1,
+            Position: rewardsCount + 1,
             EstimatedRewardAmount: 0,
             MaximumRewardAmount: 0,
             ExternalURL: "",
             Formula: "{}",
             saveStatus: 1,  // 0: saved, 1: new, 2: modified
+            deleted: false,
           })
           onChange(JSON.stringify(rewards))
         }}>Add Reward</Button>
@@ -181,28 +183,34 @@ class DashForm extends Component {
             <tbody>
               {rewards.map((reward, index) => {
                 if (reward.deleted) {
-                  return ''
+                  return undefined
                 }
+                reward.Position = ++rewardIndex
                 return (
                   <tr key={index}>
                     {
-                      this.props.editable ?
+                      this.props.editable?
                       <td data-label="Action">
-                        <a
-                          href="javascript:void(0)"
-                          onClick={e => {
-                            /*if (participants[index].saveStatus == 1) {
-                              participants.splice(index, 1)       // Remove if newly created and not saved
-                            } else {
-                              participants[index].deleted = true  // Set deleted flag
-                            }*/
-                            onChange(JSON.stringify(rewards))
-                          }}>
-                          Remove
-                        </a>
+                        {
+                          rewardsCount == reward.Position ?
+                          <a
+                            href="javascript:void(0)"
+                            onClick={e => {
+                              if (rewards[index].saveStatus == 1) {
+                                rewards.splice(index, 1)       // Remove if newly created and not saved
+                              } else {
+                                rewards[index].deleted = true  // Set deleted flag
+                              }
+                              onChange(JSON.stringify(rewards))
+                            }}>
+                            Remove
+                          </a>
+                          :
+                          undefined
+                        }
                       </td>
                       :
-                      ''
+                      undefined
                     }
                     <td data-label="Position">
                       {numWithSurfix(reward.Position)}
@@ -232,6 +240,11 @@ class DashForm extends Component {
     const { selectedAllTodos } = this.state
     const todos = value ? JSON.parse(value) : []
     const allTodos = this.props.todos
+    const helpIconStyle = {
+      fontSize: '1.3em',
+      verticalAlign: 'middle',
+      color: '#7cc74c',
+    }
     return (
       <div>
         <div className="slds-m-bottom--small">Select one or more Todos for this dash</div>
@@ -269,7 +282,16 @@ class DashForm extends Component {
                     onChange(JSON.stringify(todos))
                   }} />
               </div>
-              <LDIcon size='x-small' icon="help" />
+              <span className={styles.todoHelpIconWrapper}>
+                <a href="javascript:void(0)">
+                  <Icon name="question-circle" style={helpIconStyle} />
+                </a>
+                <div className={'slds-popover slds-nubbin--left ' + styles.todoHelpPopover} role="dialog">
+                  <div className="slds-popover__body">
+                    <p>{todo.get('Description')}</p>
+                  </div>
+                </div>
+              </span>
             </div>
           ))}
         </div>
@@ -340,6 +362,7 @@ class DashForm extends Component {
                       UserId: users.get(selectedUserId).get('Id'),
                     }],
                     saveStatus: 1,  // 0: saved, 1: new, 2: modified
+                    deleted: false,
                   })
                   onChange(JSON.stringify(participants))
                 }
@@ -360,7 +383,7 @@ class DashForm extends Component {
                     <div className="slds-truncate" title="Action">Action</div>
                   </th>
                   :
-                  ''
+                  undefined
                 }
                 <th scope="col">
                   <div className="slds-truncate" title="Participant">Participant</div>
@@ -393,7 +416,7 @@ class DashForm extends Component {
                         </a>
                       </td>
                       :
-                      ''
+                      undefined
                     }
                     <td data-label="Participant">
                       <div className="slds-tile slds-media" style={participantStyle}>
