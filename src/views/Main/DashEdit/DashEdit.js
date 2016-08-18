@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Grid, Row, Col, } from 'react-lightning-design-system'
+import { Button, Grid, Row, Col } from 'react-lightning-design-system'
 
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import DashForm from 'components/DashForm/DashForm'
@@ -184,4 +184,4 @@ class DashEdit extends Component {
 
 }
 
-export default hoc(DashEdit);
+export default hoc(DashEdit)

@@ -30,6 +30,15 @@ class Dashes extends Component {
     this.props.filterDashes(filter)
   }
 
+  openDash = (dash) => {
+    const status = dash.get('Status')
+    if (status == 'Draft' || status == 'Upcoming') {
+      this.editDash(dash.get('Id'))
+    } else {
+      this.props.push(`/dashes/${dash.get('Id')}/report`)
+    }
+  }
+
   editDash = (dashId) => {
     this.props.push(`/dashes/${dashId}`)
   }
@@ -229,7 +238,7 @@ class Dashes extends Component {
                   </DropdownButton>)
                 }
                 return filter == '' || dash.get('Status') == filter ?
-                  (<tr key={id} onClick={this.editDash.bind(this, id)} style={{ cursor: 'pointer' }}>
+                  (<tr key={id} onClick={this.openDash.bind(this, dash)} style={{ cursor: 'pointer' }}>
                     {columns.map((column, index) => {
                       const value = this.getFieldValue(dash, column.field)
                       return (

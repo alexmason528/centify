@@ -72,6 +72,7 @@ const initialState = Immutable.fromJS({
   filter: 'Draft',
   currentDash: {},
   loading: false,
+  loaded: false,
   loadingParticipants: false,
   loadingRewards: false,
 })
@@ -123,6 +124,7 @@ export default function dashes(state = initialState, action) {
       return state.withMutations((map) => {
         map.set('currentDash', Immutable.fromJS({}))
         map.set('loading', true)
+        map.set('loaded', false)
         map.set('loadingParticipants', true)
         map.set('loadingRewards', true)
       })
@@ -130,11 +132,13 @@ export default function dashes(state = initialState, action) {
       return state.withMutations((map) => {
         map.set('currentDash', Immutable.fromJS(action.result))
         map.set('loading', false)
+        map.set('loaded', true)
       })
     case DASHES_SINGLE_GET_FAIL:
       return state.withMutations((map) => {
         map.set('currentDash', Immutable.fromJS({}))
         map.set('loading', false)
+        map.set('loaded', false)
       })
     /* Single dash - participants */
     case DASHES_SINGLE_GET_PARTICIPANTS:
