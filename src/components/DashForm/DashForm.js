@@ -251,25 +251,27 @@ class DashForm extends Component {
             onChange(JSON.stringify(todos))
           }} />
         <div className="slds-m-top--medium">
-          {
-            allTodos.map((todo, index) => (
-              <Checkbox
-                key={index}
-                className="slds-m-bottom--x-small"
-                label={(index + 1) + '. ' + todo.get('Name')}
-                checked={todos[index] && !!todos[index].value}
-                onChange={(e) => {
-                  todos[index] = todos[index] ? todos[index] : { value: false, existed: false }
-                  todos[index].value = e.currentTarget.checked
-                  if (!todos[index].value) {
-                    this.setState({
-                      selectedAllTodos: false
-                    })
-                  }
-                  onChange(JSON.stringify(todos))
-                }}/>
-            ))
-          }
+          {allTodos.map((todo, index) => (
+            <div key={index}>
+              <div className={styles.todoCheckbox}>
+                <Checkbox
+                  className="slds-m-bottom--x-small"
+                  label={(index + 1) + '. ' + todo.get('Name')}
+                  checked={todos[index] && !!todos[index].value}
+                  onChange={(e) => {
+                    todos[index] = todos[index] ? todos[index] : { value: false, existed: false }
+                    todos[index].value = e.currentTarget.checked
+                    if (!todos[index].value) {
+                      this.setState({
+                        selectedAllTodos: false
+                      })
+                    }
+                    onChange(JSON.stringify(todos))
+                  }} />
+              </div>
+              <LDIcon size='x-small' icon="help" />
+            </div>
+          ))}
         </div>
       </div>
     )
@@ -401,17 +403,6 @@ class DashForm extends Component {
                           </span>
                         </div>
                         <div className="slds-media__body">
-                          {/*
-                            this.props.editable ?
-                            <a
-                              href="javascript:void(0)"
-                              className="slds-float--right"
-                              >
-                              <LDIcon icon="close" style={closeIconStyle}/>
-                            </a>
-                            :
-                            ''
-                          */}
                           <h3 className="slds-truncate" title={username}>{username}</h3>
                           <div className="slds-tile__detail slds-text-body--small">
                             <dl className="slds-dl--horizontal">
@@ -439,137 +430,131 @@ class DashForm extends Component {
   render() {
     const { handleSubmit, submitting, RewardTypeValue, editable } = this.props
     return (
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
         <Grid>
-          <Row cols={6}>
-            <Col cols={6} colsSmall={5} colsMedium={4}>
 
-              <Row cols={6} className="slds-m-top--large">
-                <Col padded cols={6} className="slds-m-bottom--small">
-                  <h2 className={styles.fieldTitle}>Dash name</h2>
-                </Col>
-                <Col padded cols={6} colsSmall={3} colsMedium={2}>
-                  <Field name="Name" component={this.nameInput}/>
-                </Col>
-                <Col padded cols={6} colsSmall={3} colsMedium={4}>
-                </Col>
-              </Row>
-
-              <Row cols={6} className="slds-m-top--xx-large">
-                <Col padded cols={6} className="slds-m-bottom--small">
-                  <h2 className={styles.fieldTitle}>Theme</h2>
-                </Col>
-                <Col padded cols={6} colsSmall={3} colsMedium={2}>
-                  {this.themeSelect()}
-                </Col>
-                <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
-              </Row>
-
-              <Row cols={6} className="slds-m-top--xx-large">
-                <Col padded cols={6} className="slds-m-bottom--small">
-                  <h2 className={styles.fieldTitle}>Goal</h2>
-                </Col>
-                <Col padded cols={6} colsSmall={3} colsMedium={1}>
-                  What is the metric?
-                </Col>
-                <Col padded cols={6} colsSmall={3} colsMedium={2}>
-                  {this.metricSelect()}
-                </Col>
-                <Col padded cols={6} colsSmall={3} colsMedium={2}></Col>
-                <Col padded cols={6} className="slds-m-top--medium">
-                  <Field name="MeasureValue" component={this.goalSlider}/>
-                </Col>
-              </Row>
-
-              <Row cols={6} className="slds-m-top--xx-large">
-                <Col padded cols={6} className="slds-m-bottom--medium">
-                  <h2 className={styles.fieldTitle}>Duration</h2>
-                </Col>
-                <Col padded cols={6} colsMedium={2}>
-                  <div className="slds-m-bottom--x-small">Start Date & Time</div>
-                  <Field name="StartsAt" component={this.dateInput}/>
-                </Col>
-                <Col padded cols={6} colsMedium={2}>
-                  <div className="slds-m-bottom--x-small">End Date & Time</div>
-                  <Field name="EndsAt" component={this.dateInput}/>
-                </Col>
-                <Col padded cols={6} colsMedium={2}>
-                  {/*
-                  <div className="slds-m-bottom--x-small">Calculated Duration</div>
-                  <div>
-                    <Field name="durationDays" component={this.inlineInput}/> Days&nbsp;&nbsp;&nbsp;
-                    <Field name="durationHours" component={this.inlineInput}/> Hours
-                  </div>
-                  */}
-                </Col>
-              </Row>
-
-              <Row cols={6} className="slds-m-top--xx-large">
-                <Col padded cols={6} className="slds-m-bottom--medium">
-                  <h2 className={styles.fieldTitle}>Rewards</h2>
-                </Col>
-                <Col padded cols={6} colsMedium={4}>
-                  {this.rewardTypeSelect()}
-                </Col>
-                <Col padded cols={6} colsMedium={2}>
-                  <table>
-                    <tbody>
-                      <tr>
-                        <td>Your Budget: </td><td><strong>$10,000</strong></td>
-                      </tr><tr>
-                        <td>This Dash: </td><td><strong>$6,000</strong></td>
-                      </tr><tr>
-                        <td>Balance: </td><td><strong>$4,000</strong></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </Col>
-                <Col padded cols={6} className="slds-m-top--small">
-                  {
-                    RewardTypeValue == 'Multiple reward positions' ?
-                    <Field name="rewards" component={this.rewardList} />
-                    :
-                    <div>
-                      What is the reward amount?
-                      <Field name="RewardAmount" component={this.rewardInput} />
-                    </div>
-                  }
-                </Col>
-              </Row>
-
-              <Row cols={6} className="slds-m-top--xx-large">
-                <Col padded cols={6} className="slds-m-bottom--medium">
-                  <h2 className={styles.fieldTitle}>Todos</h2>
-                </Col>
-                <Col padded cols={6}>
-                  <Field name="todos" component={this.todoList} />
-                </Col>
-              </Row>
-
-              <Row cols={6} className="slds-m-top--xx-large">
-                <Col padded cols={6} className="slds-m-bottom--medium">
-                  <h2 className={styles.fieldTitle}>Participants</h2>
-                </Col>
-                <Col padded cols={6}>
-                  <Field name="participants" component={this.participantList} />
-                </Col>
-              </Row>
-
-              <Row cols={6} className="slds-m-vertical--x-large">
-                <Col padded>
-                  <div style={{ textAlign: 'right' }}>
-                    <Link to='/dashes' style={{ marginRight: 10, display: 'inline-block' }}>
-                      <Button type="neutral">Cancel</Button>
-                    </Link>
-                    <button type="submit" className="slds-button slds-button--brand" disabled={!editable || submitting}>Save Dash</button>
-                  </div>
-                </Col>
-              </Row>
-
+          <Row cols={6} className="slds-m-top--large">
+            <Col padded cols={6} className="slds-m-bottom--small">
+              <h2 className={styles.fieldTitle}>Dash name</h2>
             </Col>
-            <Col cols={6} colsSmall={1} colsMedium={2}>
+            <Col padded cols={6} colsSmall={3} colsMedium={2}>
+              <Field name="Name" component={this.nameInput}/>
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={4}>
             </Col>
           </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--small">
+              <h2 className={styles.fieldTitle}>Theme</h2>
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={2}>
+              {this.themeSelect()}
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--small">
+              <h2 className={styles.fieldTitle}>Goal</h2>
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={1}>
+              What is the metric?
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={2}>
+              {this.metricSelect()}
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={2}></Col>
+            <Col padded cols={6} className="slds-m-top--medium">
+              <Field name="MeasureValue" component={this.goalSlider}/>
+            </Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--medium">
+              <h2 className={styles.fieldTitle}>Duration</h2>
+            </Col>
+            <Col padded cols={6} colsMedium={2}>
+              <div className="slds-m-bottom--x-small">Start Date & Time</div>
+              <Field name="StartsAt" component={this.dateInput}/>
+            </Col>
+            <Col padded cols={6} colsMedium={2}>
+              <div className="slds-m-bottom--x-small">End Date & Time</div>
+              <Field name="EndsAt" component={this.dateInput}/>
+            </Col>
+            <Col padded cols={6} colsMedium={2}>
+              {/*
+              <div className="slds-m-bottom--x-small">Calculated Duration</div>
+              <div>
+                <Field name="durationDays" component={this.inlineInput}/> Days&nbsp;&nbsp;&nbsp;
+                <Field name="durationHours" component={this.inlineInput}/> Hours
+              </div>
+              */}
+            </Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--medium">
+              <h2 className={styles.fieldTitle}>Rewards</h2>
+            </Col>
+            <Col padded cols={6} colsMedium={4}>
+              {this.rewardTypeSelect()}
+            </Col>
+            <Col padded cols={6} colsMedium={2}>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Your Budget: </td><td><strong>$10,000</strong></td>
+                  </tr><tr>
+                    <td>This Dash: </td><td><strong>$6,000</strong></td>
+                  </tr><tr>
+                    <td>Balance: </td><td><strong>$4,000</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </Col>
+            <Col padded cols={6} className="slds-m-top--small">
+              {
+                RewardTypeValue == 'Multiple reward positions' ?
+                <Field name="rewards" component={this.rewardList} />
+                :
+                <div>
+                  What is the reward amount?
+                  <Field name="RewardAmount" component={this.rewardInput} />
+                </div>
+              }
+            </Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--medium">
+              <h2 className={styles.fieldTitle}>Todos</h2>
+            </Col>
+            <Col padded cols={6}>
+              <Field name="todos" component={this.todoList} />
+            </Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--medium">
+              <h2 className={styles.fieldTitle}>Participants</h2>
+            </Col>
+            <Col padded cols={6}>
+              <Field name="participants" component={this.participantList} />
+            </Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-vertical--x-large">
+            <Col padded>
+              <div style={{ textAlign: 'right' }}>
+                <Link to='/dashes' style={{ marginRight: 10, display: 'inline-block' }}>
+                  <Button type="neutral">Cancel</Button>
+                </Link>
+                <button type="submit" className="slds-button slds-button--brand" disabled={!editable || submitting}>Save Dash</button>
+              </div>
+            </Col>
+          </Row>
+
         </Grid>
       </form>
     )
