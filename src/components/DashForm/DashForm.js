@@ -15,7 +15,7 @@ import {
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 
-import { formatDate2 } from 'utils/formatter'
+import { formatDate2, numWithSurfix } from 'utils/formatter'
 import DateInput from 'components/DateInput/DateInput'
 import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
@@ -45,7 +45,6 @@ class DashForm extends Component {
           <div className="slds-select_container">
             <Field name={"Type"} component="select" className="slds-select">
               <option value='OverTheLine'>Over the Line</option>
-              <option value='TugOfWar'>Tug of War</option>
               <option value='Timebomb'>Time Bomb</option>
             </Field>
           </div>
@@ -159,45 +158,76 @@ class DashForm extends Component {
           })
           onChange(JSON.stringify(rewards))
         }}>Add Reward</Button>
-        <div className="slds-card slds-m-top--medium">
-          <div className="slds-card__body">
-            <div className="slds-card__body--inner slds-p-vertical--medium">
-              <table>
-                <tbody>
-                  {rewards.map((reward, index) => (
-                    <tr key={index}>
-                      <td className="slds-p-right--medium slds-p-bottom--small" style={{ width: '100%' }}>
-                        <Input type="text" value={reward.Position} readOnly/>
+        <div className="slds-m-top--medium">
+          <table className="slds-table slds-table--bordered slds-table--cell-buffer">
+            <thead>
+              <tr className="slds-text-heading--label">
+                {
+                  this.props.editable ?
+                  <th scope="col">
+                    <div className="slds-truncate" title="Action">Action</div>
+                  </th>
+                  :
+                  ''
+                }
+                <th scope="col">
+                  <div className="slds-truncate" title="Participant">Participant</div>
+                </th>
+                <th scope="col">
+                  <div className="slds-truncate" title="Reward">Reward ($)</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {rewards.map((reward, index) => {
+                if (reward.deleted) {
+                  return ''
+                }
+                return (
+                  <tr key={index}>
+                    {
+                      this.props.editable ?
+                      <td data-label="Action">
+                        <a
+                          href="javascript:void(0)"
+                          onClick={e => {
+                            /*if (participants[index].saveStatus == 1) {
+                              participants.splice(index, 1)       // Remove if newly created and not saved
+                            } else {
+                              participants[index].deleted = true  // Set deleted flag
+                            }*/
+                            onChange(JSON.stringify(rewards))
+                          }}>
+                          Remove
+                        </a>
                       </td>
-                      <td className="slds-p-bottom--small" style={{ minWidth: 150 }}>
-                        <Input type='number' defaultValue={reward.EstimatedRewardAmount} onChange={(e) => {
-                          rewards[index].EstimatedRewardAmount = parseInt(e.currentTarget.value)
-                          rewards[index].MaximumRewardAmount = parseInt(e.currentTarget.value)
-                          if (rewards[index].saveStatus == 0) {
-                            rewards[index].saveStatus = 2
-                          }
-                          onChange(JSON.stringify(rewards))
-                        }}/>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+                      :
+                      ''
+                    }
+                    <td data-label="Position">
+                      {numWithSurfix(reward.Position)}
+                    </td>
+                    <td data-label="Reward Amount">
+                      <Input type='number' defaultValue={reward.EstimatedRewardAmount} onChange={(e) => {
+                        rewards[index].EstimatedRewardAmount = parseInt(e.currentTarget.value)
+                        rewards[index].MaximumRewardAmount = parseInt(e.currentTarget.value)
+                        if (rewards[index].saveStatus == 0) {
+                          rewards[index].saveStatus = 2
+                        }
+                        onChange(JSON.stringify(rewards))
+                      }}/>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     )
   }
 
   todoList = (props) => {
-    const optionsContainerStyle = {
-      overflow: 'auto',
-      padding: 15,
-      border: '1px solid #d8dde6',
-      borderRadius: 3,
-      height: 200
-    }
     const { value, onChange } = props.input
     const { selectedAllTodos } = this.state
     const todos = value ? JSON.parse(value) : []
@@ -220,7 +250,7 @@ class DashForm extends Component {
             })
             onChange(JSON.stringify(todos))
           }} />
-        <div style={optionsContainerStyle}>
+        <div className="slds-m-top--medium">
           {
             allTodos.map((todo, index) => (
               <Checkbox
@@ -246,16 +276,8 @@ class DashForm extends Component {
   }
 
   participantList = (props) => {
-    const optionsContainerStyle = {
-      overflow: 'auto',
-      padding: 15,
-      border: '1px solid #d8dde6',
-      borderRadius: 3,
-      height: 200
-    }
     const participantStyle = {
       maxWidth: 450,
-      marginBottom: 15,
     }
     const userSelectStyle = {
       maxWidth: 300,
@@ -273,7 +295,7 @@ class DashForm extends Component {
     return (
       <div>
         <div className="slds-clearfix slds-m-bottom--small">
-          <div className="slds-float--left">{participants.filter(p => (!p.deleted)).length} participants</div>
+          <div className="slds-float--left slds-p-vertical--x-small">Total Participants: {participants.filter(p => (!p.deleted)).length}</div>
           <div className="slds-float--right">
             <div style={userSelectStyle}>
               <Select
@@ -286,6 +308,7 @@ class DashForm extends Component {
                     selectedUserId: e.currentTarget.value
                   })
                 }}>
+                <Option value={0}>-- Select user to add --</Option>
                 {
                   users.valueSeq().map((user, index) => (
                     <Option key={index} value={user.get('Id')}>{user.get('DisplayName')}</Option>
@@ -304,73 +327,110 @@ class DashForm extends Component {
                 }
               }
               if (!dup) {
-                participants.push( {
-                  Type: "User",
-                  DisplayName: "",
-                  Name: users.get(selectedUserId).get('FirstName') + ' ' + users.get(selectedUserId).get('LastName'),
-                  AvatarURL: users.get(selectedUserId).get('AvatarURL'),
-                  Email: users.get(selectedUserId).get('Email'),
-                  Users: [{
-                    UserId: users.get(selectedUserId).get('Id'),
-                  }],
-                  saveStatus: 1,  // 0: saved, 1: new, 2: modified
-                })
-                onChange(JSON.stringify(participants))
+                if (selectedUserId) {
+                  participants.push( {
+                    Type: "User",
+                    DisplayName: "",
+                    Name: users.get(selectedUserId).get('FirstName') + ' ' + users.get(selectedUserId).get('LastName'),
+                    AvatarURL: users.get(selectedUserId).get('AvatarURL'),
+                    Email: users.get(selectedUserId).get('Email'),
+                    Users: [{
+                      UserId: users.get(selectedUserId).get('Id'),
+                    }],
+                    saveStatus: 1,  // 0: saved, 1: new, 2: modified
+                  })
+                  onChange(JSON.stringify(participants))
+                }
               } else {
                 participants[dupIndex].deleted = false
                 onChange(JSON.stringify(participants))
               }
             }}>Add User</Button>
           </div>
-        </div> 
-        <div style={optionsContainerStyle}>
-          {participants.map((participant, index) => {
-            if (participant.deleted) {
-              return ''
-            }
-            const user = users.get(participant.Users[0].UserId)
-            const username = user.get('FirstName') + ' ' + user.get('LastName')
-            return (
-              <div className="slds-tile slds-media" key={index} style={participantStyle}>
-                <div className="slds-media__figure">
-                  <span className="slds-avatar slds-avatar--circle slds-avatar--small">
-                    <img src={user.get('AvatarURL')} alt={username} />
-                  </span>
-                </div>
-                <div className="slds-media__body">
-                  {
-                    this.props.editable ?
-                    <a
-                      href="javascript:void(0)"
-                      className="slds-float--right"
-                      onClick={e => {
-                        if (participants[index].saveStatus == 1) {
-                          participants.splice(index, 1)       // Remove if newly created and not saved
-                        } else {
-                          participants[index].deleted = true  // Set deleted flag
-                        }
-                        onChange(JSON.stringify(participants))
-                      }}>
-                      <LDIcon icon="close" style={closeIconStyle}/>
-                    </a>
-                    :
-                    ''
-                  }
-                  <h3 className="slds-truncate" title={username}>{username}</h3>
-                  <div className="slds-tile__detail slds-text-body--small">
-                    <dl className="slds-dl--horizontal">
-                      <dt className="slds-dl--horizontal__label" style={{ maxWidth: 50 }}>
-                        <p className="slds-truncate" title="Email">Email:</p>
-                      </dt>
-                      <dd className="slds-dl--horizontal__detail slds-tile__meta">
-                        <p className="slds-truncate" title={user.get('Email')}>{user.get('Email')}</p>
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+        </div>
+        <div className="slds-m-vertical--medium">
+          <table className="slds-table slds-table--bordered slds-table--cell-buffer">
+            <thead>
+              <tr className="slds-text-heading--label">
+                {
+                  this.props.editable ?
+                  <th scope="col">
+                    <div className="slds-truncate" title="Action">Action</div>
+                  </th>
+                  :
+                  ''
+                }
+                <th scope="col">
+                  <div className="slds-truncate" title="Participant">Participant</div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {participants.map((participant, index) => {
+                if (participant.deleted) {
+                  return ''
+                }
+                const user = users.get(participant.Users[0].UserId)
+                const username = user.get('FirstName') + ' ' + user.get('LastName')
+                return (
+                  <tr key={index}>
+                    {
+                      this.props.editable ?
+                      <td data-label="Action">
+                        <a
+                          href="javascript:void(0)"
+                          onClick={e => {
+                            if (participants[index].saveStatus == 1) {
+                              participants.splice(index, 1)       // Remove if newly created and not saved
+                            } else {
+                              participants[index].deleted = true  // Set deleted flag
+                            }
+                            onChange(JSON.stringify(participants))
+                          }}>
+                          Remove
+                        </a>
+                      </td>
+                      :
+                      ''
+                    }
+                    <td data-label="Participant">
+                      <div className="slds-tile slds-media" style={participantStyle}>
+                        <div className="slds-media__figure">
+                          <span className="slds-avatar slds-avatar--circle slds-avatar--small">
+                            <img src={user.get('AvatarURL')} alt={username} />
+                          </span>
+                        </div>
+                        <div className="slds-media__body">
+                          {/*
+                            this.props.editable ?
+                            <a
+                              href="javascript:void(0)"
+                              className="slds-float--right"
+                              >
+                              <LDIcon icon="close" style={closeIconStyle}/>
+                            </a>
+                            :
+                            ''
+                          */}
+                          <h3 className="slds-truncate" title={username}>{username}</h3>
+                          <div className="slds-tile__detail slds-text-body--small">
+                            <dl className="slds-dl--horizontal">
+                              <dt className="slds-dl--horizontal__label" style={{ maxWidth: 50 }}>
+                                <p className="slds-truncate" title="Email">Email:</p>
+                              </dt>
+                              <dd className="slds-dl--horizontal__detail slds-tile__meta">
+                                <p className="slds-truncate" title={user.get('Email')}>{user.get('Email')}</p>
+                              </dd>
+                            </dl>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
     )
@@ -386,7 +446,7 @@ class DashForm extends Component {
 
               <Row cols={6} className="slds-m-top--large">
                 <Col padded cols={6} className="slds-m-bottom--small">
-                  <h2 className={styles.fieldTitle}>Enter Dash name</h2>
+                  <h2 className={styles.fieldTitle}>Dash name</h2>
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={2}>
                   <Field name="Name" component={this.nameInput}/>
@@ -397,7 +457,7 @@ class DashForm extends Component {
 
               <Row cols={6} className="slds-m-top--xx-large">
                 <Col padded cols={6} className="slds-m-bottom--small">
-                  <h2 className={styles.fieldTitle}>Step 1 - Select Theme</h2>
+                  <h2 className={styles.fieldTitle}>Theme</h2>
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={2}>
                   {this.themeSelect()}
@@ -407,7 +467,7 @@ class DashForm extends Component {
 
               <Row cols={6} className="slds-m-top--xx-large">
                 <Col padded cols={6} className="slds-m-bottom--small">
-                  <h2 className={styles.fieldTitle}>Step 2 - Select Goal</h2>
+                  <h2 className={styles.fieldTitle}>Goal</h2>
                 </Col>
                 <Col padded cols={6} colsSmall={3} colsMedium={1}>
                   What is the metric?
@@ -423,8 +483,7 @@ class DashForm extends Component {
 
               <Row cols={6} className="slds-m-top--xx-large">
                 <Col padded cols={6} className="slds-m-bottom--medium">
-                  <h2 className={styles.fieldTitle}>Step 3 - Set the Dash</h2>
-                  (UTC+10:00) Sydney, Canberra, Melbourne
+                  <h2 className={styles.fieldTitle}>Duration</h2>
                 </Col>
                 <Col padded cols={6} colsMedium={2}>
                   <div className="slds-m-bottom--x-small">Start Date & Time</div>
@@ -447,7 +506,7 @@ class DashForm extends Component {
 
               <Row cols={6} className="slds-m-top--xx-large">
                 <Col padded cols={6} className="slds-m-bottom--medium">
-                  <h2 className={styles.fieldTitle}>Step 4 - Set the Keywords</h2>
+                  <h2 className={styles.fieldTitle}>Rewards</h2>
                 </Col>
                 <Col padded cols={6} colsMedium={4}>
                   {this.rewardTypeSelect()}
@@ -480,7 +539,7 @@ class DashForm extends Component {
 
               <Row cols={6} className="slds-m-top--xx-large">
                 <Col padded cols={6} className="slds-m-bottom--medium">
-                  <h2 className={styles.fieldTitle}>Step 5 - Select the Todos</h2>
+                  <h2 className={styles.fieldTitle}>Todos</h2>
                 </Col>
                 <Col padded cols={6}>
                   <Field name="todos" component={this.todoList} />
@@ -489,7 +548,7 @@ class DashForm extends Component {
 
               <Row cols={6} className="slds-m-top--xx-large">
                 <Col padded cols={6} className="slds-m-bottom--medium">
-                  <h2 className={styles.fieldTitle}>Step 6 - Add the Participants</h2>
+                  <h2 className={styles.fieldTitle}>Participants</h2>
                 </Col>
                 <Col padded cols={6}>
                   <Field name="participants" component={this.participantList} />

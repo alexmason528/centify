@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button } from 'react-lightning-design-system'
+import { Button, Grid, Row, Col, } from 'react-lightning-design-system'
 
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import DashForm from 'components/DashForm/DashForm'
@@ -165,6 +165,13 @@ class DashEdit extends Component {
     const editable = currentDash.get('Status') && currentDash.get('Status').toLowerCase() == 'draft'
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
+        <Grid className="slds-p-vertical--large">
+          <Row cols={6}>
+            <Col padded cols={6}>
+              <h2 className={styles.pageTitle}>Edit Dash</h2>
+            </Col>
+          </Row>
+        </Grid>
         <DashForm
           onSubmit={(model) => this.onSubmit(model)}
           initialValues={this.initialValues()}

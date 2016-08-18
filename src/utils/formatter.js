@@ -4,7 +4,7 @@ export function format2Digits(n) {
 
 export function nth(n) {
   const m = n % 10
-  const t = n / 10
+  const t = parseInt(n / 10)
   if (t == 1) {
     return 'th'
   }
@@ -18,6 +18,10 @@ export function nth(n) {
     return 'rd'
   }
   return 'th'
+}
+
+export function numWithSurfix(n) {
+  return n + nth(n)
 }
 
 export function formatDate(date = null, includeHM = true, includeSec = true) {

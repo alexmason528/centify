@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button } from 'react-lightning-design-system'
+import { Button, Grid, Row, Col, } from 'react-lightning-design-system'
 
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import DashForm from 'components/DashForm/DashForm'
@@ -108,6 +108,13 @@ class DashCreate extends Component {
     }
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
+        <Grid className="slds-p-vertical--large">
+          <Row cols={6}>
+            <Col padded cols={6}>
+              <h2 className={styles.pageTitle}>Create New Dash</h2>
+            </Col>
+          </Row>
+        </Grid>
         <DashForm
           editable
           onSubmit={(model) => this.onSubmit(model)}
