@@ -94,9 +94,12 @@ class DashReport extends Component {
 
   renderNotJoinedParticipants = () => {
     const { currentDash, users } = this.props
-    const joinedParticipants = currentDash.get('Participants').filter(p => p.get('Status').toLowerCase() != 'joined')
+    const notJoinedParticipants = currentDash.get('Participants').filter(p => p.get('Status').toLowerCase() != 'joined')
     const participantStyle = {
       maxWidth: 450,
+    }
+    if (!notJoinedParticipants.size) {
+      return undefined
     }
     return (
       <div className="slds-p-top--large">
@@ -110,7 +113,7 @@ class DashReport extends Component {
             </tr>
           </thead>
           <tbody>
-            {joinedParticipants.valueSeq().map((participant, index) => {
+            {notJoinedParticipants.valueSeq().map((participant, index) => {
               const user = users.get(participant.getIn(['Users', 0, 'UserId']))
               if (!user) {
                 return undefined
