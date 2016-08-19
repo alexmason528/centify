@@ -1,0 +1,10 @@
+.timer {
+  font-size: 18px;
+}
+.timer td {
+  vertical-align: top;
+}
+.timer td:nth-child(2n+1) {
+  text-align: center;
+  padding: 0 10px;
+}

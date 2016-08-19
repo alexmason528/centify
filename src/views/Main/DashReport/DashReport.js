@@ -2,28 +2,13 @@ import React, { Component } from 'react'
 import { Button, Grid, Row, Col } from 'react-lightning-design-system'
 
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
+import DashReportTimer from 'components/DashReportTimer/DashReportTimer'
 import { numWithSurfix } from 'utils/formatter'
 import styles from './styles.module.css'
 import hoc from './hoc'
 
 
 class DashReport extends Component {
-
-  componentDidMount() {
-    const auth = this.props.auth
-    if (auth) {
-      const profile = auth.getProfile()
-      // Get users
-      const { getUsers, loadedUsers, getDash } = this.props
-      if (!loadedUsers) {
-        getUsers(profile.centifyOrgId)
-      }
-      // Get dash
-      if (this.props.params.dashId) {
-        getDash(profile.centifyOrgId, this.props.params.dashId)
-      }
-    }
-  }
 
   sumOfOneField(participant, field) {
     let sum = 0
@@ -35,7 +20,7 @@ class DashReport extends Component {
 
   renderJoinedParticipants = () => {
     const { currentDash, users } = this.props
-    const joinedParticipants = currentDash.get('Participants').filter(p => p.get('Status').toLowerCase() == 'joined').sortBy(p => p.get('Score'))
+    const joinedParticipants = currentDash.get('Participants').filter(p => p.get('Status').toLowerCase() == 'joined').sortBy(p => p.get('Position') ? p.get('Position') : 9999)
     const participantStyle = {
       maxWidth: 450,
     }
@@ -68,7 +53,7 @@ class DashReport extends Component {
               return (
                 <tr key={index}>
                   <td data-label="Position">
-                    {numWithSurfix(index + 1)}
+                    {participant.get('Position') ? numWithSurfix(participant.get('Position')) : '-'}
                   </td>
                   <td data-label="Participant">
                     <div className="slds-tile slds-media" style={participantStyle}>
@@ -115,7 +100,7 @@ class DashReport extends Component {
     }
     return (
       <div className="slds-p-top--large">
-        <h2 className={styles.pageTitle + ' slds-m-vertical--large'}>Not Joined</h2>
+        <h2 className={styles.pageTitle1 + ' slds-m-vertical--large'}>Not Joined</h2>
         <table className="slds-table slds-table--bordered slds-table--cell-buffer">
           <thead>
             <tr className="slds-text-heading--label">
@@ -164,6 +149,43 @@ class DashReport extends Component {
     )
   }
 
+  estimatedRewardAmount = () => {
+    const { currentDash } = this.props
+    let amt = 0
+    const rewards = currentDash.get('Rewards')
+    rewards.map(reward => {
+      amt += parseInt(reward.get('EstimatedRewardAmount'))
+    })
+    return amt
+  }
+
+  refresh = () => {
+    const auth = this.props.auth
+    if (auth) {
+      const profile = auth.getProfile()
+      // Get dash
+      if (this.props.params.dashId) {
+        this.props.getDash(profile.centifyOrgId, this.props.params.dashId)
+      }
+    }
+  }
+
+  componentDidMount() {
+    const auth = this.props.auth
+    if (auth) {
+      const profile = auth.getProfile()
+      // Get users
+      const { getUsers, loadedUsers, getDash } = this.props
+      if (!loadedUsers) {
+        getUsers(profile.centifyOrgId)
+      }
+      // Get dash
+      if (this.props.params.dashId) {
+        getDash(profile.centifyOrgId, this.props.params.dashId)
+      }
+    }
+  }
+
   render() {
     const { currentDash, loading, loaded, loadingParticipants, loadingRewards, loadingUsers, users } = this.props
     if (loading || loadingParticipants || loadingRewards || loadingUsers || !loaded) {
@@ -174,12 +196,29 @@ class DashReport extends Component {
     const containerStyle = {
       maxWidth: 1200,
     }
+    const headerContainerStyle = {
+      display: 'flex',
+      alignItems: 'center',
+    }
+    const midPartStyle = {
+      flexGrow: 1,
+    }
+    const endDate = new Date(currentDash.get('EndsAt'))
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium" style={containerStyle}>
-        <Grid className="slds-p-vertical--large">
+        <Grid>
           <Row cols={6}>
             <Col padded cols={6}>
-              <h2 className={styles.pageTitle}>Dash for cash</h2>
+              <div className="slds-p-vertical--large" style={headerContainerStyle}>
+                <h2 className={styles.pageTitle} style={{ flexGrow: 1 }}>{currentDash.get('Name')}</h2>
+                <DashReportTimer endDate={endDate} />
+                <h2 className={styles.pageTitle1 + ' slds-text-align--right'} style={{ flexGrow: 1 }}>Estimated Reward: ${this.estimatedRewardAmount()}</h2>
+              </div>
+              <div className="slds-p-vertical--medium slds-text-align--right">
+                <Button
+                  type="brand"
+                  onClick={() => this.refresh()}>Refresh Dash</Button>
+              </div>
               {this.renderJoinedParticipants()}
               {this.renderNotJoinedParticipants()}
             </Col>
