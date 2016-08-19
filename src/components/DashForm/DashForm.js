@@ -83,10 +83,7 @@ class DashForm extends Component {
     return (
       <div>
         <span>What is the target value (use slider to set)? </span>
-        <Input type="text" value={_value} readOnly style={valueStyle}/>
-        <div className="slds-p-top--medium">
-          <Slider min={0} max={5000} step={1} value={_value} {...otherProps}/>
-        </div>
+        <Input type="text" style={valueStyle} {...props.input}/>
       </div>
     )
   }

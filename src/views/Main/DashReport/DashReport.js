@@ -61,7 +61,7 @@ class DashReport extends Component {
                         <span className="slds-avatar slds-avatar--circle slds-avatar--small">
                           <img src={user.get('AvatarURL')} alt={username} />
                         </span>
-                      </div>
+                []      </div>
                       <div className="slds-media__body">
                         <h3 className="slds-truncate" title={username}>{username}</h3>
                         <div className="slds-tile__detail slds-text-body--small">
