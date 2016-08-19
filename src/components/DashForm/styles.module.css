@@ -5,7 +5,7 @@
 }
 
 .todoCheckbox {
-  display: inline-block !important;
+  display: inline-block;
 }
 
 .todoHelpIconWrapper {
@@ -23,5 +23,5 @@
   transform: translateY(-50%);
 }
 .todoHelpIconWrapper:hover .todoHelpPopover {
-  display: block;
+  display: block !important;
 }
