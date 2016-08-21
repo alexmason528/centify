@@ -28,6 +28,9 @@ class DashEdit extends Component {
       if (this.props.params.dashId) {
         this.props.getDash(profile.centifyOrgId, this.props.params.dashId)
       }
+      // Get budget
+      const { getBudget } = this.props
+      getBudget(profile.centifyOrgId)
     }
   }
 
@@ -77,6 +80,7 @@ class DashEdit extends Component {
         // durationHours : 0,
         RewardType : "All over the line",
         RewardAmount : 0,
+        EstimatedRewardAmount: currentDash.get('EstimatedRewardAmount') ? parseInt(currentDash.get('EstimatedRewardAmount')) : 0,
         rewards: JSON.stringify(_rewards ? _rewards : []),
         participants: JSON.stringify(_participants ? _participants : []),
         todos: JSON.stringify(this.getTodosArrayFromList(_todos ? _todos : [])),
@@ -95,6 +99,7 @@ class DashEdit extends Component {
         // durationHours : 0,
         RewardType : "All over the line",
         RewardAmount : 0,
+        EstimatedRewardAmount: 0,
         rewards: null,
         participants: null,
         todos: null,
@@ -121,6 +126,7 @@ class DashEdit extends Component {
     const auth = this.props.auth
     const profile = auth.getProfile()
     const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model
+    const _rewards = rewards ? JSON.parse(rewards) : []
     const data = {
       Description : "",
       ImageURL : "",
@@ -147,7 +153,8 @@ class DashEdit extends Component {
       },
       IsBash : false,
       DashIdAssociatedToBash : null,
-      rewards: rewards ? JSON.parse(rewards) : [],
+      RewardCount: _rewards.length,
+      rewards: _rewards,
       participants: participants ? JSON.parse(participants) : [],
       todos: todos ? this.todosList(JSON.parse(todos)) : [],
       ...modelData

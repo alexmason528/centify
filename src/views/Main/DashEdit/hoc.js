@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { getDash, updateDash } from 'redux/modules/dashes'
 import { getUsers } from 'redux/modules/users'
 import { getTodos } from 'redux/modules/todos'
+import { getBudget } from 'redux/modules/budget'
 
 const mapStateToProps = ({ dashes, users, todos }) => ({
   // dash
@@ -26,6 +27,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   updateDash,
   getUsers,
   getTodos,
+  getBudget,
 }, dispatch)
 
 export default (container) => connect(

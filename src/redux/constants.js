@@ -79,3 +79,9 @@ export const TODOS_GET_LIST_FAIL = 'centify/todos/SINGLE_GET_FAIL'
 export const TODOS_UPDATE = 'centify/todos/UPDATE'
 export const TODOS_UPDATE_SUCCESS = 'centify/todos/UPDATE_SUCCESS'
 export const TODOS_UPDATE_FAIL = 'centify/todos/UPDATE_FAIL'
+
+/* Budget module */
+
+export const BUDGET_GET = 'centify/budget/GET'
+export const BUDGET_GET_SUCCESS = 'centify/budget/GET_SUCCESS'
+export const BUDGET_GET_FAIL = 'centify/budget/GET_FAIL'

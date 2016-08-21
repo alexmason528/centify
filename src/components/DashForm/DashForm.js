@@ -232,6 +232,22 @@ class DashForm extends Component {
     )
   }
 
+  calcEstimatedRewardAmount = () => {
+    let thisDash = 0
+    const { RewardTypeValue, RewardAmount, rewards } = this.props
+    if (RewardTypeValue == 'Multiple reward positions') {
+      const _rewards = rewards ? JSON.parse(rewards) : []
+      for(let i = 0; i < _rewards.length; i++) {
+        if (!_rewards[i].deleted) {
+          thisDash += _rewards[i].EstimatedRewardAmount ? parseInt(_rewards[i].EstimatedRewardAmount) : 0
+        }
+      }
+    } else {
+      thisDash = RewardAmount
+    }
+    return thisDash
+  }
+
   todoList = (props) => {
     const { value, onChange } = props.input
     const { selectedAllTodos } = this.state
@@ -448,7 +464,9 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, RewardTypeValue, editable } = this.props
+    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable } = this.props
+    const budget = 10000
+    const value = this.calcEstimatedRewardAmount()
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
         <Grid>
@@ -524,11 +542,11 @@ class DashForm extends Component {
               <table>
                 <tbody>
                   <tr>
-                    <td>Your Budget: </td><td><strong>$10,000</strong></td>
+                    <td>Your Budget: </td><td><strong>${budget}</strong></td>
                   </tr><tr>
-                    <td>This Dash: </td><td><strong>$6,000</strong></td>
+                    <td>This Dash: </td><td><strong>${value}</strong></td>
                   </tr><tr>
-                    <td>Balance: </td><td><strong>$4,000</strong></td>
+                    <td>Balance: </td><td><strong>${budget - value}</strong></td>
                   </tr>
                 </tbody>
               </table>
@@ -590,7 +608,9 @@ const selector = formValueSelector('DashForm')
 _DashForm = connect(
   state => {
     return {
-      RewardTypeValue: selector(state, 'RewardType')
+      RewardTypeValue: selector(state, 'RewardType'),
+      RewardAmount: selector(state, 'RewardAmount'),
+      rewards: selector(state, 'rewards'),
     }
   }
 )(_DashForm)
