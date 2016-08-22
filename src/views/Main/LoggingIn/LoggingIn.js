@@ -1,10 +1,11 @@
 import React, { PropTypes as T } from 'react'
-import { Button } from 'react-lightning-design-system'
 
+import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import AuthService from 'utils/AuthService'
+import hoc from './hoc'
 import styles from './styles.module.css'
 
-export class Login extends React.Component {
+export class LoggingIn extends React.Component {
   static contextTypes = {
     router: T.object
   }
@@ -14,17 +15,16 @@ export class Login extends React.Component {
     auth: T.instanceOf(AuthService)
   }
 
+  componentDidMount() {
+    const { auth } = this.props
+  }
+
   render() {
     const { auth } = this.props
     return (
-      <div className={styles.root}>
-        <h2>Login</h2>
-        <div className={styles.toolbar}>
-          <Button type="brand" onClick={auth.login.bind(this)}>Login</Button>
-        </div>
-      </div>
+      <LoadingSpinner width={100} height={500} />
     )
   }
 }
 
-export default Login
+export default hoc(LoggingIn)

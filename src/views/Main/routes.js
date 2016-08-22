@@ -5,6 +5,7 @@ import Container from './Container'
 import LayoutContainer from './LayoutContainer/LayoutContainer'
 import Home from './Home/Home'
 import Login from './Login/Login'
+import LoggingIn from './LoggingIn/LoggingIn'
 import Dashes from './Dashes/Dashes'
 import DashCreate from './DashCreate/DashCreate'
 import DashEdit from './DashEdit/DashEdit'
@@ -25,7 +26,7 @@ export const makeMainRoutes = () => {
     <Route path="/" component={Container} auth={auth}>
       <IndexRedirect to="/home" />
       <Route path="login" component={Login} />
-      <Route path="access_token=:token" component={Login} /> //to prevent router errors
+      <Route path="access_token=:token" component={LoggingIn} />
 
       <Route component={LayoutContainer} onEnter={requireAuth}>
         <Route path="home" component={Home} />

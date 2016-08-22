@@ -20,7 +20,12 @@ export class LayoutContainer extends React.Component {
     const {
       auth,
     } = this.props
-    this.getLoggedInUserIdentity()
+    const profile = auth.getProfile()
+    if (profile && profile.centifyUserId) {
+      this.getLoggedInUserIdentity()
+    } else {
+      auth.onGetProfile = this.getLoggedInUserIdentity
+    }
   }
 
   getLoggedInUserIdentity = () => {
