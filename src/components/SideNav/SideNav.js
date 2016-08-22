@@ -30,7 +30,7 @@ const SideNav = ({ routeName }) => {
         <li><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
           <Icon fixedWidth name="dollar"/> Base IC
         </Link></li>
-        <li><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
+        <li className={routeName == 'payouts' ? "slds-is-active" : ""}><Link to="/payouts"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
           <Icon fixedWidth name="money"/> Payouts
         </Link></li>
         <li><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">

@@ -25,6 +25,7 @@ var config = getConfig({
   in: join(src, 'app.js'),
   out: dest,
   html: function (context) {
+    console.log(context.stats.assetsByChunkName.main)
     var main_css = context.stats.assetsByChunkName.main[2];
     return {
       'index.html': context.defaultTemplate({

@@ -2,7 +2,7 @@ import superagent from 'superagent';
 
 const methods = ['get', 'post', 'put', 'patch', 'del'];
 
-function formatUrl(path) {
+export function formatUrl(path) {
   if (path.substr(0, 4).toLowerCase() == 'http') {
     return path;
   }
