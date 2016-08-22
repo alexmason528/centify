@@ -25,8 +25,14 @@ var config = getConfig({
   in: join(src, 'app.js'),
   out: dest,
   html: function (context) {
-    console.log(context.stats.assetsByChunkName.main)
-    var main_css = context.stats.assetsByChunkName.main[2];
+    var assets = context.stats.assetsByChunkName.main;
+    var main_css = '';
+    for(var i = 0; i < assets.length; i++) {
+      if (assets[i].search('.css') >= 0 && assets[i].search('awesome') < 0) {
+        main_css = assets[i];
+        break;
+      }
+    }
     return {
       'index.html': context.defaultTemplate({
         title: 'MyCentify',
