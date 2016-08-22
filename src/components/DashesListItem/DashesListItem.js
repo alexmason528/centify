@@ -49,10 +49,9 @@ class DashesListItem extends Component {
         return dash.get(column) ? 'Yes' : 'No'
       case 'ParticipantsJoined':
         {
-          const loadedParticipants = dash.getIn(['Participants', 'loaded'])
-          if (loadedParticipants) {
-            const participants = dash.getIn(['Participants', 'items'])
-            return dash.get('ParticipantsJoined') + ' / ' + participants.size
+          // const participants = dash.getIn(['Participants', 'items'])
+          if (participants) {
+            return dash.get('ParticipantsJoined') + ' / ' + dash.get('MinimumParticipants')
           } else {
             return '-'
           }

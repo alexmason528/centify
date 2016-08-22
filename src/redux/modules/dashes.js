@@ -75,6 +75,7 @@ const initialState = Immutable.fromJS({
   loaded: false,
   loadingParticipants: false,
   loadingRewards: false,
+  storeUpdateIndicator: 0,
 })
 
 export default function dashes(state = initialState, action) {
@@ -106,6 +107,7 @@ export default function dashes(state = initialState, action) {
         return state.withMutations((map) => {
           map.setIn(['list', dashId, 'Participants', 'items'], Immutable.fromJS(participants))
           map.setIn(['list', dashId, 'Participants', 'loaded'], true)
+          map.set('storeUpdateIndicator', Math.random())
         })
       }
     case DASHES_LIST_ITEM_REWARDS_SUCCESS:
@@ -115,6 +117,7 @@ export default function dashes(state = initialState, action) {
         return state.withMutations((map) => {
           map.setIn(['list', dashId, 'Rewards', 'items'], Immutable.fromJS(rewards))
           map.setIn(['list', dashId, 'Rewards', 'loaded'], true)
+          map.set('storeUpdateIndicator', Math.random())
         })
       }
     case DASHES_FILTER:

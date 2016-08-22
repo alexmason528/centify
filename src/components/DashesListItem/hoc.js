@@ -5,7 +5,6 @@ import { getDashesList, filterDashes, deleteDash, cancelDash } from 'redux/modul
 
 const mapStateToProps = ({ dashes }, ownProps) => ({
   dash: dashes.getIn(['list', ownProps.id]),
-  participants: dashes.getIn(['list', ownProps.id, 'Participants']),
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
