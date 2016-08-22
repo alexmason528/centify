@@ -43,6 +43,7 @@ class DashForm extends Component {
         <div className="slds-form-element__control">
           <div className="slds-select_container">
             <Field name={"Type"} component="select" className="slds-select">
+              <option value='TugOfWar'>Tug of War</option>
               <option value='OverTheLine'>Over the Line</option>
               <option value='Timebomb'>Time Bomb</option>
             </Field>

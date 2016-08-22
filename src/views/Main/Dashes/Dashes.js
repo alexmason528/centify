@@ -6,6 +6,7 @@ import {
   MenuItem,
 } from 'react-lightning-design-system'
 import { Link } from 'react-router'
+import { Icon } from 'react-fa'
 
 import { formatDate } from 'utils/formatter'
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
@@ -30,17 +31,22 @@ class Dashes extends Component {
     this.props.filterDashes(filter)
   }
 
-  openDash = (dash) => {
+  handleClickRow = (dash) => {
     const status = dash.get('Status')
+    const id = dash.get('Id')
     if (status == 'Draft' || status == 'Upcoming') {
-      this.editDash(dash.get('Id'))
+      this.editDash(id)
     } else {
-      this.props.push(`/dashes/${dash.get('Id')}/report`)
+      this.showDashReport(id)
     }
   }
 
   editDash = (dashId) => {
     this.props.push(`/dashes/${dashId}`)
+  }
+
+  showDashReport = (dashId) => {
+    this.props.push(`/dashes/${dashId}/report`)
   }
 
   deleteDash = (dashId) => {
@@ -63,10 +69,38 @@ class Dashes extends Component {
     if (Array.isArray(column)) {
       return dash.getIn(column)
     }
+    const typeIconStyle = {
+      fontSize: 18,
+    }
+    const gameTypeIconStyle = {
+      fontSize: 22,
+    }
     switch(column) {
+      case 'Type':
+        {
+          const val = dash.get(column)
+          switch(val) {
+            case 'TugOfWar':
+              return <Icon name="exchange" style={typeIconStyle} />
+            case 'OverTheLine':
+              return <Icon name="long-arrow-right" style={typeIconStyle} />
+            case 'Timebomb':
+              return <Icon name="bomb" style={typeIconStyle} />
+            case 'Countdown':
+              return <Icon name="clock-o" style={typeIconStyle} />
+            default:
+              return undefined
+          }
+        }
+      case 'GameType':
+        return <Icon name="rocket" style={gameTypeIconStyle} />
       case 'StartsAt':
       case 'EndsAt':
-        return formatDate(dash.get(column))
+      case 'CompletedAt':
+        {
+          const val = dash.get(column)
+          return val ? formatDate(val) : '-'
+        }
       case 'isPublic':
       case 'isTeamDash':
         return dash.get(column) ? 'Yes' : 'No'
@@ -87,25 +121,6 @@ class Dashes extends Component {
             return 0
           }
         }
-      case 'Winners':
-        {
-          const loadedParticipants = dash.getIn(['Participants', 'loaded'])
-          if (loadedParticipants) {
-            const participants = dash.getIn(['Participants', 'items'])
-            let rewardsCount = 0
-            participants.forEach(participant => {
-              const users = participant.get('Users')
-              users.map(user => {
-                if (user.get('RewardAmount') > 0) {
-                  rewardsCount++
-                }
-              })
-            })
-            return rewardsCount
-          } else {
-            return 0
-          }
-        }
       default:
         return dash.get(column)
     }
@@ -113,73 +128,108 @@ class Dashes extends Component {
   }
 
   tableColumns(filter) {
-    if (filter == 'Upcoming') {
-      return [
-        { label: 'Name', field: 'Name' },
-        { label: 'Type', field: 'Type' },
-        { label: 'Game Type', field: 'GameType' },
-        { label: 'Team/Individual', field: 'isTeamDash' },
-        { label: 'Start Date', field: 'StartsAt' },
-        { label: 'End Date', field: 'EndsAt' },
-        { label: 'Public?', field: 'isPublic' },
-        { label: 'Min. Participants', field: 'MinimumParticipants' },
-        { label: '# Joined', field: 'ParticipantsJoined' },
-        { label: 'Est. Reward Amt.', field: 'EstimatedRewardAmount' },
-      ]
+    return [
+      { label: 'Type', field: 'Type' },
+      { label: 'Game Type', field: 'GameType' },
+      { label: 'Name', field: 'Name' },
+      { label: 'Participants', field: 'ParticipantsJoined' },
+      { label: 'Reward Amount.', field: 'EstimatedRewardAmount' },
+      { label: 'Rewards Paid', field: 'RewardsPaid' },
+      { label: 'Start Date', field: 'StartsAt' },
+      { label: 'Completed Date', field: 'CompletedAt' },
+    ]
+  }
+
+  tableRowActions(filter, dash) {
+    const greenIcon = {
+      color: '#00e000'
+    }
+    const redIcon = {
+      color: '#e00000'
+    }
+    const iconStyle = {
+      fontSize: 15,
+      marginRight: 7,
+    }
+    const id = dash.get('Id')
+    if (filter == 'Draft') {
+      return (
+        <span>
+          <a href="javascript:;" onClick={this.editDash.bind(this, id)}>
+            <Icon name="pencil-square-o" style={iconStyle} />
+          </a>
+          <a href="javascript:;">
+            <Icon name="check-circle" style={{ ...iconStyle, ...greenIcon }} />
+          </a>
+          <a href="javascript:;" onClick={this.deleteDash.bind(this, id)}>
+            <Icon name="times" style={{ ...iconStyle, ...redIcon }} />
+          </a>
+        </span>
+      )
+    } else if (filter == 'Upcoming') {
+      return (
+        <span>
+          <a href="javascript:;" onClick={this.editDash.bind(this, id)}>
+            <Icon name="pencil-square-o" style={iconStyle} />
+          </a>
+          <a href="javascript:;" onClick={this.deleteDash.bind(this, id)}>
+            <Icon name="times" style={{ ...iconStyle, ...redIcon }} />
+          </a>
+        </span>
+      )
     } else if (filter == 'Running') {
-      return [
-        { label: 'Name', field: 'Name' },
-        { label: 'Type', field: 'Type' },
-        { label: 'Game Type', field: 'GameType' },
-        { label: 'Team/Individual', field: 'isTeamDash' },
-        { label: 'Start Date', field: 'StartsAt' },
-        { label: 'End Date', field: 'EndsAt' },
-        { label: 'Public?', field: 'isPublic' },
-        { label: 'Min. Participants', field: 'MinimumParticipants' },
-        { label: '# Joined', field: 'ParticipantsJoined' },
-        { label: 'Est. Reward Amt.', field: 'EstimatedRewardAmount' },
-        { label: 'Rewards Paid', field: 'RewardsPaid' },
-        { label: 'Measure Val', field: ['Measure', 'Value'] },
-      ]
-    } else if (filter == 'Review' || filter == 'Completed') {
-      return [
-        { label: 'Name', field: 'Name' },
-        { label: 'Type', field: 'Type' },
-        { label: 'Game Type', field: 'GameType' },
-        { label: 'Team/Individual', field: 'isTeamDash' },
-        { label: 'Start Date', field: 'StartsAt' },
-        { label: 'End Date', field: 'EndsAt' },
-        { label: 'Completed At', field: 'CompletedAt' },
-        { label: 'Public?', field: 'isPublic' },
-        { label: 'Min. Participants', field: 'MinimumParticipants' },
-        { label: '# Joined', field: 'ParticipantsJoined' },
-        { label: 'Est. Reward Amt.', field: 'EstimatedRewardAmount' },
-        { label: 'Rewards Paid', field: 'RewardsPaid' },
-        { label: 'Winners', field: 'Winners' },
-        { label: 'Measure Val', field: ['Measure', 'Value'] },
-      ]
+      return (
+        <span>
+          <a href="javascript:;" onClick={this.showDashReport.bind(this, id)}>
+            <Icon name="line-chart" style={iconStyle} />
+          </a>
+          <a href="javascript:;">
+            <Icon name="info-circle" style={iconStyle} />
+          </a>
+          <a href="javascript:;" onClick={this.deleteDash.bind(this, id)}>
+            <Icon name="times" style={{ ...iconStyle, ...redIcon }} />
+          </a>
+        </span>
+      )
+    } else if (filter == 'Finalizing') {
+      return (
+        <span>
+          <a href="javascript:;" onClick={this.showDashReport.bind(this, id)}>
+            <Icon name="line-chart" style={iconStyle} />
+          </a>
+          <a href="javascript:;">
+            <Icon name="info-circle" style={iconStyle} />
+          </a>
+          <a href="javascript:;">
+            <Icon name="check-circle" style={{ ...iconStyle, ...greenIcon }} />
+          </a>
+        </span>
+      )
+    } else if (filter == 'Completed') {
+      return (
+        <span>
+          <a href="javascript:;" onClick={this.showDashReport.bind(this, id)}>
+            <Icon name="line-chart" style={iconStyle} />
+          </a>
+          <a href="javascript:;">
+            <Icon name="info-circle" style={iconStyle} />
+          </a>
+          <a href="javascript:;">
+            <Icon name="dollar" style={iconStyle} />
+          </a>
+        </span>
+      )
     } else if (filter == 'Closed') {
-      return [
-        { label: 'Name', field: 'Name' },
-        { label: 'Type', field: 'Type' },
-        { label: 'Game Type', field: 'GameType' },
-        { label: 'Team/Individual', field: 'isTeamDash' },
-        { label: 'Start Date', field: 'StartsAt' },
-        { label: 'End Date', field: 'EndsAt' },
-        { label: 'Public?', field: 'isPublic' },
-        { label: 'Min. Participants', field: 'MinimumParticipants' },
-        { label: '# Joined', field: 'ParticipantsJoined' },
-        { label: 'Est. Reward Amt.', field: 'EstimatedRewardAmount' },
-      ]
-    } else {
-      return [
-        { label: 'Name', field: 'Name' },
-        { label: 'Type', field: 'Type' },
-        { label: 'Participants Joined', field: 'ParticipantsJoined' },
-        { label: 'Start Date', field: 'StartsAt' },
-        { label: 'End Date', field: 'EndsAt' },
-        { label: 'Status', field: 'Status' },
-      ];
+      return (
+        <span>
+          <a href="javascript:;" onClick={this.showDashReport.bind(this, id)}>
+            <Icon name="line-chart" style={iconStyle} />
+          </a>
+          <a href="javascript:;">
+            <Icon name="info-circle" style={iconStyle} />
+          </a>
+        </span>
+      )
     }
   }
 
@@ -199,7 +249,7 @@ class Dashes extends Component {
             <Button type={filter == 'Upcoming' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Upcoming')}>Upcoming</Button>
             <Button type={filter == 'Running' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Running')}>Running</Button>
             {/*<Button type={filter == 'Finalizing' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Finalizing')}>Finalizing</Button>*/}
-            <Button type={filter == 'Review' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Review')}>Review</Button>
+            <Button type={filter == 'Finalizing' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Finalizing')}>Finalizing</Button>
             <Button type={filter == 'Completed' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Completed')}>Completed</Button>
             <Button type={filter == 'Closed' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Closed')}>Closed</Button>
           </ButtonGroup>
@@ -214,42 +264,43 @@ class Dashes extends Component {
           <table className="slds-table slds-table--bordered slds-table--cell-buffer">
             <thead>
               <tr className="slds-text-heading--label">
+                <th title="Actions">Actions</th>
                 {columns.map((column, index) => (
-                  <th scope="col" title={column.label} key={index}>
+                  <th scope="col" title={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {}}>
                     <div className="slds-truncate">{column.label}</div>
                   </th>
                 ))}
-                <th></th>
               </tr>
             </thead>
             <tbody>
               {dashesList.valueSeq().map((dash, index) => {
                 const id = dash.get('Id')
                 const status = dash.get('Status').toLowerCase()
-                let menu = ''
+                /*let menu = ''
                 if (status == 'draft') {
                   menu = (<DropdownButton type='icon-border-filled' menuAlign='right' menuSize='small'>
-                    <MenuItem onClick={this.editDash.bind(this, id)}>Edit</MenuItem>
+                    <MenuItem >Edit</MenuItem>
                     <MenuItem onClick={this.deleteDash.bind(this, id)}>Delete</MenuItem>
                   </DropdownButton>)
                 } else if (status != 'closed') {
                   menu = (<DropdownButton type='icon-border-filled' menuAlign='right' menuSize='small'>
                     <MenuItem onClick={this.cancelDash.bind(this, id)}>Cancel</MenuItem>
                   </DropdownButton>)
-                }
+                }*/
+                const actions = this.tableRowActions(filter, dash)
                 return filter == '' || dash.get('Status') == filter ?
-                  (<tr key={id} onClick={this.openDash.bind(this, dash)} style={{ cursor: 'pointer' }}>
+                  (<tr key={id} onClick={this.handleClickRow.bind(this, dash)} style={{ cursor: 'pointer' }}>
+                    <td onClick={e => e.stopPropagation()}>
+                      {actions}
+                    </td>
                     {columns.map((column, index) => {
                       const value = this.getFieldValue(dash, column.field)
                       return (
-                        <td title={value} data-label={column.label} key={index}>
+                        <td data-label={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {}}>
                           <div className="slds-truncate">{value}</div>
                         </td>
                       )
                     })}
-                    <td onClick={e => e.stopPropagation()}>
-                      {menu}
-                    </td>
                   </tr>)
                   :
                   false
