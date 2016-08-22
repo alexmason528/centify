@@ -3,16 +3,15 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux';
 import { getDashesList, filterDashes, deleteDash, cancelDash } from 'redux/modules/dashes';
 
-const mapStateToProps = ({ dashes }) => ({
-  dashesList: dashes.get('list'),
-  filter: dashes.get('filter'),
-  loadingList: dashes.get('loadingList'),
-  loadedList: dashes.get('loadedList'),
+const mapStateToProps = ({ dashes }, ownProps) => ({
+  dash: dashes.getIn(['list', ownProps.id]),
+  participants: dashes.getIn(['list', ownProps.id, 'Participants']),
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  getDashesList,
-  filterDashes,
+  deleteDash,
+  cancelDash,
+  push,
 }, dispatch)
 
 export default (container) => connect(
