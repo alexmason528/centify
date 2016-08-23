@@ -1,7 +1,11 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux';
-import { getTodos, updateTodo } from 'redux/modules/todos';
+import {
+  getTodos,
+  setTodoStatus,
+  updateTodo,
+} from 'redux/modules/todos';
 
 const mapStateToProps = ({ todos }) => ({
   todos: todos.get('todos'),
@@ -11,6 +15,8 @@ const mapStateToProps = ({ todos }) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   getTodos,
+  setTodoStatus,
+  updateTodo,
 }, dispatch)
 
 export default (container) => connect(

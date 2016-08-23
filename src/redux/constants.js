@@ -80,6 +80,8 @@ export const TODOS_UPDATE = 'centify/todos/UPDATE'
 export const TODOS_UPDATE_SUCCESS = 'centify/todos/UPDATE_SUCCESS'
 export const TODOS_UPDATE_FAIL = 'centify/todos/UPDATE_FAIL'
 
+export const TODOS_SET_STATUS = 'centify/todos/SET_STATUS'
+
 /* Budget module */
 
 export const BUDGET_GET = 'centify/budget/GET'

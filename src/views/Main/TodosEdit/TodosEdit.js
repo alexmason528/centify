@@ -10,7 +10,11 @@ import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import styles from './styles.module.css'
 import hoc from './hoc'
 
-class Todos extends Component {
+class TodosEdit extends Component {
+
+  state = {
+    submitting: false
+  }
 
   componentDidMount() {
     const auth = this.props.auth
@@ -23,8 +27,24 @@ class Todos extends Component {
     }
   }
 
+  handleSave = () => {
+    const auth = this.props.auth
+    if (auth) {
+      const profile = auth.getProfile()
+      const { todos, updateTodo } = this.props
+      {todos.map((todo, index) => {
+        const status = todo.get('Status')
+        const orgStatus = todo.get('OrgStatus')
+        if (typeof orgStatus != 'undefined' && status != orgStatus) {
+          updateTodo(profile.centifyOrgId, todo.get('Id'), todo, index)
+        }
+      })}
+    }
+  }
+
   render() {
-    const { todos, loadedTodos, loadingTodos, auth } = this.props
+    const { todos, loadedTodos, loadingTodos, auth, setTodoStatus } = this.props
+    const { submitting } = this.state
     const profile = auth.getProfile()
     if (loadingTodos) {
       return (
@@ -59,16 +79,19 @@ class Todos extends Component {
           The following are ToDos that are allowed to be selected as prerequisites for dashes.  Once they are activated you are then able to select them when creating a dash.
         </div>
         <div className="slds-m-bottom--large slds-text-align--right">
-          <Link to="/todos/edit">
-            <Button type="brand">Edit Todos</Button>
+          <Link to="/todos">
+            <Button type="neutral">Cancel</Button>
           </Link>
+          <Button
+            type="brand"
+            style={{ marginLeft: 10 }}
+            onClick={this.handleSave}
+            disabled={submitting}>Save</Button>
         </div>
         <table className={styles.todosTable + ' slds-table slds-table--bordered slds-table--cell-buffer'}>
           <thead>
             <tr className="slds-text-heading--label">
-              <th scope="col" title="Status">
-                <div className="slds-truncate">Status</div>
-              </th>
+              <th style={{ width: 35 }} />
               <th scope="col" title="Name">
                 <div className="slds-truncate">Name</div>
               </th>
@@ -86,11 +109,15 @@ class Todos extends Component {
               const status = todo.get('Status')
               return (
                 <tr key={id}>
-                  <td title={category} data-label="Status">
-                    <div className="slds-truncate">
-                      {status ? <Icon name="check" style={activeIconStyle}/> : <Icon name="times" style={inactiveIconStyle}/>}
-                    </div>
+                  <td data-label="Toggle" style={tdStyle}>
+                    <Checkbox
+                      checked={status ? true : false}
+                      onChange={(e) => {
+                        setTodoStatus(index, !!e.currentTarget.checked)
+                      }} />
                   </td>
+                  {/*
+                      */}
                   <td title={name} data-label="Name">
                     {name}
                     <div className={styles.tooltip + ' slds-popover slds-popover--tooltip slds-nubbin--bottom'} role="tooltip" style={tooltipStyle}>
@@ -107,10 +134,20 @@ class Todos extends Component {
             })}
           </tbody>
         </table>
+        <div className="slds-m-top--large slds-text-align--right">
+          <Link to="/todos">
+            <Button type="neutral">Cancel</Button>
+          </Link>
+          <Button
+            type="brand"
+            style={{ marginLeft: 10 }}
+            onClick={this.handleSave}
+            disabled={submitting}>Save</Button>
+        </div>
       </div>
     )
   }
 
 }
 
-export default hoc(Todos);
+export default hoc(TodosEdit);

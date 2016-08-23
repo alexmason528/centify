@@ -11,6 +11,7 @@ import {
   TODOS_UPDATE,
   TODOS_UPDATE_SUCCESS,
   TODOS_UPDATE_FAIL,
+  TODOS_SET_STATUS,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
@@ -62,9 +63,20 @@ export default function dashes(state = initialState, action) {
       })
     /* Update todo */
     case TODOS_UPDATE_SUCCESS:
-      const index = action.data.index
-      const todo = action.data.model
-      return state.setIn(['todos', index], todo)
+      {
+        const index = action.data.index
+        const todo = action.data.model
+        return state.setIn(['todos', index], todo)
+      }
+    case TODOS_SET_STATUS:
+      {
+        const { index, status } = action.data
+        const orgStatus = state.getIn(['todos', index, 'Status'])
+        return state.withMutations((map) => {
+          map.setIn(['todos', index, 'Status'], status)
+          map.setIn(['todos', index, 'OrgStatus'], orgStatus)
+        })
+      }
     default:
       return state
   }
@@ -86,6 +98,16 @@ export function updateTodo(orgId, todoId, model, index) {
     data: {
       model,
       index,
+    }
+  }
+}
+
+export function setTodoStatus(index, status) {
+  return {
+    type: TODOS_SET_STATUS,
+    data: {
+      index,
+      status
     }
   }
 }
