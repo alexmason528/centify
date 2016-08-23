@@ -13,7 +13,8 @@ import hoc from './hoc'
 class TodosEdit extends Component {
 
   state = {
-    submitting: false
+    submitting: false,
+    updatingTodoCount: 0,
   }
 
   componentDidMount() {
@@ -32,13 +33,31 @@ class TodosEdit extends Component {
     if (auth) {
       const profile = auth.getProfile()
       const { todos, updateTodo } = this.props
+      let updatingTodoCount = 0
       {todos.map((todo, index) => {
         const status = todo.get('Status')
         const orgStatus = todo.get('OrgStatus')
         if (typeof orgStatus != 'undefined' && status != orgStatus) {
+          updatingTodoCount += 1
           updateTodo(profile.centifyOrgId, todo.get('Id'), todo, index)
+          .then(() => {
+            let submitting = this.state.submitting
+            let updatingTodoCount = this.state.updatingTodoCount
+            updatingTodoCount -= 1
+            if (!updatingTodoCount) {
+              submitting = false
+            }
+            this.setState({
+              submitting,
+              updatingTodoCount
+            })
+          })
         }
       })}
+      this.setState({
+        submitting: true,
+        updatingTodoCount
+      })
     }
   }
 

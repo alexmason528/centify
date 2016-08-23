@@ -106,6 +106,21 @@ class DashesListItem extends Component {
     }
   }
 
+  createLinkIcon = (onClick, icon, iconStyle, tooltipText) => {
+    return (
+      <span className={styles.tooltipWrapper}>
+        <a href="javascript:;" onClick={onClick}>
+          <Icon name={icon} style={iconStyle} />
+        </a>
+        <div className={"slds-popover slds-nubbin--top " + styles.tooltip} role="dialog">
+          <div className="slds-popover__body">
+            {tooltipText}
+          </div>
+        </div>
+      </span>
+    )
+  }
+
   tableRowActions(filter, dash) {
     const greenIcon = {
       color: '#00e000'
@@ -121,79 +136,127 @@ class DashesListItem extends Component {
     if (filter == 'Draft') {
       return (
         <span>
-          <a href="javascript:;" onClick={this.editDash.bind(this, id)}>
-            <Icon name="pencil-square-o" style={iconStyle} />
-          </a>
-          <a href="javascript:;">
-            <Icon name="check-circle" style={{ ...iconStyle, ...greenIcon }} />
-          </a>
-          <a href="javascript:;" onClick={this.deleteDash.bind(this, id)}>
-            <Icon name="times" style={{ ...iconStyle, ...redIcon }} />
-          </a>
+          {this.createLinkIcon(
+            this.editDash.bind(this, id),
+            "pencil-square-o",
+            iconStyle,
+            'Edit'
+          )}
+          {this.createLinkIcon(
+            null,
+            "check-circle",
+            { ...iconStyle, ...greenIcon },
+            'Activate'
+          )}
+          {this.createLinkIcon(
+            this.deleteDash.bind(this, id),
+            "times",
+            { ...iconStyle, ...redIcon },
+            'Delete'
+          )}
         </span>
       )
     } else if (filter == 'Upcoming') {
       return (
         <span>
-          <a href="javascript:;" onClick={this.editDash.bind(this, id)}>
-            <Icon name="pencil-square-o" style={iconStyle} />
-          </a>
-          <a href="javascript:;" onClick={this.deleteDash.bind(this, id)}>
-            <Icon name="times" style={{ ...iconStyle, ...redIcon }} />
-          </a>
+          {this.createLinkIcon(
+            this.editDash.bind(this, id),
+            "pencil-square-o",
+            iconStyle,
+            'Edit'
+          )}
+          {this.createLinkIcon(
+            this.cancelDash.bind(this, id),
+            "times",
+            { ...iconStyle, ...redIcon },
+            'Cancel'
+          )}
         </span>
       )
     } else if (filter == 'Running') {
       return (
         <span>
-          <a href="javascript:;" onClick={this.showDashReport.bind(this, id)}>
-            <Icon name="line-chart" style={iconStyle} />
-          </a>
-          <a href="javascript:;">
-            <Icon name="info-circle" style={iconStyle} />
-          </a>
-          <a href="javascript:;" onClick={this.cancelDash.bind(this, id)}>
-            <Icon name="times" style={{ ...iconStyle, ...redIcon }} />
-          </a>
+          {this.createLinkIcon(
+            this.showDashReport.bind(this, id),
+            "line-chart",
+            iconStyle,
+            'Dash Report'
+          )}
+          {this.createLinkIcon(
+            null,
+            "info-circle",
+            iconStyle,
+            'View Details'
+          )}
+          {this.createLinkIcon(
+            this.cancelDash.bind(this, id),
+            "times",
+            { ...iconStyle, ...redIcon },
+            'Cancel'
+          )}
         </span>
       )
     } else if (filter == 'Finalizing') {
       return (
         <span>
-          <a href="javascript:;" onClick={this.showDashReport.bind(this, id)}>
-            <Icon name="line-chart" style={iconStyle} />
-          </a>
-          <a href="javascript:;">
-            <Icon name="info-circle" style={iconStyle} />
-          </a>
-          <a href="javascript:;">
-            <Icon name="check-circle" style={{ ...iconStyle, ...greenIcon }} />
-          </a>
+          {this.createLinkIcon(
+            this.showDashReport.bind(this, id),
+            "line-chart",
+            iconStyle,
+            'Dash Report'
+          )}
+          {this.createLinkIcon(
+            null,
+            "info-circle",
+            iconStyle,
+            'View Details'
+          )}
+          {this.createLinkIcon(
+            null,
+            "check-circle",
+            { ...iconStyle, ...greenIcon },
+            'Complete'
+          )}
         </span>
       )
     } else if (filter == 'Completed') {
       return (
         <span>
-          <a href="javascript:;" onClick={this.showDashReport.bind(this, id)}>
-            <Icon name="line-chart" style={iconStyle} />
-          </a>
-          <a href="javascript:;">
-            <Icon name="info-circle" style={iconStyle} />
-          </a>
-          <a href="javascript:;">
-            <Icon name="dollar" style={iconStyle} />
-          </a>
+          {this.createLinkIcon(
+            this.showDashReport.bind(this, id),
+            "line-chart",
+            iconStyle,
+            'Dash Report'
+          )}
+          {this.createLinkIcon(
+            null,
+            "info-circle",
+            iconStyle,
+            'View Details'
+          )}
+          {this.createLinkIcon(
+            null,
+            "dollar",
+            iconStyle,
+            'Payout'
+          )}
         </span>
       )
     } else if (filter == 'Closed') {
       return (
         <span>
-          <a href="javascript:;" onClick={this.showDashReport.bind(this, id)}>
-            <Icon name="line-chart" style={iconStyle} />
-          </a>
-          <a href="javascript:;">
-            <Icon name="info-circle" style={iconStyle} />
-          </a>
+          {this.createLinkIcon(
+            this.showDashReport.bind(this, id),
+            "line-chart",
+            iconStyle,
+            'Dash Report'
+          )}
+          {this.createLinkIcon(
+            null,
+            "info-circle",
+            iconStyle,
+            'View Details'
+          )}
         </span>
       )
     }
@@ -204,7 +267,7 @@ class DashesListItem extends Component {
     const actions = this.tableRowActions(filter, dash)
     return (
       <tr onClick={this.handleClickRow.bind(this, dash)} style={{ cursor: 'pointer' }}>
-        <td onClick={e => e.stopPropagation()}>
+        <td className={styles.actionTd} onClick={e => e.stopPropagation()}>
           {actions}
         </td>
         {columns.map((column, index) => {
