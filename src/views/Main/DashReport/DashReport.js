@@ -61,7 +61,7 @@ class DashReport extends Component {
                         <span className="slds-avatar slds-avatar--circle slds-avatar--small">
                           <img src={user.get('AvatarURL')} alt={username} />
                         </span>
-                []      </div>
+                      </div>
                       <div className="slds-media__body">
                         <h3 className="slds-truncate" title={username}>{username}</h3>
                         <div className="slds-tile__detail slds-text-body--small">
@@ -215,7 +215,7 @@ class DashReport extends Component {
               <div className="slds-p-vertical--large" style={headerContainerStyle}>
                 <h2 className={styles.pageTitle} style={{ flexGrow: 1 }}>{currentDash.get('Name')}</h2>
                 <DashReportTimer endDate={endDate} />
-                <h2 className={styles.pageTitle1 + ' slds-text-align--right'} style={{ flexGrow: 1 }}>Estimated Reward: ${this.estimatedRewardAmount()}</h2>
+                <h2 className={styles.pageTitle1 + ' slds-text-align--right'} style={{ flexGrow: 1 }}>Estimated Reward: ${currentDash.get('EstimatedRewardAmount')}</h2>
               </div>
               <div className="slds-p-vertical--medium slds-text-align--right">
                 <Button
