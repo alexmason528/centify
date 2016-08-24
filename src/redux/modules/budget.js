@@ -20,7 +20,7 @@ export default function budget(state = initialState, action) {
     case REDUX_INIT:
       return state
     case BUDGET_GET_SUCCESS:
-      return state
+      return state.set('budgetAmount', action.result.BudgetAmount)
     default:
       return state
   }

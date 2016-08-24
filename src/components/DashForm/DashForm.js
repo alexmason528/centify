@@ -465,8 +465,7 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable } = this.props
-    const budget = 10000
+    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount } = this.props
     const value = this.calcEstimatedRewardAmount()
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
@@ -543,11 +542,11 @@ class DashForm extends Component {
               <table>
                 <tbody>
                   <tr>
-                    <td>Your Budget: </td><td><strong>${budget}</strong></td>
+                    <td>Your Budget: </td><td><strong>${budgetAmount}</strong></td>
                   </tr><tr>
                     <td>This Dash: </td><td><strong>${value}</strong></td>
                   </tr><tr>
-                    <td>Balance: </td><td><strong>${budget - value}</strong></td>
+                    <td>Balance: </td><td><strong>${budgetAmount - value}</strong></td>
                   </tr>
                 </tbody>
               </table>

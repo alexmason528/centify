@@ -106,7 +106,7 @@ class DashCreate extends Component {
   }
 
   render() {
-    const { loading, loadingParticipants, loadingRewards, loadingUsers, loadingTodos, users, todos } = this.props
+    const { loading, loadingParticipants, loadingRewards, loadingUsers, loadingTodos, users, todos, budgetAmount } = this.props
     if (loading || loadingParticipants || loadingRewards || loadingUsers || loadingTodos) {
       return (
         <LoadingSpinner/>
@@ -126,7 +126,8 @@ class DashCreate extends Component {
           onSubmit={(model) => this.onSubmit(model)}
           initialValues={this.initialValues()}
           users={users}
-          todos={todos} />
+          todos={todos}
+          budgetAmount={budgetAmount} />
       </div>
     )
   }

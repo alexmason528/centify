@@ -163,7 +163,7 @@ class DashEdit extends Component {
   }
 
   render() {
-    const { currentDash, loading, loadingParticipants, loadingRewards, loadingTodos, loadingUsers, users, todos } = this.props
+    const { currentDash, loading, loadingParticipants, loadingRewards, loadingTodos, loadingUsers, users, todos, budgetAmount } = this.props
     if (loading || loadingParticipants || loadingRewards || loadingTodos || loadingUsers) {
       return (
         <LoadingSpinner/>
@@ -184,7 +184,8 @@ class DashEdit extends Component {
           initialValues={this.initialValues()}
           users={users}
           todos={todos}
-          editable={editable} />
+          editable={editable}
+          budgetAmount={budgetAmount} />
       </div>
     )
   }

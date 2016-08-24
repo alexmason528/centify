@@ -5,7 +5,7 @@ import { getUsers } from 'redux/modules/users'
 import { getTodos } from 'redux/modules/todos'
 import { getBudget } from 'redux/modules/budget'
 
-const mapStateToProps = ({ dashes, users, todos }) => ({
+const mapStateToProps = ({ dashes, users, todos, budget }) => ({
   // dashes
   currentDash: dashes.get('currentDash'),
   // users
@@ -16,6 +16,8 @@ const mapStateToProps = ({ dashes, users, todos }) => ({
   todos: todos.get('todos'),
   loadingTodos: users.get('loadingTodos'),
   loadedTodos: users.get('loadedTodos'),
+  // budget
+  budgetAmount: budget.get('budgetAmount'),
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
