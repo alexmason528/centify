@@ -32,7 +32,7 @@ class TodosEdit extends Component {
     const auth = this.props.auth
     if (auth) {
       const profile = auth.getProfile()
-      const { todos, updateTodo } = this.props
+      const { todos, updateTodo, push } = this.props
       let updatingTodoCount = 0
       {todos.map((todo, index) => {
         const status = todo.get('Status')
@@ -51,6 +51,7 @@ class TodosEdit extends Component {
               submitting,
               updatingTodoCount
             })
+            push('/todos')
           })
         }
       })}

@@ -14,6 +14,7 @@ const mapStateToProps = ({ todos }) => ({
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  push,
   getTodos,
   setTodoStatus,
   updateTodo,
