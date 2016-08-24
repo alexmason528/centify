@@ -219,7 +219,7 @@ class DashesListItem extends Component {
           )}
         </span>
       )
-    } else if (filter == 'Completed') {
+    } /*else if (filter == 'Completed') {
       return (
         <span>
           {this.createLinkIcon(
@@ -242,7 +242,7 @@ class DashesListItem extends Component {
           )}
         </span>
       )
-    } else if (filter == 'Closed') {
+    }*/ else if (filter == 'Closed') {
       return (
         <span>
           {this.createLinkIcon(
