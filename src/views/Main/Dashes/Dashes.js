@@ -35,7 +35,7 @@ class Dashes extends Component {
       { label: 'Game Type', field: 'GameType' },
       { label: 'Name', field: 'Name' },
       { label: 'Participants', field: 'ParticipantsJoined' },
-      { label: 'Reward Amount.', field: 'EstimatedRewardAmount' },
+      { label: 'Reward Amount', field: 'EstimatedRewardAmount' },
       { label: 'Rewards Paid', field: 'RewardsPaid' },
       { label: 'Start Date', field: 'StartsAt' },
       { label: 'Completed Date', field: 'CompletedAt' },
