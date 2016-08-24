@@ -123,6 +123,11 @@ class DashEdit extends Component {
   }
 
   onSubmit = (model) => {
+    const { currentDash } = this.props
+    const editable = currentDash.get('Status') && currentDash.get('Status').toLowerCase() == 'draft'
+    if (!editable) {
+      return
+    }
     const auth = this.props.auth
     const profile = auth.getProfile()
     const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model

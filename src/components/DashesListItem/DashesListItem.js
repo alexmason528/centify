@@ -86,6 +86,10 @@ class DashesListItem extends Component {
     this.props.push(`/dashes/${dashId}`)
   }
 
+  viewDashDetails = (dashId) => {
+    this.props.push(`/dashes/${dashId}`)
+  }
+
   showDashReport = (dashId) => {
     this.props.push(`/dashes/${dashId}/report`)
   }
@@ -133,6 +137,7 @@ class DashesListItem extends Component {
       marginRight: 7,
     }
     const id = dash.get('Id')
+    const { onActivate, onComplete } = this.props
     if (filter == 'Draft') {
       return (
         <span>
@@ -143,7 +148,7 @@ class DashesListItem extends Component {
             'Edit'
           )}
           {this.createLinkIcon(
-            null,
+            onActivate,
             "check-circle",
             { ...iconStyle, ...greenIcon },
             'Activate'
@@ -183,7 +188,7 @@ class DashesListItem extends Component {
             'Dash Report'
           )}
           {this.createLinkIcon(
-            null,
+            this.viewDashDetails.bind(this, id),
             "info-circle",
             iconStyle,
             'View Details'
@@ -206,13 +211,13 @@ class DashesListItem extends Component {
             'Dash Report'
           )}
           {this.createLinkIcon(
-            null,
+            this.viewDashDetails.bind(this, id),
             "info-circle",
             iconStyle,
             'View Details'
           )}
           {this.createLinkIcon(
-            null,
+            onComplete,
             "check-circle",
             { ...iconStyle, ...greenIcon },
             'Complete'
@@ -252,7 +257,7 @@ class DashesListItem extends Component {
             'Dash Report'
           )}
           {this.createLinkIcon(
-            null,
+            this.viewDashDetails.bind(this, id),
             "info-circle",
             iconStyle,
             'View Details'

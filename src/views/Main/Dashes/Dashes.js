@@ -8,11 +8,19 @@ import { Link } from 'react-router'
 import { formatDate } from 'utils/formatter'
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import DashesListItem from 'components/DashesListItem/DashesListItem'
+import DashesListActionDialog from 'components/DashesListActionDialog/DashesListActionDialog'
 import styles from './styles.module.css'
 import hoc from './hoc'
 
 
 class Dashes extends Component {
+
+  state = {
+    actionDialogOpen: false,
+    actionDialogAction: '',
+    actionDialogDash: false,
+    actionDialogSubmitting: false,
+  }
 
   componentDidMount() {
     const auth = this.props.auth
@@ -42,6 +50,62 @@ class Dashes extends Component {
     ]
   }
 
+  onActivateDash = (dash) => {
+    console.log('asdfa')
+    this.setState({
+      actionDialogOpen: true,
+      actionDialogAction: 'activate',
+      actionDialogDash: dash,
+    });
+  }
+
+  onCompleteDash = (dash) => {
+    this.setState({
+      actionDialogOpen: true,
+      actionDialogAction: 'complete',
+      actionDialogDash: dash,
+    });
+  }
+
+  onClose = () => {
+    this.setState({
+      actionDialogOpen: false,
+    })
+  }
+
+  onDoAction = () => {
+    const { actionDialogAction, actionDialogDash } = this.state
+    let actionDispatcher = null
+    if (actionDialogAction == 'activate') {
+      actionDispatcher = this.props.activateDash
+    } else if (actionDialogAction == 'complete') {
+      actionDispatcher = this.props.completeDash
+    }
+    if (actionDispatcher) {
+      const auth = this.props.auth
+      if (auth) {
+        const dashId = actionDialogDash.get('Id')
+        const profile = auth.getProfile()
+        this.setState({
+          actionDialogSubmitting: true,
+        })
+        actionDispatcher(profile.centifyOrgId, dashId)
+        .then(() => {
+          this.setState({
+            actionDialogOpen: false,
+            actionDialogSubmitting: false,
+          })
+        })
+        .catch(() => {
+          this.setState({
+            actionDialogOpen: false,
+            actionDialogSubmitting: false,
+          })
+        })
+      }
+    }
+  }
+
   render() {
     const { dashesList, filter, loadingList } = this.props
     if (loadingList) {
@@ -49,9 +113,10 @@ class Dashes extends Component {
         <LoadingSpinner/>
       )
     }
+    const { actionDialogAction, actionDialogDash, actionDialogOpen, actionDialogSubmitting } = this.state
     const columns = this.tableColumns(filter)
     return (
-      <div className={styles.root + ' slds-m-horizontal--medium slds-m-vertical--medium'}>
+      <div className="slds-m-horizontal--medium slds-m-vertical--medium">
         <div className="slds-m-top--medium">
           <ButtonGroup>
             <Button type={filter == 'Draft' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Draft')}>Draft</Button>
@@ -88,13 +153,22 @@ class Dashes extends Component {
                     key={index}
                     id={id}
                     filter={filter}
-                    columns={columns} />
+                    columns={columns}
+                    onActivate={this.onActivateDash.bind(this, dash)}
+                    onComplete={this.onCompleteDash.bind(this, dash)} />
                   :
                   false
               })}
             </tbody>
           </table>
         </div>
+        <DashesListActionDialog
+          open={actionDialogOpen}
+          submitting={actionDialogSubmitting}
+          action={actionDialogAction}
+          dash={actionDialogDash}
+          onClose={this.onClose}
+          onYes={this.onDoAction} />
       </div>
     )
   }

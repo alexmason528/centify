@@ -24,6 +24,7 @@ import {
   DASHES_SINGLE_GET_REWARDS,
   DASHES_SINGLE_GET_REWARDS_SUCCESS,
   DASHES_SINGLE_GET_REWARDS_FAIL,
+
   DASHES_CREATE,
   DASHES_CREATE_SUCCESS,
   DASHES_CREATE_FAIL,
@@ -36,6 +37,12 @@ import {
   DASHES_CANCEL,
   DASHES_CANCEL_SUCCESS,
   DASHES_CANCEL_FAIL,
+  DASHES_ACTIVATE,
+  DASHES_ACTIVATE_SUCCESS,
+  DASHES_ACTIVATE_FAIL,
+  DASHES_COMPLETE,
+  DASHES_COMPLETE_SUCCESS,
+  DASHES_COMPLETE_FAIL,
 
   DASHES_REWARD_CREATE,
   DASHES_REWARD_CREATE_SUCCESS,
@@ -462,5 +469,19 @@ export function cancelDash(orgId, dashId) {
     .catch(res => {
       throw new SubmissionError({ _error: res.error })
     })
+  }
+}
+
+export function activateDash(orgId, dashId) {
+  return {
+    types: [DASHES_ACTIVATE, DASHES_ACTIVATE_SUCCESS, DASHES_ACTIVATE_FAIL],
+    promise: (client) => client.put(`/v1/${orgId}/dashes/${dashId}/activate`)
+  }
+}
+
+export function completeDash(orgId, dashId) {
+  return {
+    types: [DASHES_COMPLETE, DASHES_COMPLETE_SUCCESS, DASHES_COMPLETE_FAIL],
+    promise: (client) => client.put(`/v1/${orgId}/dashes/${dashId}/complete`)
   }
 }
