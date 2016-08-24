@@ -41,7 +41,8 @@ var config = getConfig({
           'name': 'MyCentify',
           'description': 'MyCentify'
         },
-        css: main_css
+        css: main_css,
+        head: '<link rel="icon" href="images/favicon-32x32.png" sizes="32x32" /><link rel="icon" href="images/favicon-192x192.png" sizes="192x192" />',
       })
     }
   }
