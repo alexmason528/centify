@@ -3,17 +3,14 @@ import { Grid, Row, Col } from 'react-lightning-design-system'
 
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import DashForm from 'components/DashForm/DashForm'
-import MessageDialog from 'components/MessageDialog/MessageDialog'
 import { formatDate2 } from 'utils/formatter'
 import styles from './styles.module.css'
 import hoc from './hoc'
 
 class DashCreate extends Component {
 
-  state = {
-    open: false,
-    title: '',
-    text: '',
+  static contextTypes = {
+    notify: React.PropTypes.func
   }
 
   componentDidMount() {
@@ -112,21 +109,7 @@ class DashCreate extends Component {
     }
     this.props.createDash(profile.centifyOrgId, data)
     .catch(res => {
-      this.openDialog('', 'Failed to create dash due to errors.')
-    })
-  }
-
-  openDialog = (title, text) => {
-    this.setState({
-      open: true,
-      title,
-      text,
-    })
-  }
-
-  onClose = () => {
-    this.setState({
-      open: false,
+      this.context.notify('Failed to create dash due to errors', 'error')
     })
   }
 
@@ -137,7 +120,6 @@ class DashCreate extends Component {
         <LoadingSpinner/>
       )
     }
-    const { open, title, text } = this.state
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
         <Grid className="slds-p-vertical--large">
@@ -154,11 +136,6 @@ class DashCreate extends Component {
           users={users}
           todos={todos.filter(todo => !!todo.get('Status'))}
           budgetAmount={budgetAmount} />
-        <MessageDialog
-          open={open}
-          title={title}
-          text={text}
-          onClose={this.onClose} />
       </div>
     )
   }
