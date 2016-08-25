@@ -29,7 +29,8 @@ class DashCreate extends Component {
     }
   }
 
-  initialValues() { 
+  initialValues() {
+    const startDate = new Date()
     const endDate = new Date()
     endDate.setDate(endDate.getDate() + parseInt(1))
     return {
@@ -37,8 +38,8 @@ class DashCreate extends Component {
       Type : "OverTheLine",
       MeasureType : "Deal",
       MeasureValue : 0,
-      StartsAt: formatDate2(),
-      EndsAt: formatDate2(endDate),
+      StartsAt: startDate.toISOString(),
+      EndsAt: endDate.toISOString(),
       // durationDays : 0,
       // durationHours : 0,
       RewardType : "All over the line",
@@ -75,7 +76,7 @@ class DashCreate extends Component {
       ImageURL : "",
       IsTeamDash : false,
       GameType : "RocketLaunch",
-      TargetThreshold : model.MeasureValue,
+      TargetThreshold : parseInt(model.MeasureValue),
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : 30,
       ScoreFormula : "",
