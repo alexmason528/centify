@@ -11,8 +11,6 @@ import {
   Button,
   Container,
 } from 'react-lightning-design-system'
-import Slider from 'rc-slider'
-import 'rc-slider/assets/index.css'
 
 import { formatDate2, numWithSurfix } from 'utils/formatter'
 import DateInput from 'components/DateInput/DateInput'
@@ -37,7 +35,7 @@ class DashForm extends Component {
     )
   }
 
-  themeSelect = () => {
+  typeSelect = () => {
     return (
       <div className="slds-form-element">
         <div className="slds-form-element__control">
@@ -73,7 +71,7 @@ class DashForm extends Component {
     )
   }
 
-  goalSlider = (props) => {
+  measureValueInput = (props) => {
     const {value, ...otherProps} = props.input
     const _value = value ? value : 0
     const valueStyle = {
@@ -83,7 +81,7 @@ class DashForm extends Component {
     }
     return (
       <div>
-        <span>What is the target value (use slider to set)? </span>
+        <span>What is the target value? </span>
         <Input type="text" style={valueStyle} {...props.input}/>
       </div>
     )
@@ -484,10 +482,10 @@ class DashForm extends Component {
 
           <Row cols={6} className="slds-m-top--xx-large">
             <Col padded cols={6} className="slds-m-bottom--small">
-              <h2 className={styles.fieldTitle}>Theme</h2>
+              <h2 className={styles.fieldTitle}>Type</h2>
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}>
-              {this.themeSelect()}
+              {this.typeSelect()}
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
           </Row>
@@ -504,7 +502,7 @@ class DashForm extends Component {
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}></Col>
             <Col padded cols={6} className="slds-m-top--medium">
-              <Field name="MeasureValue" component={this.goalSlider}/>
+              <Field name="MeasureValue" component={this.measureValueInput}/>
             </Col>
           </Row>
 
