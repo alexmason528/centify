@@ -21,6 +21,8 @@ export default function budget(state = initialState, action) {
       return state
     case BUDGET_GET_SUCCESS:
       return state.set('budgetAmount', action.result.BudgetAmount)
+    case BUDGET_GET_FAIL:
+      return state.set('budgetAmount', 0)
     default:
       return state
   }

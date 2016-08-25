@@ -531,7 +531,7 @@ class DashForm extends Component {
             </Col>
           </Row>
 
-          <Row cols={6} className="slds-m-top--xx-large">
+          <Row cols={6} className="slds-m-top--xx-large" style={budgetAmount == 0 ? { display: 'none' } : {}}>
             <Col padded cols={6} className="slds-m-bottom--medium">
               <h2 className={styles.fieldTitle}>Rewards</h2>
             </Col>
