@@ -127,7 +127,7 @@ class DashCreate extends Component {
           onSubmit={(model) => this.onSubmit(model)}
           initialValues={this.initialValues()}
           users={users}
-          todos={todos}
+          todos={todos.filter(todo => !!todo.get('Status'))}
           budgetAmount={budgetAmount} />
       </div>
     )

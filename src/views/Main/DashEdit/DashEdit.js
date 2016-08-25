@@ -189,7 +189,7 @@ class DashEdit extends Component {
           onSubmit={(model) => this.onSubmit(model)}
           initialValues={this.initialValues()}
           users={users}
-          todos={todos}
+          todos={todos.filter(todo => !!todo.get('Status'))}
           editable={editable}
           budgetAmount={budgetAmount} />
       </div>
