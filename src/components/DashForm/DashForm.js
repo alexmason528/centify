@@ -53,6 +53,37 @@ class DashForm extends Component {
     )
   }
 
+  themeSelect = () => {
+    const { dashtypes, dashbanners, DashTypeId } = this.props
+    const dashType = dashtypes.get(DashTypeId)
+    const themesAllowed = dashType ? dashType.get('GameThemesAllowed') : false
+    return (
+      <div className="slds-form-element">
+        <div className="slds-form-element__control">
+          <div className="slds-select_container">
+            <Field name={"DashBannerId"} component="select" className="slds-select">
+              <option value="">- Select theme -</option>
+              {
+                themesAllowed ?
+                dashbanners.valueSeq().map((banner, index) => {
+                  const name = banner.get('Name')
+                  return (
+                    themesAllowed.find(t => t == name) ?
+                    <option key={index} value={banner.get('Id')}>{name}</option>
+                    :
+                    undefined
+                  )
+                })
+                :
+                undefined
+              }
+            </Field>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   metricSelect = () => {
     return (
       <div className="slds-form-element">
@@ -494,6 +525,16 @@ class DashForm extends Component {
 
           <Row cols={6} className="slds-m-top--xx-large">
             <Col padded cols={6} className="slds-m-bottom--small">
+              <h2 className={styles.fieldTitle}>Theme</h2>
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={2}>
+              {this.themeSelect()}
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--small">
               <h2 className={styles.fieldTitle}>Goal</h2>
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={1}>
@@ -608,6 +649,7 @@ const selector = formValueSelector('DashForm')
 _DashForm = connect(
   state => {
     return {
+      DashTypeId: selector(state, 'DashTypeId'),
       RewardTypeValue: selector(state, 'RewardType'),
       RewardAmount: selector(state, 'RewardAmount'),
       rewards: selector(state, 'rewards'),

@@ -5,8 +5,9 @@ import { getUsers } from 'redux/modules/users'
 import { getTodos } from 'redux/modules/todos'
 import { getBudget } from 'redux/modules/budget'
 import { getDashTypes } from 'redux/modules/dashtypes'
+import { getDashBanners } from 'redux/modules/dashbanners'
 
-const mapStateToProps = ({ dashes, users, todos, budget, dashtypes }) => ({
+const mapStateToProps = ({ dashes, users, todos, budget, dashtypes, dashbanners }) => ({
   // dashes
   currentDash: dashes.get('currentDash'),
   loading: dashes.get('loading'),
@@ -27,6 +28,10 @@ const mapStateToProps = ({ dashes, users, todos, budget, dashtypes }) => ({
   dashtypes: dashtypes.get('dashtypes'),
   loadingDashTypes: dashtypes.get('loading'),
   loadedDashTypes: dashtypes.get('loaded'),
+  // dash banners
+  dashbanners: dashbanners.get('dashbanners'),
+  loadingDashBanners: dashbanners.get('loading'),
+  loadedDashBanners: dashbanners.get('loaded'),
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -36,6 +41,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   getTodos,
   getBudget,
   getDashTypes,
+  getDashBanners,
 }, dispatch)
 
 export default (container) => connect(

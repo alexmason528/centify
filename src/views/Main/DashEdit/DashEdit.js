@@ -52,6 +52,14 @@ class DashEdit extends Component {
           this.context.notify('Failed to get dash types from server', 'error')
         })
       }
+      // Get dash banners
+      const { getDashBanners, loadedDashBanners } = this.props
+      if (!loadedDashBanners) {
+        getDashBanners()
+        .catch(res => {
+          this.context.notify('Failed to get dash banners from server', 'error')
+        })
+      }
     }
   }
 
@@ -94,6 +102,7 @@ class DashEdit extends Component {
         Name : currentDash.get('Name'),
         Type : currentDash.get('Type'),
         DashTypeId: currentDash.get('DashTypeId'),
+        DashBannerId: currentDash.get('DashBannerId'),
         MeasureType : currentDash.getIn(['Measure', 'EventType'], ''),
         MeasureValue : currentDash.get('TargetThreshold'),
         StartsAt: new Date(currentDash.get('StartsAt')).toISOString(),
@@ -202,9 +211,12 @@ class DashEdit extends Component {
       loadingUsers, users,
       loadingTodos, todos,
       budgetAmount,
-      loadingDashTypes, dashtypes,
+      loadingDashTypes, loadedDashTypes, dashtypes,
+      loadingDashBanners, dashbanners,
     } = this.props
-    if (loading || loadingParticipants || loadingRewards || loadingTodos || loadingUsers || loadingDashTypes) {
+    if (loading || loadingParticipants || loadingRewards
+      || loadingUsers || loadingTodos || loadingDashTypes
+      || loadingDashBanners || !loadedDashTypes) {
       return (
         <LoadingSpinner/>
       )
@@ -226,7 +238,8 @@ class DashEdit extends Component {
           todos={todos.filter(todo => !!todo.get('Status'))}
           editable={editable}
           budgetAmount={budgetAmount}
-          dashtypes={dashtypes} />
+          dashtypes={dashtypes}
+          dashbanners={dashbanners} />
       </div>
     )
   }

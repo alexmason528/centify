@@ -99,3 +99,9 @@ export const BUDGET_GET_FAIL = 'centify/budget/GET_FAIL'
 export const DASH_TYPES_GET = 'centify/dashtypes/GET'
 export const DASH_TYPES_GET_SUCCESS = 'centify/dashtypes/GET_SUCCESS'
 export const DASH_TYPES_GET_FAIL = 'centify/dashtypes/GET_FAIL'
+
+/* Dash banners module */
+
+export const DASH_BANNERS_GET = 'centify/dashbanners/GET'
+export const DASH_BANNERS_GET_SUCCESS = 'centify/dashbanners/GET_SUCCESS'
+export const DASH_BANNERS_GET_FAIL = 'centify/dashbanners/GET_FAIL'

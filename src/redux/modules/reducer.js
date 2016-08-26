@@ -7,6 +7,7 @@ import users from './users'
 import todos from './todos'
 import budget from './budget'
 import dashtypes from './dashtypes'
+import dashbanners from './dashbanners'
 
 export default combineReducers({
   routing: routerReducer,
@@ -16,4 +17,5 @@ export default combineReducers({
   todos,
   budget,
   dashtypes,
+  dashbanners,
 });

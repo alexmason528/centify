@@ -21,7 +21,6 @@ class Payouts extends Component {
       const url = `/v1/${profile.centifyOrgId}/dashes/payout`
       // window.open(url, '_blank')
       this.client.get(url).then((res) => {
-        console.log(res)
         const windowUrl = window.URL || window.webkitURL
         const data = res
         const anchor = this.refs.tempAnchor

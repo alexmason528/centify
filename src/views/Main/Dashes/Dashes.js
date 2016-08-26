@@ -58,7 +58,6 @@ class Dashes extends Component {
   }
 
   onActivateDash = (dash) => {
-    console.log('asdfa')
     this.setState({
       actionDialogOpen: true,
       actionDialogAction: 'activate',

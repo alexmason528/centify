@@ -44,6 +44,14 @@ class DashCreate extends Component {
           this.context.notify('Failed to get dash types from server', 'error')
         })
       }
+      // Get dash banners
+      const { getDashBanners, loadedDashBanners } = this.props
+      if (!loadedDashBanners) {
+        getDashBanners()
+        .catch(res => {
+          this.context.notify('Failed to get dash banners from server', 'error')
+        })
+      }
     }
   }
 
@@ -136,9 +144,12 @@ class DashCreate extends Component {
       loadingUsers, users, 
       loadingTodos, todos,
       budgetAmount,
-      loadingDashTypes, dashtypes,
+      loadingDashTypes, loadedDashTypes, dashtypes,
+      loadingDashBanners, dashbanners,
     } = this.props
-    if (loading || loadingParticipants || loadingRewards || loadingUsers || loadingTodos || loadingDashTypes) {
+    if (loading || loadingParticipants || loadingRewards
+      || loadingUsers || loadingTodos || loadingDashTypes
+      || loadingDashBanners || !loadedDashTypes) {
       return (
         <LoadingSpinner/>
       )
@@ -159,7 +170,8 @@ class DashCreate extends Component {
           users={users}
           todos={todos.filter(todo => !!todo.get('Status'))}
           budgetAmount={budgetAmount}
-          dashtypes={dashtypes} />
+          dashtypes={dashtypes}
+          dashbanners={dashbanners} />
       </div>
     )
   }
