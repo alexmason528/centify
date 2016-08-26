@@ -21,15 +21,29 @@ class DashCreate extends Component {
       const { users, loadingUsers, loadedUsers } = this.props
       if (!loadedUsers) {
         this.props.getUsers(profile.centifyOrgId)
+        .catch(res => {
+          this.context.notify('Failed to get users from server', 'error')
+        })
       }
       // Get todos
       const { getTodos, loadedTodos } = this.props
       if (!loadedTodos) {
         getTodos(profile.centifyOrgId)
+        .catch(res => {
+          this.context.notify('Failed to get todos from server', 'error')
+        })
       }
       // Get budget
       const { getBudget } = this.props
       getBudget(profile.centifyOrgId)
+      // Get dash types
+      const { getDashTypes, loadedDashTypes } = this.props
+      if (!loadedDashTypes) {
+        getDashTypes(profile.centifyOrgId)
+        .catch(res => {
+          this.context.notify('Failed to get dash types from server', 'error')
+        })
+      }
     }
   }
 
@@ -108,14 +122,23 @@ class DashCreate extends Component {
       ...modelData
     }
     this.props.createDash(profile.centifyOrgId, data)
+    .then(() => {
+      this.context.notify('Dash created successfully', 'success')
+    })
     .catch(res => {
       this.context.notify('Failed to create dash due to errors', 'error')
     })
   }
 
   render() {
-    const { loading, loadingParticipants, loadingRewards, loadingUsers, loadingTodos, users, todos, budgetAmount } = this.props
-    if (loading || loadingParticipants || loadingRewards || loadingUsers || loadingTodos) {
+    const {
+      loading, loadingParticipants, loadingRewards, 
+      loadingUsers, users, 
+      loadingTodos, todos,
+      budgetAmount,
+      loadingDashTypes, dashtypes,
+    } = this.props
+    if (loading || loadingParticipants || loadingRewards || loadingUsers || loadingTodos || loadingDashTypes) {
       return (
         <LoadingSpinner/>
       )
@@ -135,7 +158,8 @@ class DashCreate extends Component {
           initialValues={this.initialValues()}
           users={users}
           todos={todos.filter(todo => !!todo.get('Status'))}
-          budgetAmount={budgetAmount} />
+          budgetAmount={budgetAmount}
+          dashtypes={dashtypes} />
       </div>
     )
   }

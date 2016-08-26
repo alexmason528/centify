@@ -15,6 +15,10 @@ import hoc from './hoc'
 
 class Dashes extends Component {
 
+  static contextTypes = {
+    notify: React.PropTypes.func
+  }
+
   state = {
     actionDialogOpen: false,
     actionDialogAction: '',
@@ -29,6 +33,9 @@ class Dashes extends Component {
       const { loadedList, getDashesList } = this.props
       if (!loadedList) {
         getDashesList(profile.centifyOrgId)
+        .catch(res => {
+          this.context.notify('Failed to get dash list from server', 'error')
+        })
       }
     }
   }
@@ -95,12 +102,14 @@ class Dashes extends Component {
             actionDialogOpen: false,
             actionDialogSubmitting: false,
           })
+          this.context.notify('Successfully ' + actionDialogAction + 'd dash', 'success')
         })
         .catch(() => {
           this.setState({
             actionDialogOpen: false,
             actionDialogSubmitting: false,
           })
+          this.context.notify('Failed to ' + actionDialogAction + ' dash', 'error')
         })
       }
     }

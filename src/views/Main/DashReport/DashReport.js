@@ -10,6 +10,10 @@ import hoc from './hoc'
 
 class DashReport extends Component {
 
+  static contextTypes = {
+    notify: React.PropTypes.func
+  }
+
   sumOfOneField(participant, field) {
     let sum = 0
     participant.get('Users').map(user => {
@@ -181,10 +185,16 @@ class DashReport extends Component {
       const { getUsers, loadedUsers, getDash } = this.props
       if (!loadedUsers) {
         getUsers(profile.centifyOrgId)
+        .catch(res => {
+          this.context.notify('Failed to get users from server', 'error')
+        })
       }
       // Get dash
       if (this.props.params.dashId) {
         getDash(profile.centifyOrgId, this.props.params.dashId)
+        .catch(res => {
+          this.context.notify('Failed to get dashes from server', 'error')
+        })
       }
     }
   }

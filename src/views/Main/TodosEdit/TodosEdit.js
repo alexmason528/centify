@@ -12,6 +12,10 @@ import hoc from './hoc'
 
 class TodosEdit extends Component {
 
+  static contextTypes = {
+    notify: React.PropTypes.func
+  }
+
   state = {
     submitting: false,
     updatingTodoCount: 0,
@@ -24,6 +28,9 @@ class TodosEdit extends Component {
       const { loadedTodos, getTodos } = this.props
       if (!loadedTodos) {
         getTodos(profile.centifyOrgId)
+        .catch(res => {
+          this.context.notify('Failed to get todos from server', 'error')
+        })
       }
     }
   }
@@ -52,6 +59,9 @@ class TodosEdit extends Component {
               updatingTodoCount
             })
             push('/todos')
+          })
+          .catch(res => {
+            this.context.notify('Failed to update a todo status', 'error')
           })
         }
       })}

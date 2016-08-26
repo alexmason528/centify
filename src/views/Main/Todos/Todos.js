@@ -12,6 +12,10 @@ import hoc from './hoc'
 
 class Todos extends Component {
 
+  static contextTypes = {
+    notify: React.PropTypes.func
+  }
+
   componentDidMount() {
     const auth = this.props.auth
     if (auth) {
@@ -19,6 +23,9 @@ class Todos extends Component {
       const { loadedTodos, getTodos } = this.props
       if (!loadedTodos) {
         getTodos(profile.centifyOrgId)
+        .catch(res => {
+          this.context.notify('Failed to get todos from server', 'error')
+        })
       }
     }
   }

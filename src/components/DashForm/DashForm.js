@@ -36,14 +36,16 @@ class DashForm extends Component {
   }
 
   typeSelect = () => {
+    const { dashtypes } = this.props
     return (
       <div className="slds-form-element">
         <div className="slds-form-element__control">
           <div className="slds-select_container">
-            <Field name={"Type"} component="select" className="slds-select">
-              <option value='TugOfWar'>Tug of War</option>
-              <option value='OverTheLine'>Over the Line</option>
-              <option value='Timebomb'>Time Bomb</option>
+            <Field name={"DashTypeId"} component="select" className="slds-select">
+              <option value="">- Select dash type -</option>
+              {dashtypes.valueSeq().map((type, index) => (
+                <option key={index} value={type.get('Id')}>{type.get('Name')}</option>
+              ))}
             </Field>
           </div>
         </div>

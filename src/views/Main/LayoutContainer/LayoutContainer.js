@@ -8,8 +8,10 @@ import hoc from './hoc'
 import styles from './styles.module.css'
 
 export class LayoutContainer extends React.Component {
+
   static contextTypes = {
-    router: T.object
+    router: T.object,
+    notify: React.PropTypes.func
   }
 
   constructor(props, context) {
@@ -39,6 +41,9 @@ export class LayoutContainer extends React.Component {
         centifyUserId,
       } = auth.getProfile()
       this.props.getUserIdentity(centifyOrgId, centifyUserId)
+      .catch(res => {
+        this.context.notify('Failed to get current user identity', 'error')
+      })
     }
   }
 

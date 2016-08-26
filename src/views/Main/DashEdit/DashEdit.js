@@ -22,19 +22,36 @@ class DashEdit extends Component {
       const { getUsers, loadedUsers } = this.props
       if (!loadedUsers) {
         getUsers(profile.centifyOrgId)
+        .catch(res => {
+          this.context.notify('Failed to get users from server', 'error')
+        })
       }
       // Get todos
       const { getTodos, loadedTodos } = this.props
       if (!loadedTodos) {
         getTodos(profile.centifyOrgId)
+        .catch(res => {
+          this.context.notify('Failed to get todos from server', 'error')
+        })
       }
       // Get dash
       if (this.props.params.dashId) {
         this.props.getDash(profile.centifyOrgId, this.props.params.dashId)
+        .catch(res => {
+          this.context.notify('Failed to get dash details from server', 'error')
+        })
       }
       // Get budget
       const { getBudget } = this.props
       getBudget(profile.centifyOrgId)
+      // Get dash types
+      const { getDashTypes, loadedDashTypes } = this.props
+      if (!loadedDashTypes) {
+        getDashTypes(profile.centifyOrgId)
+        .catch(res => {
+          this.context.notify('Failed to get dash types from server', 'error')
+        })
+      }
     }
   }
 
@@ -76,8 +93,9 @@ class DashEdit extends Component {
       return {
         Name : currentDash.get('Name'),
         Type : currentDash.get('Type'),
+        DashTypeId: currentDash.get('DashTypeId'),
         MeasureType : currentDash.getIn(['Measure', 'EventType'], ''),
-        MeasureValue : currentDash.getIn(['Measure', 'Value'], 0),
+        MeasureValue : currentDash.get('TargetThreshold'),
         StartsAt: new Date(currentDash.get('StartsAt')).toISOString(),
         EndsAt: new Date(currentDash.get('EndsAt')).toISOString(),
         // durationDays : 0,
@@ -170,14 +188,23 @@ class DashEdit extends Component {
       ...modelData
     }
     this.props.updateDash(profile.centifyOrgId, this.props.params.dashId, data)
+    .then(() => {
+      this.context.notify('Dash updated successfully', 'success')
+    })
     .catch(res => {
       this.context.notify('Failed to update dash due to errors', 'error')
     })
   }
 
   render() {
-    const { currentDash, loading, loadingParticipants, loadingRewards, loadingTodos, loadingUsers, users, todos, budgetAmount } = this.props
-    if (loading || loadingParticipants || loadingRewards || loadingTodos || loadingUsers) {
+    const {
+      currentDash, loading, loadingParticipants, loadingRewards,
+      loadingUsers, users,
+      loadingTodos, todos,
+      budgetAmount,
+      loadingDashTypes, dashtypes,
+    } = this.props
+    if (loading || loadingParticipants || loadingRewards || loadingTodos || loadingUsers || loadingDashTypes) {
       return (
         <LoadingSpinner/>
       )
@@ -198,7 +225,8 @@ class DashEdit extends Component {
           users={users}
           todos={todos.filter(todo => !!todo.get('Status'))}
           editable={editable}
-          budgetAmount={budgetAmount} />
+          budgetAmount={budgetAmount}
+          dashtypes={dashtypes} />
       </div>
     )
   }
