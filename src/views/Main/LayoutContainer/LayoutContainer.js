@@ -27,6 +27,7 @@ export class LayoutContainer extends React.Component {
       this.getLoggedInUserIdentity()
     } else {
       auth.onGetProfile = this.getLoggedInUserIdentity
+      auth.onAccountNotLinked = this.onAccountNotLinked
     }
   }
 
@@ -45,6 +46,10 @@ export class LayoutContainer extends React.Component {
         this.context.notify('Failed to get current user identity', 'error')
       })
     }
+  }
+
+  onAccountNotLinked = () => {
+    this.props.push('/account-not-linked')
   }
 
   logout = () => {
@@ -90,15 +95,22 @@ export class LayoutContainer extends React.Component {
         <Grid>
           <Row cols={6}>
             <Col cols={6}>
-              <Header profile={headerProfileData} logout={this.logout}/>
+              <Header profile={headerProfileData} logout={this.logout} notLinked={auth.notLinked}/>
             </Col>
             <Col cols={6} colsSmall={2} colsMedium={1}>
               <div className="slds-p-left--large slds-p-large--large slds-p-top--large slds-p-bottom--x-large">
-                <img src={headerProfileData.avatarUrl}
-                  alt="user-image" className="slds-avatar--circle" style={avatarStyle}/>
-                {headerProfileData.name}
+                {
+                  auth.notLinked ?
+                  undefined
+                  :
+                  <div>
+                    <img src={headerProfileData.avatarUrl}
+                      alt="user-image" className="slds-avatar--circle" style={avatarStyle} />
+                    {headerProfileData.name}
+                  </div>
+                }
               </div>
-              <SideNav routeName={routeName}/>
+              <SideNav routeName={routeName} notLinked={auth.notLinked}/>
             </Col>
             <Col cols={6} colsSmall={4} colsMedium={5}>
               {children}

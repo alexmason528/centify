@@ -35,6 +35,8 @@ export default class AuthService extends EventEmitter {
     this.lock.on('authorization_error', this._authorizationError.bind(this))
     // binds login functions to keep this context
     this.login = this.login.bind(this)
+
+    this.notLinked = true
   }
 
   _doAuthentication(authResult) {
@@ -43,14 +45,18 @@ export default class AuthService extends EventEmitter {
     this.lock.getProfile(authResult.idToken, (error, profile) => {
       if (error) {
         console.log('Error loading the Profile', error)
-      } else if (profile.centifyUserId) {
+      } else if (profile.centifyUserId && false) {
         // Saves the user token
         this.setProfile(profile)
         if (this.onGetProfile) {
+          this.notLinked = false
           this.onGetProfile()
         }
       } else {
-        alert('Not a centify account.');
+        if (this.onAccountNotLinked) {
+          this.notLinked = true
+          this.onAccountNotLinked()
+        }
       }
     })
   }

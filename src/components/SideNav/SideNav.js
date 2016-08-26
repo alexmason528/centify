@@ -5,7 +5,7 @@ import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
 import { Icon } from 'react-fa'
 
-const SideNav = ({ routeName }) => {
+const SideNav = ({ routeName, notLinked }) => {
   const logoStyle = {
     height: 40,
     width: 'auto'
@@ -14,6 +14,41 @@ const SideNav = ({ routeName }) => {
     width: 35,
     height: 'auto',
     marginRight: 10,
+  }
+  if (notLinked) {
+    return (
+      <div className="slds-grid slds-grid--vertical">
+        <ul className="slds-navigation-list--vertical slds-has-block-links--space">
+          <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
+            <Icon fixedWidth name="dashboard"/> Dashboard
+          </Link></li>
+          <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
+            <Icon fixedWidth name="flag-checkered"/> Dashes
+          </Link></li>
+          <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
+            <Icon fixedWidth name="hand-o-right"/> ToDos
+          </Link></li>
+          <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
+            <Icon fixedWidth name="dollar"/> Base IC
+          </Link></li>
+          <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
+            <Icon fixedWidth name="money"/> Payouts
+          </Link></li>
+          <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
+            <Icon fixedWidth name="comment"/> Notifications
+          </Link></li>
+          <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
+            <Icon fixedWidth name="trophy"/> Gamification
+          </Link></li>
+          <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
+            <Icon fixedWidth name="line-chart"/> Data Analysis
+          </Link></li>
+          <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
+            <Icon fixedWidth name="university"/> Budget
+          </Link></li>
+        </ul>
+      </div>
+    )
   }
   return (
     <div className="slds-grid slds-grid--vertical">

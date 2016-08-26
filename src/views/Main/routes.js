@@ -6,6 +6,7 @@ import LayoutContainer from './LayoutContainer/LayoutContainer'
 import Home from './Home/Home'
 import Login from './Login/Login'
 import LoggingIn from './LoggingIn/LoggingIn'
+import AccountNotLinked from './AccountNotLinked/AccountNotLinked'
 import Dashes from './Dashes/Dashes'
 import DashCreate from './DashCreate/DashCreate'
 import DashEdit from './DashEdit/DashEdit'
@@ -31,6 +32,7 @@ export const makeMainRoutes = () => {
       <Route path="access_token=:token" component={LoggingIn} />
 
       <Route component={LayoutContainer} onEnter={requireAuth}>
+      <Route path="account-not-linked" component={AccountNotLinked} />
         <Route path="home" component={Home} />
         <Route path="dashes" component={Dashes} />
         <Route path="dashes/new" component={DashCreate} />
