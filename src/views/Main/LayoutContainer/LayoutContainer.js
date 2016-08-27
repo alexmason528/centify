@@ -4,6 +4,7 @@ import { Grid, Row, Col } from 'react-lightning-design-system'
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import Header from 'components/Header/Header'
 import SideNav from 'components/SideNav/SideNav'
+import Footer from 'components/Footer/Footer'
 import hoc from './hoc'
 import styles from './styles.module.css'
 
@@ -118,6 +119,7 @@ export class LayoutContainer extends React.Component {
             </Col>
           </Row>
         </Grid>
+        <Footer/>
       </div>
     )
   }

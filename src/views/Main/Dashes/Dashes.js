@@ -163,7 +163,7 @@ class Dashes extends Component {
                     id={id}
                     filter={filter}
                     columns={columns}
-                    participantCount={participantCount ? participantCount : '-'}
+                    participantCount={participantCount ? participantCount : 0}
                     onActivate={this.onActivateDash.bind(this, dash)}
                     onComplete={this.onCompleteDash.bind(this, dash)} />
                   :
