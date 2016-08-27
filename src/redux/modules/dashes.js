@@ -114,6 +114,7 @@ export default function dashes(state = initialState, action) {
         return state.withMutations((map) => {
           map.setIn(['list', dashId, 'Participants', 'items'], Immutable.fromJS(participants))
           map.setIn(['list', dashId, 'Participants', 'loaded'], true)
+          map.setIn(['list', dashId, 'ParticipantCount'], participants.length)
           map.set('storeUpdateIndicator', Math.random())
         })
       }

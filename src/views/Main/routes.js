@@ -32,7 +32,7 @@ export const makeMainRoutes = () => {
       <Route path="access_token=:token" component={LoggingIn} />
 
       <Route component={LayoutContainer} onEnter={requireAuth}>
-      <Route path="account-not-linked" component={AccountNotLinked} />
+        <Route path="account-not-linked" component={AccountNotLinked} />
         <Route path="home" component={Home} />
         <Route path="dashes" component={Dashes} />
         <Route path="dashes/new" component={DashCreate} />

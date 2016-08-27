@@ -21,6 +21,10 @@ export class AccountNotLinked extends React.Component {
     this.props.push('/login')
   }
 
+  onSignup = () => {
+    window.location.href = "https://centify.com"
+  }
+
   render() {
     const titleStyle = {
       fontWeight: 700,
@@ -36,7 +40,7 @@ export class AccountNotLinked extends React.Component {
         <div style={{ marginTop: 30 }}>
           <Button type="neutral" onClick={this.onLogout}>Logout</Button>
           &nbsp;
-          <Button type="brand">Signup</Button>
+          <Button type="brand" onClick={this.onSignup}>Signup</Button>
         </div>
       </div>
     )

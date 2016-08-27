@@ -4,7 +4,7 @@ import { push } from 'react-router-redux';
 import { getDashesList, filterDashes, deleteDash, cancelDash } from 'redux/modules/dashes';
 
 const mapStateToProps = ({ dashes }, ownProps) => ({
-  dash: dashes.getIn(['list', ownProps.id]),
+  dash: dashes.getIn(['list', ownProps.id])
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

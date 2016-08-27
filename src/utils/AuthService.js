@@ -45,7 +45,7 @@ export default class AuthService extends EventEmitter {
     this.lock.getProfile(authResult.idToken, (error, profile) => {
       if (error) {
         console.log('Error loading the Profile', error)
-      } else if (profile.centifyUserId && false) {
+      } else if (profile.centifyUserId) {
         // Saves the user token
         this.setProfile(profile)
         if (this.onGetProfile) {

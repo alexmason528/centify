@@ -156,12 +156,14 @@ class Dashes extends Component {
             <tbody>
               {dashesList.valueSeq().map((dash, index) => {
                 const id = dash.get('Id')
+                const participantCount = dash.get('ParticipantCount')
                 return filter == '' || dash.get('Status') == filter ?
                   <DashesListItem
                     key={index}
                     id={id}
                     filter={filter}
                     columns={columns}
+                    participantCount={participantCount ? participantCount : '-'}
                     onActivate={this.onActivateDash.bind(this, dash)}
                     onComplete={this.onCompleteDash.bind(this, dash)} />
                   :

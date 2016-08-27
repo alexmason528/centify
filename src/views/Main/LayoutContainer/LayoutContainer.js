@@ -64,8 +64,11 @@ export class LayoutContainer extends React.Component {
       identity,
       loadedIdentity,
     } = this.props
+    const routeParts = this.props.location.pathname.substr(1).split("/")
+    const routeName = routeParts[0]
+    const notLinked = (routeName == 'account-not-linked')
 
-    if (!loadedIdentity) {
+    if (!loadedIdentity && !notLinked) {
       return (
         <LoadingSpinner width={100} height={500} />
       )
@@ -80,8 +83,6 @@ export class LayoutContainer extends React.Component {
       height: 'auto',
       marginRight: 10,
     }
-    const routeParts = this.props.location.pathname.substr(1).split("/")
-    const routeName = routeParts[0]
 
     let children = null
     if (this.props.children) {
@@ -95,7 +96,7 @@ export class LayoutContainer extends React.Component {
         <Grid>
           <Row cols={6}>
             <Col cols={6}>
-              <Header profile={headerProfileData} logout={this.logout} notLinked={auth.notLinked}/>
+              <Header profile={headerProfileData} logout={this.logout} notLinked={notLinked}/>
             </Col>
             <Col cols={6} colsSmall={2} colsMedium={1}>
               <div className="slds-p-left--large slds-p-large--large slds-p-top--large slds-p-bottom--x-large">
@@ -110,7 +111,7 @@ export class LayoutContainer extends React.Component {
                   </div>
                 }
               </div>
-              <SideNav routeName={routeName} notLinked={auth.notLinked}/>
+              <SideNav routeName={routeName} notLinked={notLinked}/>
             </Col>
             <Col cols={6} colsSmall={4} colsMedium={5}>
               {children}

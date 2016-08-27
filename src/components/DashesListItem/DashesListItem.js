@@ -48,7 +48,10 @@ class DashesListItem extends Component {
       case 'isTeamDash':
         return dash.get(column) ? 'Yes' : 'No'
       case 'ParticipantsJoined':
-        return dash.get('ParticipantsJoined') + ' / ' + dash.get('MinimumParticipants')
+        {
+          const { participantCount } = this.props
+          return dash.get('ParticipantsJoined') + ' / ' + participantCount
+        }
       case 'RewardsPaid':
         {
           const loadedParticipants = dash.getIn(['Participants', 'loaded'])

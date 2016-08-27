@@ -8,6 +8,7 @@ const mapStateToProps = ({ dashes }) => ({
   filter: dashes.get('filter'),
   loadingList: dashes.get('loadingList'),
   loadedList: dashes.get('loadedList'),
+  storeUpdateIndicator: dashes.get('storeUpdateIndicator'),
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
