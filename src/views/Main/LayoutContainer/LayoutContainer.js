@@ -84,6 +84,15 @@ export class LayoutContainer extends React.Component {
       height: 'auto',
       marginRight: 10,
     }
+    const appContainerStyle = {
+      paddingBottom: 52,
+    }
+    const footerStyle = {
+      position: 'fixed',
+      left: 0,
+      bottom: 0,
+      width: '100%',
+    }
 
     let children = null
     if (this.props.children) {
@@ -93,7 +102,7 @@ export class LayoutContainer extends React.Component {
     }
 
     return (
-      <div className="app-container">
+      <div className="app-container" style={appContainerStyle}>
         <Grid>
           <Row cols={6}>
             <Col cols={6}>
@@ -102,7 +111,7 @@ export class LayoutContainer extends React.Component {
             <Col cols={6} colsSmall={2} colsMedium={1}>
               <div className="slds-p-left--large slds-p-large--large slds-p-top--large slds-p-bottom--x-large">
                 {
-                  auth.notLinked ?
+                  notLinked ?
                   undefined
                   :
                   <div>
@@ -119,7 +128,7 @@ export class LayoutContainer extends React.Component {
             </Col>
           </Row>
         </Grid>
-        <Footer/>
+        <Footer style={footerStyle}/>
       </div>
     )
   }

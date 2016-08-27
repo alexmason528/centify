@@ -105,3 +105,9 @@ export const DASH_TYPES_GET_FAIL = 'centify/dashtypes/GET_FAIL'
 export const DASH_BANNERS_GET = 'centify/dashbanners/GET'
 export const DASH_BANNERS_GET_SUCCESS = 'centify/dashbanners/GET_SUCCESS'
 export const DASH_BANNERS_GET_FAIL = 'centify/dashbanners/GET_FAIL'
+
+/* Apple TV module */
+
+export const APPLE_TV_ACTIVATION = 'centify/appletv/ACTIVATION'
+export const APPLE_TV_ACTIVATION_SUCCESS = 'centify/appletv/ACTIVATION_SUCCESS'
+export const APPLE_TV_ACTIVATION_FAIL = 'centify/appletv/ACTIVATION_FAIL'

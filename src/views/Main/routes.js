@@ -14,6 +14,7 @@ import DashReport from './DashReport/DashReport'
 import Todos from './Todos/Todos'
 import TodosEdit from './TodosEdit/TodosEdit'
 import Payouts from './Payouts/Payouts'
+import AppleTVActivation from './AppleTVActivation/AppleTVActivation'
 
 const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DOMAIN__);
 
@@ -41,6 +42,7 @@ export const makeMainRoutes = () => {
         <Route path="todos" component={Todos} />
         <Route path="todos/edit" component={TodosEdit} />
         <Route path="payouts" component={Payouts} />
+        <Route path="appletv" component={AppleTVActivation} />
       </Route>
 
     </Route>

@@ -1,0 +1,20 @@
+.helpIconWrapper {
+  position: relative;
+  font-size: 13px;
+  font-weight: 400;
+  text-transform: none;
+}
+.helpPopover {
+  display: none !important;
+  position: absolute !important;
+  left: 100%;
+  top: 50%;
+  margin-left: 15px;
+  -webkit-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.helpIconWrapper:hover .helpPopover {
+  display: block !important;
+}
