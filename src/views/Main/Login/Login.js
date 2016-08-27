@@ -14,6 +14,10 @@ export class Login extends React.Component {
     auth: T.instanceOf(AuthService)
   }
 
+  componentDidMount() {
+    this.props.auth.login()
+  }
+
   render() {
     const { auth } = this.props
     return (
