@@ -7,16 +7,20 @@ import styles from './styles.module.css'
 
 class AppleTVActivation extends Component {
 
+  static contextTypes = {
+    notify: React.PropTypes.func
+  }
+
   activate = () => {
     const auth = this.props.auth
     if (auth) {
       const profile = auth.getProfile()
       this.props.activateAppleTV(profile.centifyOrgId)
       .then(res => {
-        //
+        this.context.notify('Successfully activated Apple TV', 'success')
       })
       .catch(() => {
-        //
+        this.context.notify('Failed to activate Apple TV', 'error')
       })
     }
   }
