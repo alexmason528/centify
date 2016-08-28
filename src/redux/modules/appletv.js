@@ -26,9 +26,12 @@ export default function appletv(state = initialState, action) {
 
 /* Get budget */
 
-export function activateAppleTV(orgId) {
+export function activateAppleTV(orgId, tvCode) {
+  const model = {
+    ActivationCode: tvCode
+  }
   return {
     types: [APPLE_TV_ACTIVATION, APPLE_TV_ACTIVATION_SUCCESS, APPLE_TV_ACTIVATION_FAIL],
-    promise: (client) => client.post(`/v1/${orgId}/devices/adopt`)
+    promise: (client) => client.post(`/v1/${orgId}/devices/adopt`, { data: model })
   }
 }

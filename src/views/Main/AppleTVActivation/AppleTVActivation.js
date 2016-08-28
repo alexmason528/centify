@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Input, Button } from 'react-lightning-design-system'
 import { Icon } from 'react-fa'
 
+import MessageDialog from 'components/MessageDialog/MessageDialog'
 import hoc from './hoc'
 import styles from './styles.module.css'
 
@@ -11,18 +12,53 @@ class AppleTVActivation extends Component {
     notify: React.PropTypes.func
   }
 
+  state = {
+    dialogOpen: false,
+    dialogText: '',
+    tvCode: '',
+    submitting: false,
+  }
+
   activate = () => {
     const auth = this.props.auth
     if (auth) {
       const profile = auth.getProfile()
-      this.props.activateAppleTV(profile.centifyOrgId)
+      const { tvCode } = this.state
+      if (!/^[0-9]{4}$/g.test(tvCode)) {
+        this.openDialog('Please enter four digit into input field.')
+        return
+      }
+      this.setState({
+        submitting: true
+      })
+      this.props.activateAppleTV(profile.centifyOrgId, tvCode)
       .then(res => {
-        this.context.notify('Successfully activated Apple TV', 'success')
+        this.openDialog('Successfully activated Apple TV')
       })
       .catch(() => {
-        this.context.notify('Failed to activate Apple TV', 'error')
+        this.openDialog('Failed to activate Apple TV')
       })
     }
+  }
+
+  onTVCodeInputChange = (e) => {
+    this.setState({
+      tvCode: e.currentTarget.value,
+    })
+  }
+
+  openDialog = (text) => {
+    this.setState({
+      dialogOpen: true,
+      dialogText: text
+    })
+  }
+
+  closeDialog = () => {
+    this.setState({
+      dialogOpen: false,
+      submitting: false,
+    })
   }
 
   render() {
@@ -41,6 +77,7 @@ class AppleTVActivation extends Component {
       color: '#7cc74c',
       marginLeft: 10,
     }
+    const { dialogOpen, dialogText, tvCode, submitting } = this.state
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--large" style={{ maxWidth: 830 }}>
         <h2 style={titleStyle}>Apple TV Activation</h2>
@@ -53,18 +90,24 @@ class AppleTVActivation extends Component {
               </a>
               <div className={'slds-popover slds-nubbin--left ' + styles.helpPopover} role="dialog">
                 <div className="slds-popover__body">
-                  <p>Description</p>
+                  <p>Enter Apple TV Activation code here</p>
                 </div>
               </div>
             </span>
           </div>
           <Input
             type="text"
+            value={tvCode}
+            onChange={this.onTVCodeInputChange}
             style={{ maxWidth: 350 }} />
           <div className="slds-text-align--right slds-m-top--medium">
-            <Button type="brand" onClick={this.activate}>Activate</Button>
+            <Button type="brand" onClick={this.activate} disabled={submitting}>Activate</Button>
           </div>
         </div>
+        <MessageDialog
+          open={dialogOpen}
+          text={dialogText}
+          onClose={this.closeDialog} />
       </div>
     )
   }
