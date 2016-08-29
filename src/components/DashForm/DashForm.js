@@ -84,20 +84,59 @@ class DashForm extends Component {
     )
   }
 
-  metricSelect = () => {
+  basicFilterSelect = () => {
+    const basicSelectStyle = {
+      maxWidth: 400,
+      marginTop: 5,
+    }
     return (
-      <div className="slds-form-element">
-        <div className="slds-form-element__control">
-          <div className="slds-select_container">
-            <Field name={"MeasureType"} component="select" className="slds-select">
-              <option value="Deal">Deal</option>
-              <option value="Call">Call</option>
-              <option value="Email">Email</option>
-              <option value="Meeting">Meeting</option>
-              <option value="Lead">Lead</option>
-              <option value="Account">Account</option>
-              <option value="TrailingRevenueComp">Trailing Revenue Comp</option>
-            </Field>
+      <div>
+        What is the metric?
+        <div className="slds-form-element" style={basicSelectStyle}>
+          <div className="slds-form-element__control">
+            <div className="slds-select_container">
+              <Field name={"MeasureType"} component="select" className="slds-select">
+                <option value="Deal">Deal</option>
+                <option value="Call">Call</option>
+                <option value="Email">Email</option>
+                <option value="Lead">Lead</option>
+                <option value="advanced">Advanced...</option>
+              </Field>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  advancedFilter = () => {
+    const midTextSelectStyle = {
+      display: 'inline-block',
+      maxWidth: 100,
+      margin: '0 10px',
+    }
+    return (
+      <div className="slds-m-top--medium">
+        <div className="slds-form-element">
+          <div className="slds-form-element__control">
+            <label className="slds-radio">
+              <input type="radio" name="options" />
+              <span className="slds-radio--faux"></span>
+              <span className="slds-form-element__label">
+                Include
+                <Select style={midTextSelectStyle}>
+                  <Option value="deals">Deals</Option>
+                  <Option value="calls">Calls</Option>
+                  <Option value="values">Values</Option>
+                </Select>
+                matching
+                <Select style={midTextSelectStyle}>
+                  <Option value="all">All</Option>
+                  <Option value="any">Any</Option>
+                </Select>
+                of the following values:
+              </span>
+            </label>
           </div>
         </div>
       </div>
@@ -108,9 +147,9 @@ class DashForm extends Component {
     const {value, ...otherProps} = props.input
     const _value = value ? value : 0
     const valueStyle = {
-      display: 'inline-block',
-      width: 100,
-      marginLeft: 15,
+      maxWidth: 400,
+      marginTop: 5,
+      display: 'block',
     }
     return (
       <div>
@@ -537,14 +576,11 @@ class DashForm extends Component {
             <Col padded cols={6} className="slds-m-bottom--small">
               <h2 className={styles.fieldTitle}>Goal</h2>
             </Col>
-            <Col padded cols={6} colsSmall={3} colsMedium={1}>
-              What is the metric?
+            <Col padded cols={6}>
+              {this.basicFilterSelect()}
+              {this.advancedFilter()}
             </Col>
-            <Col padded cols={6} colsSmall={3} colsMedium={2}>
-              {this.metricSelect()}
-            </Col>
-            <Col padded cols={6} colsSmall={3} colsMedium={2}></Col>
-            <Col padded cols={6} className="slds-m-top--medium">
+            <Col padded cols={6} className="slds-m-top--large">
               <Field name="MeasureValue" component={this.measureValueInput}/>
             </Col>
           </Row>

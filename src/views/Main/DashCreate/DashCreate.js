@@ -147,13 +147,13 @@ class DashCreate extends Component {
       loadingDashTypes, loadedDashTypes, dashtypes,
       loadingDashBanners, dashbanners,
     } = this.props
-    if (loading || loadingParticipants || loadingRewards
-      || loadingUsers || loadingTodos || loadingDashTypes
-      || loadingDashBanners || !loadedDashTypes) {
-      return (
-        <LoadingSpinner/>
-      )
-    }
+    // if (loading || loadingParticipants || loadingRewards
+    //   || loadingUsers || loadingTodos || loadingDashTypes
+    //   || loadingDashBanners || !loadedDashTypes) {
+    //   return (
+    //     <LoadingSpinner/>
+    //   )
+    // }
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium">
         <Grid className="slds-p-vertical--large">
