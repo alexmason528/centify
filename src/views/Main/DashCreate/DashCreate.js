@@ -55,6 +55,22 @@ class DashCreate extends Component {
     }
   }
 
+  calcEstimatedRewardAmount = (model) => {
+    let thisDash = 0
+    const { RewardTypeValue, RewardAmount, rewards } = model
+    if (RewardTypeValue == 'Multiple reward positions') {
+      const _rewards = rewards ? JSON.parse(rewards) : []
+      for(let i = 0; i < _rewards.length; i++) {
+        if (!_rewards[i].deleted) {
+          thisDash += _rewards[i].EstimatedRewardAmount ? parseInt(_rewards[i].EstimatedRewardAmount) : 0
+        }
+      }
+    } else {
+      thisDash = RewardAmount
+    }
+    return thisDash
+  }
+
   initialValues() {
     const startDate = new Date()
     const endDate = new Date()
@@ -112,6 +128,7 @@ class DashCreate extends Component {
       AreTeamRewardsShared : false,
       MinimumParticipants : 1,
       MinimumUsersInTeam : 1,
+      EstimatedRewardAmount: this.calcEstimatedRewardAmount(model),
       Measure : {
         Name : "string",
         EventType : model.MeasureType,
