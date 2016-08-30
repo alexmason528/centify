@@ -115,6 +115,20 @@ class DashForm extends Component {
       maxWidth: 100,
       margin: '0 10px',
     }
+    const ruleSelectStyle = {
+      display: 'inline-block',
+      maxWidth: 160,
+      marginRight: 15,
+    }
+    const ruleStyle = {
+      padding: '5px 0',
+    }
+    const ruleButtonStyle = {
+      width: 30,
+      marginLeft: 5,
+      padding: 0,
+      textAlign: 'center',
+    }
     return (
       <div className="slds-m-top--medium">
         <div className="slds-form-element">
@@ -138,6 +152,90 @@ class DashForm extends Component {
               </span>
             </label>
           </div>
+        </div>
+        <div style={{ paddingLeft: 35, maxWidth: 700 }}>
+          <hr style={{ margin: '20px 0 10px' }} />
+          <div style={ruleStyle}>
+            <Select style={ruleSelectStyle}>
+              <Option value="salesvalue">Sales Value</Option>
+              <Option value="value">Value</Option>
+              <Option value="deals">Deals</Option>
+            </Select>
+            <Select style={ruleSelectStyle}>
+              <Option value="==">is</Option>
+              <Option value="!=">is not</Option>
+              <Option value=">">is greater than</Option>
+              <Option value="<">is less than</Option>
+            </Select>
+            <Select style={ruleSelectStyle}>
+              <Option value="closed">Closed Won</Option>
+              <Option value="things">Things</Option>
+              <Option value="more">More</Option>
+            </Select>
+            <div className="slds-float--right">
+              <Button type="icon-border" icon="add" />
+              <Button type="icon-border" icon="dash" />
+            </div>
+          </div>
+          <div style={ruleStyle}>
+            <Select style={ruleSelectStyle}>
+              <Option value="salesvalue">Sales Value</Option>
+              <Option value="value">Value</Option>
+              <Option value="deals">Deals</Option>
+            </Select>
+            <Select style={ruleSelectStyle}>
+              <Option value="==">is</Option>
+              <Option value="!=">is not</Option>
+              <Option value=">">is greater than</Option>
+              <Option value="<">is less than</Option>
+            </Select>
+            <Select style={ruleSelectStyle}>
+              <Option value="closed">Closed Won</Option>
+              <Option value="things">Things</Option>
+              <Option value="more">More</Option>
+            </Select>
+            <div className="slds-float--right">
+              <Button type="icon-border" icon="add" />
+              <Button type="icon-border" icon="dash" />
+            </div>
+          </div>
+          <hr style={{ margin: '10px 0 20px' }} />
+        </div>
+        <div className="slds-form-element">
+          <div className="slds-form-element__control">
+            <label className="slds-radio">
+              <input type="radio" name="options" />
+              <span className="slds-radio--faux"></span>
+              <span className="slds-form-element__label">
+                Include deals with
+                <Select style={midTextSelectStyle}>
+                  <Option value=">=">at least</Option>
+                  <Option value="<=">at most</Option>
+                  <Option value="=">equals</Option>
+                </Select>
+                <Input type="text" style={midTextSelectStyle} defaultValue={5} />
+                products matching the following rule:
+              </span>
+            </label>
+          </div>
+        </div>
+        <div style={{ paddingLeft: 35, maxWidth: 700 }}>
+          <hr style={{ margin: '20px 0 10px' }} />
+          <div style={ruleStyle}>
+            <Select style={ruleSelectStyle}>
+              <Option value="productcode">Product code</Option>
+              <Option value="value">Value</Option>
+              <Option value="deals">Deals</Option>
+            </Select>
+            <Select style={ruleSelectStyle}>
+              <Option value="==">is</Option>
+              <Option value="!=">is not</Option>
+              <Option value=">">is greater than</Option>
+              <Option value="<">is less than</Option>
+            </Select>
+            <Input type="text" style={ruleSelectStyle} />
+          </div>
+          <hr style={{ margin: '10px 0 20px' }} />
         </div>
       </div>
     )
