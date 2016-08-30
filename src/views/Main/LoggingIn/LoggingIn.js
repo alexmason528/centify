@@ -17,6 +17,10 @@ export class LoggingIn extends React.Component {
 
   componentDidMount() {
     const { auth } = this.props
+    const token = this.props.params.token
+    if (token) {
+      auth.setToken(token)
+    }
   }
 
   render() {
