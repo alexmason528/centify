@@ -67,12 +67,13 @@ class DashForm extends Component {
                 themesAllowed ?
                 dashbanners.valueSeq().map((banner, index) => {
                   const name = banner.get('Name')
-                  return (
-                    themesAllowed.find(t => t == name) ?
-                    <option key={index} value={banner.get('Id')}>{name}</option>
-                    :
-                    undefined
-                  )
+                  // return (
+                  //   themesAllowed.find(t => t == name) ?
+                  //   <option key={index} value={banner.get('Id')}>{name}</option>
+                  //   :
+                  //   undefined
+                  // )
+                  return <option key={index} value={banner.get('Id')}>{name}</option>
                 })
                 :
                 undefined

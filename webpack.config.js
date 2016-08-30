@@ -42,7 +42,7 @@ var config = getConfig({
           'description': 'MyCentify'
         },
         css: main_css,
-        head: '<link rel="icon" href="images/favicon-32x32.png" sizes="32x32" /><link rel="icon" href="images/favicon-192x192.png" sizes="192x192" />',
+        head: '<link rel="icon" href="/images/favicon-32x32.png" sizes="32x32" /><link rel="icon" href="/images/favicon-192x192.png" sizes="192x192" />',
       })
     }
   }
