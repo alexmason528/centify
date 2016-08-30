@@ -64,19 +64,24 @@ class DashForm extends Component {
             <Field name={"DashBannerId"} component="select" className="slds-select">
               <option value="">- Select theme -</option>
               {
-                themesAllowed ?
+                // themesAllowed ?
+                // dashbanners.valueSeq().map((banner, index) => {
+                //   const name = banner.get('Name')
+                //   return (
+                //     themesAllowed.find(t => t == name) ?
+                //     <option key={index} value={banner.get('Id')}>{name}</option>
+                //     :
+                //     undefined
+                //   )
+                // })
+                // :
+                // undefined
                 dashbanners.valueSeq().map((banner, index) => {
                   const name = banner.get('Name')
-                  // return (
-                  //   themesAllowed.find(t => t == name) ?
-                  //   <option key={index} value={banner.get('Id')}>{name}</option>
-                  //   :
-                  //   undefined
-                  // )
-                  return <option key={index} value={banner.get('Id')}>{name}</option>
+                  return (
+                    <option key={index} value={banner.get('Id')}>{name}</option>
+                  )
                 })
-                :
-                undefined
               }
             </Field>
           </div>
