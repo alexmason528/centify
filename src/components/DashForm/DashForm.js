@@ -578,7 +578,9 @@ class DashForm extends Component {
                   return ''
                 }
                 const user = users.get(participant.Users[0].UserId)
-                const username = user.get('FirstName') + ' ' + user.get('LastName')
+                const username = user ? user.get('FirstName') + ' ' + user.get('LastName') : "(Unknown)"
+                const avatar = user ? user.get('AvatarURL') : ''
+                const email = user ? user.get('Email') : ''
                 return (
                   <tr key={index}>
                     {
@@ -604,7 +606,7 @@ class DashForm extends Component {
                       <div className="slds-tile slds-media" style={participantStyle}>
                         <div className="slds-media__figure">
                           <span className="slds-avatar slds-avatar--circle slds-avatar--small">
-                            <img src={user.get('AvatarURL')} alt={username} />
+                            <img src={avatar} alt={username} />
                           </span>
                         </div>
                         <div className="slds-media__body">
@@ -615,7 +617,7 @@ class DashForm extends Component {
                                 <p className="slds-truncate" title="Email">Email:</p>
                               </dt>
                               <dd className="slds-dl--horizontal__detail slds-tile__meta">
-                                <p className="slds-truncate" title={user.get('Email')}>{user.get('Email')}</p>
+                                <p className="slds-truncate" title={email}>{email}</p>
                               </dd>
                             </dl>
                           </div>
