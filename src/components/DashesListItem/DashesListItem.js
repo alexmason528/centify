@@ -173,12 +173,12 @@ class DashesListItem extends Component {
             iconStyle,
             'Edit'
           )}
-          {this.createLinkIcon(
+          {/*this.createLinkIcon(
             this.cancelDash.bind(this, id),
             "times",
             { ...iconStyle, ...redIcon },
             'Cancel'
-          )}
+          )*/}
         </span>
       )
     } else if (filter == 'Running') {
@@ -196,12 +196,12 @@ class DashesListItem extends Component {
             iconStyle,
             'View Details'
           )}
-          {this.createLinkIcon(
+          {/*this.createLinkIcon(
             this.cancelDash.bind(this, id),
             "times",
             { ...iconStyle, ...redIcon },
             'Cancel'
-          )}
+          )*/}
         </span>
       )
     } else if (filter == 'Finalizing') {
