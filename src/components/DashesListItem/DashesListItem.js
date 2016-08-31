@@ -100,6 +100,7 @@ class DashesListItem extends Component {
   deleteDash = (dashId) => {
     const auth = this.props.auth
     if (auth) {
+
       const profile = auth.getProfile()
       this.props.deleteDash(profile.centifyOrgId, dashId)
     }
@@ -140,7 +141,7 @@ class DashesListItem extends Component {
       marginRight: 7,
     }
     const id = dash.get('Id')
-    const { onActivate, onComplete } = this.props
+    const { onActivate, onComplete, onDelete } = this.props
     if (filter == 'Draft') {
       return (
         <span>
@@ -157,7 +158,8 @@ class DashesListItem extends Component {
             'Activate'
           )}
           {this.createLinkIcon(
-            this.deleteDash.bind(this, id),
+            //this.deleteDash.bind(this, id),
+            onDelete,
             "times",
             { ...iconStyle, ...redIcon },
             'Delete'

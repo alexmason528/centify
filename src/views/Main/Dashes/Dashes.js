@@ -65,6 +65,15 @@ class Dashes extends Component {
     });
   }
 
+  onDeleteDash = (dash) => {
+    this.setState({
+      actionDialogOpen: true,
+      actionDialogAction: 'delete',
+      actionDialogDash: dash,
+    });
+    console.log('dash: ', dash);
+  }
+
   onCompleteDash = (dash) => {
     this.setState({
       actionDialogOpen: true,
@@ -165,6 +174,7 @@ class Dashes extends Component {
                     columns={columns}
                     participantCount={participantCount ? participantCount : 0}
                     onActivate={this.onActivateDash.bind(this, dash)}
+                    onDelete={this.onDeleteDash.bind(this, dash)}
                     onComplete={this.onCompleteDash.bind(this, dash)} />
                   :
                   false
