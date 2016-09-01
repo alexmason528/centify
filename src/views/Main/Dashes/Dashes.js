@@ -71,7 +71,6 @@ class Dashes extends Component {
       actionDialogAction: 'delete',
       actionDialogDash: dash,
     });
-    console.log('dash: ', dash);
   }
 
   onCompleteDash = (dash) => {
@@ -115,6 +114,7 @@ class Dashes extends Component {
             actionDialogSubmitting: false,
           })
           this.context.notify('Successfully ' + actionDialogAction + 'd dash', 'success')
+          this.props.getDashesList(profile.centifyOrgId)
         })
         .catch(() => {
           this.setState({

@@ -95,6 +95,9 @@ export default function dashes(state = initialState, action) {
     case DASHES_LIST_SUCCESS:
       return state.withMutations((map) => {
         const dashes = action.result ? action.result : {}
+        // console.log('current list before delete: ', map)
+        map.remove('list')
+        // console.log('current list: ', map)
         dashes.forEach(dash => {
           map.setIn(['list', dash.Id], Immutable.fromJS(dash))
         })
