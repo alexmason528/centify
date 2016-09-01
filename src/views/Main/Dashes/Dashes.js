@@ -96,6 +96,10 @@ class Dashes extends Component {
     } else if (actionDialogAction == 'complete') {
       actionDispatcher = this.props.completeDash
     }
+    else if (actionDialogAction == 'delete') {
+      actionDispatcher = this.props.deleteDash
+    }
+
     if (actionDispatcher) {
       const auth = this.props.auth
       if (auth) {

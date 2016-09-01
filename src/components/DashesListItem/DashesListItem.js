@@ -100,7 +100,6 @@ class DashesListItem extends Component {
   deleteDash = (dashId) => {
     const auth = this.props.auth
     if (auth) {
-
       const profile = auth.getProfile()
       this.props.deleteDash(profile.centifyOrgId, dashId)
     }
