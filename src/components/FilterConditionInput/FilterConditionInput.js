@@ -6,6 +6,7 @@ import {
 } from 'react-lightning-design-system'
 import math from 'mathjs'
 
+import hoc from './hoc'
 import styles from './styles.module.css'
 import { formatDate, format2Digits } from 'utils/formatter'
 
@@ -17,8 +18,46 @@ const supportedOperators = ['==','!=','>','<']
 
 class FilterConditionInput extends Component {
 
+  static contextTypes = {
+    notify: React.PropTypes.func,
+    auth: React.PropTypes.object,
+  }
+
   state = {
     basicFilter: '',
+  }
+
+  componentDidMount() {
+    const auth = this.context.auth
+    if (auth) {
+      const profile = auth.getProfile()
+      if (!profile.centifyOrgId) {
+        this.context.notify('No organization ID available')
+        return;
+      }
+      const {
+        globalBasicFilters,
+        loadingGlobal,
+        loadedGlobal,
+        orgBasicFilters,
+        loadingOrg,
+        loadedOrg,
+        getGlobalBasicFilters,
+        getOrgBasicFilters,
+      } = this.props
+      if (!loadedGlobal) {
+        getGlobalBasicFilters()
+        .catch(() => {
+          this.context.notify('Failed to get Centify-wide basic filter schemas')
+        })
+      }
+      if (!loadedOrg) {
+        getOrgBasicFilters(profile.centifyOrgId)
+        .catch(() => {
+          this.context.notify('Failed to get Centify-wide basic filter schemas')
+        })
+      }
+    }
   }
 
   assert = (condition, message) => {
@@ -54,7 +93,6 @@ class FilterConditionInput extends Component {
             this.assert(node.args[0].index, "Left hand side must be an index into data[]")
             this.assert(node.args[0].index.dimensions.length == 1, "Must be only 1 index into array")
             this.assert(node.args[0].index.dimensions[0].valueType == 'string', "Index into data[] must be a string")
-            console.log(node.args)
             switch(node.args[1].valueType) {
               case 'string':
                 this.assert(supportedStringOperators.includes(node.op), "Unsupported operator for string")
@@ -143,8 +181,6 @@ class FilterConditionInput extends Component {
       padding: 0,
       textAlign: 'center',
     }
-    console.log('parsedExpression')
-    console.log(parsedExpression)
     return (
       <div className="slds-m-top--medium">
         <div className="slds-form-element">
@@ -172,7 +208,6 @@ class FilterConditionInput extends Component {
         <div style={{ paddingLeft: 35, maxWidth: 700 }}>
           <hr style={{ margin: '20px 0 10px' }} />
           {parsedExpression.expressions.map((expression, index) => {
-            console.log(expression.operator)
             return (
               <div style={ruleStyle} key={index}>
                 <Select style={ruleSelectStyle} value={expression.fieldId}>
@@ -241,6 +276,23 @@ class FilterConditionInput extends Component {
   }
 
   render() {
+    const {
+      globalBasicFilters,
+      loadingGlobal,
+      loadedGlobal,
+      orgBasicFilters,
+      loadingOrg,
+      loadedOrg,
+      getGlobalBasicFilters,
+      getOrgBasicFilters,
+    } = this.props
+    if (!loadedGlobal || !loadedOrg) {
+      return (
+        <div style={{ border: '1px solid #f0f0f1', padding: '10px 25px' }}>
+          Loading data...
+        </div>
+      )
+    }
     const { basicFilter } = this.state
     const { value } = this.props
     const parsedExpression = this.parse(value)
@@ -259,4 +311,4 @@ class FilterConditionInput extends Component {
 
 }
 
-export default FilterConditionInput
+export default hoc(FilterConditionInput)

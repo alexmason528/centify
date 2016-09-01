@@ -71,7 +71,6 @@ class Dashes extends Component {
       actionDialogAction: 'delete',
       actionDialogDash: dash,
     });
-    console.log('dash: ', dash);
   }
 
   onCompleteDash = (dash) => {
