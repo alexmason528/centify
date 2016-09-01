@@ -227,10 +227,10 @@ export function getDashesList(orgId) {
     )
     .then((res) => {
       res.map(dash => {
-        if (dash.Status != 'Draft' && dash.Status != 'Closed') {
-          // dispatch(getDashesListRewards(orgId, dash.Id))
-          dispatch(getDashesListParticipants(orgId, dash.Id))
-        }
+        // if (dash.Status != 'Draft' && dash.Status != 'Closed') {
+        // dispatch(getDashesListRewards(orgId, dash.Id))
+        dispatch(getDashesListParticipants(orgId, dash.Id))
+        // }
       })
     })
     .catch(res => {
