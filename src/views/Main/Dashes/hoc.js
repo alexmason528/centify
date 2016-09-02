@@ -16,7 +16,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   filterDashes,
   activateDash,
   deleteDash,
-  completeDash,
+  completeDash
 }, dispatch)
 
 export default (container) => connect(
