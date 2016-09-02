@@ -1,20 +1,16 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { push } from 'react-router-redux';
-import { getGlobalBasicFilters, getOrgBasicFilters } from 'redux/modules/filters';
+import { getSchemas } from 'redux/modules/schemas';
 
-const mapStateToProps = ({ filters }) => ({
-  globalBasicFilters: filters.get('globalBasicFilters'),
-  loadingGlobal: filters.get('loadingGlobalBasicFilters'),
-  loadedGlobal: filters.get('loadedGlobalBasicFilters'),
-  orgBasicFilters: filters.get('orgBasicFilters'),
-  loadingOrg: filters.get('loadingOrgBasicFilters'),
-  loadedOrg: filters.get('loadedOrgBasicFilters'),
+const mapStateToProps = ({ schemas }) => ({
+  schemas: schemas.get('schemas'),
+  loadingSchemas: schemas.get('loading'),
+  loadedSchemas: schemas.get('loaded'),
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  getGlobalBasicFilters,
-  getOrgBasicFilters,
+  getSchemas,
 }, dispatch)
 
 export default (container) => connect(

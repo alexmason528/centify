@@ -9,7 +9,7 @@ import math from 'mathjs'
 import hoc from './hoc'
 import styles from './styles.module.css'
 import { formatDate, format2Digits } from 'utils/formatter'
-
+import basicFilters from 'basic-filters.json'
 
 const supportedStringOperators = ['==','!=']
 const supportedNumberOperators = ['==','!=','>','<']
@@ -27,6 +27,12 @@ class FilterConditionInput extends Component {
     basicFilter: '',
   }
 
+  constructor(props) {
+    super(props)
+
+    this.convertedBasicFilters = false
+  }
+
   componentDidMount() {
     const auth = this.context.auth
     if (auth) {
@@ -36,27 +42,48 @@ class FilterConditionInput extends Component {
         return;
       }
       const {
-        globalBasicFilters,
-        loadingGlobal,
-        loadedGlobal,
-        orgBasicFilters,
-        loadingOrg,
-        loadedOrg,
-        getGlobalBasicFilters,
-        getOrgBasicFilters,
+        loadedSchemas,
+        getSchemas,
       } = this.props
-      if (!loadedGlobal) {
-        getGlobalBasicFilters()
+      if (!loadedSchemas) {
+        getSchemas(profile.centifyOrgId)
         .catch(() => {
-          this.context.notify('Failed to get Centify-wide basic filter schemas')
+          this.context.notify('Failed to get Centify-wide basic filters', 'error')
         })
       }
-      if (!loadedOrg) {
-        getOrgBasicFilters(profile.centifyOrgId)
-        .catch(() => {
-          this.context.notify('Failed to get Centify-wide basic filter schemas')
+    }
+  }
+
+  convertBasicFilters() {
+    if (this.convertedBasicFilters) {
+      return
+    }
+    const {
+      loadedSchemas,
+      schemas,
+    } = this.props
+    if (loadedSchemas) {
+      for(const k in basicFilters) {
+        const filter = basicFilters[k]
+        filter.FilterConditionPattern = filter.FilterConditionPattern.replace(/data\[\"([A-Za-z]+)\"\]/g, (v, name) => {
+          let id = ''
+          schemas.map(schema => {
+            if (schema.get('Type') != filter.EventType) {
+              return
+            }
+            const fields = schema.get('Fields')
+            if (fields) {
+              fields.map(field => {
+                if (field.get('Name') == name) {
+                  id = field.get('Id')
+                }
+              })
+            }
+          })
+          return v.replace(name, id)
         })
       }
+      this.convertedBasicFilters = basicFilters
     }
   }
 
@@ -134,12 +161,28 @@ class FilterConditionInput extends Component {
     this.setState({
       basicFilter: e.currentTarget.value,
     })
+    if (e.currentTarget.value != 'advanced') {
+      for(const k in this.convertedBasicFilters) {
+        const filter = this.convertedBasicFilters[k]
+        if (filter.EventType == e.currentTarget.value) {
+          this.props.onChange(filter.FilterConditionPattern)
+          break
+        }
+      }
+    }
   }
 
   basicFilterSelect = (value) => {
     const basicSelectStyle = {
       maxWidth: 400,
       marginTop: 5,
+    }
+    const basicFilterOptions = []
+    for(const k in this.convertedBasicFilters) {
+      const filter = this.convertedBasicFilters[k]
+      basicFilterOptions.push(
+        <Option key={k} value={filter.EventType}>{filter.EventType}</Option>
+      )
     }
     return (
       <div>
@@ -148,10 +191,7 @@ class FilterConditionInput extends Component {
           <div className="slds-form-element__control">
             <div className="slds-select_container">
               <Select value={this.state.basicFilter} onChange={this.onChangeBasicFilterSelect}>
-                <Option value="Deal">Deal</Option>
-                <Option value="Call">Call</Option>
-                <Option value="Email">Email</Option>
-                <Option value="Lead">Lead</Option>
+                {basicFilterOptions}
                 <Option value="advanced">Advanced...</Option>
               </Select>
             </div>
@@ -181,6 +221,9 @@ class FilterConditionInput extends Component {
       padding: 0,
       textAlign: 'center',
     }
+    const {
+      schemas
+    } = this.props
     return (
       <div className="slds-m-top--medium">
         <div className="slds-form-element">
@@ -191,9 +234,9 @@ class FilterConditionInput extends Component {
               <span className="slds-form-element__label">
                 Include
                 <Select style={midTextSelectStyle}>
-                  <Option value="deals">Deals</Option>
-                  <Option value="calls">Calls</Option>
-                  <Option value="values">Values</Option>
+                  {schemas.valueSeq().map((schema, index) => (
+                    <Option key={index} value={schema.get('Id')}>{schema.get('Type')}</Option>
+                  ))}
                 </Select>
                 matching
                 <Select style={midTextSelectStyle} value={parsedExpression.matching}>
@@ -211,9 +254,14 @@ class FilterConditionInput extends Component {
             return (
               <div style={ruleStyle} key={index}>
                 <Select style={ruleSelectStyle} value={expression.fieldId}>
-                  <Option value="salesvalue">Sales Value</Option>
-                  <Option value="value">Value</Option>
-                  <Option value="deals">Deals</Option>
+                  {
+                    schemas.get('Deal') ?
+                    schemas.getIn(['Deal', 'Fields']).valueSeq().map((field, index) => (
+                      <Option key={index} value={field.get('Id')}>{field.get('Name')}</Option>
+                    ))
+                    :
+                    undefined
+                  }
                 </Select>
                 <Select style={ruleSelectStyle} value={expression.operator}>
                   <Option value="==">is</Option>
@@ -221,11 +269,7 @@ class FilterConditionInput extends Component {
                   <Option value=">">is greater than</Option>
                   <Option value="<">is less than</Option>
                 </Select>
-                <Select style={ruleSelectStyle} value={expression.value}>
-                  <Option value="closed">Closed Won</Option>
-                  <Option value="things">Things</Option>
-                  <Option value="more">More</Option>
-                </Select>
+                <Input type="text" style={ruleSelectStyle} value={expression.value} />
                 <div className="slds-float--right">
                   <Button type="icon-border" icon="add" />
                   <Button type="icon-border" icon="dash" />
@@ -277,16 +321,9 @@ class FilterConditionInput extends Component {
 
   render() {
     const {
-      globalBasicFilters,
-      loadingGlobal,
-      loadedGlobal,
-      orgBasicFilters,
-      loadingOrg,
-      loadedOrg,
-      getGlobalBasicFilters,
-      getOrgBasicFilters,
+      loadedSchemas,
     } = this.props
-    if (!loadedGlobal || !loadedOrg) {
+    if (!loadedSchemas) {
       return (
         <div style={{ border: '1px solid #f0f0f1', padding: '10px 25px' }}>
           Loading data...
@@ -296,6 +333,7 @@ class FilterConditionInput extends Component {
     const { basicFilter } = this.state
     const { value } = this.props
     const parsedExpression = this.parse(value)
+    this.convertBasicFilters()
     return (
       <div>
         {this.basicFilterSelect(value)}

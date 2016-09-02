@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import ReactDOM from 'react-dom'
-import { Router, browserHistory } from 'react-router'
+import { Router, hashHistory } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux';
 
@@ -14,8 +14,8 @@ import './app.css'
 import makeRoutes from './routes'
 
 const client = new ApiClient();
-const store = createStore(browserHistory, client);
-const history = syncHistoryWithStore(browserHistory, store);
+const store = createStore(hashHistory, client);
+const history = syncHistoryWithStore(hashHistory, store);
 const routes = makeRoutes()
 
 const mountNode = document.querySelector('#root');
