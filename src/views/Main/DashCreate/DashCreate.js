@@ -114,7 +114,7 @@ class DashCreate extends Component {
     const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model
     const _rewards = rewards ? JSON.parse(rewards) : []
     const data = {
-      Description : "",
+      Description : model.description,
       ImageURL : "",
       IsTeamDash : false,
       GameType : "RocketLaunch",
