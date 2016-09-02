@@ -114,6 +114,7 @@ class Dashes extends Component {
             actionDialogSubmitting: false,
           })
           this.context.notify('Successfully ' + actionDialogAction + 'd dash', 'success')
+          this.props.getDashesList(profile.centifyOrgId)
         })
         .catch(() => {
           this.setState({
