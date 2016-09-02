@@ -52,6 +52,17 @@ class DashCreate extends Component {
           this.context.notify('Failed to get dash banners from server', 'error')
         })
       }
+      // Get organization schemas
+      const {
+        loadedSchemas,
+        getSchemas,
+      } = this.props
+      if (!loadedSchemas) {
+        getSchemas(profile.centifyOrgId)
+        .catch(() => {
+          this.context.notify('Failed to get organization-wide basic filters', 'error')
+        })
+      }
     }
   }
 
@@ -162,10 +173,12 @@ class DashCreate extends Component {
       budgetAmount,
       loadingDashTypes, loadedDashTypes, dashtypes,
       loadingDashBanners, dashbanners,
+      loadingSchemas, schemas,
     } = this.props
     if (loading || loadingParticipants || loadingRewards
       || loadingUsers || loadingTodos || loadingDashTypes
-      || loadingDashBanners || !loadedDashTypes) {
+      || loadingDashBanners || !loadedDashTypes
+      || loadingSchemas) {
       return (
         <LoadingSpinner/>
       )
@@ -187,7 +200,8 @@ class DashCreate extends Component {
           todos={todos.filter(todo => !!todo.get('Status'))}
           budgetAmount={budgetAmount}
           dashtypes={dashtypes}
-          dashbanners={dashbanners} />
+          dashbanners={dashbanners}
+          schemas={schemas} />
       </div>
     )
   }
