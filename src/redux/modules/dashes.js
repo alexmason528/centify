@@ -95,6 +95,7 @@ export default function dashes(state = initialState, action) {
     case DASHES_LIST_SUCCESS:
       return state.withMutations((map) => {
         const dashes = action.result ? action.result : {}
+        // console.log('mutate list from DASHES_LIST_SUCCESS: ', dashes);
         dashes.forEach(dash => {
           map.setIn(['list', dash.Id], Immutable.fromJS(dash))
         })
@@ -123,6 +124,7 @@ export default function dashes(state = initialState, action) {
         const dashId = action.data.dashId
         const rewards = action.result
         return state.withMutations((map) => {
+          console.log('mutate list from DASHES_LIST_ITEM_REWARDS_SUCCESS');
           map.setIn(['list', dashId, 'Rewards', 'items'], Immutable.fromJS(rewards))
           map.setIn(['list', dashId, 'Rewards', 'loaded'], true)
           map.set('storeUpdateIndicator', Math.random())
@@ -227,10 +229,10 @@ export function getDashesList(orgId) {
     )
     .then((res) => {
       res.map(dash => {
-        if (dash.Status != 'Draft' && dash.Status != 'Closed') {
+        //if (dash.Status != 'Draft' && dash.Status != 'Closed') {
           // dispatch(getDashesListRewards(orgId, dash.Id))
           dispatch(getDashesListParticipants(orgId, dash.Id))
-        }
+        //}
       })
     })
     .catch(res => {

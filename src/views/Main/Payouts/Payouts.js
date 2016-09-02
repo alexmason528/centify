@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { Button } from 'react-lightning-design-system'
 
-// import ApiClient, { formatUrl } from 'utils/ApiClient'
-import ApiClient from 'utils/ApiClient'
+import ApiClient, { formatUrl } from 'utils/ApiClient'
 import styles from './styles.module.css'
 
 
@@ -18,21 +17,10 @@ class Payouts extends Component {
     const auth = this.props.auth
     if (auth) {
       const profile = auth.getProfile()
-      const url = `/v1/${profile.centifyOrgId}/dashes/payout`
-      // window.open(url, '_blank')
+      const url = formatUrl(`/v1/${profile.centifyOrgId}/dashes/payout`)
       this.client.get(url).then((res) => {
-        const windowUrl = window.URL || window.webkitURL
-        const data = res
-        const anchor = this.refs.tempAnchor
-        const blob = new Blob([data], { type: 'text/csv' });
-        const url = windowUrl.createObjectURL(blob);
-        anchor.setAttribute('href', url)
-        anchor.setAttribute('download', 'download.csv')
-        const event = document.createEvent('MouseEvents')
-        event.initEvent('click', true, true)
-        event.synthetic = true
-        anchor.dispatchEvent(event, true)
-        windowUrl.revokeObjectURL(url)
+        console.log(res)
+        window.location.href = res.url
       })
     }
   }
