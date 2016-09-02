@@ -169,6 +169,7 @@ class DashEdit extends Component {
   }
 
   onSubmit = (model) => {
+    console.log('data: ', model)
     const { currentDash } = this.props
     const editable = currentDash.get('Status') && currentDash.get('Status').toLowerCase() == 'draft'
     if (!editable) {
@@ -179,7 +180,7 @@ class DashEdit extends Component {
     const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model
     const _rewards = rewards ? JSON.parse(rewards) : []
     const data = {
-      Description : "",
+      Description : model.description,
       ImageURL : "",
       IsTeamDash : false,
       GameType : "RocketLaunch",

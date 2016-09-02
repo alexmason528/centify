@@ -52,14 +52,13 @@ class DashesListItem extends Component {
           const { participantCount } = this.props
           return dash.get('ParticipantsJoined') + ' / ' + participantCount
         }
-        case 'EstimatedRewardAmount':
+      case 'EstimatedRewardAmount':
         {
           let amount = dash.get(column)
           if (!amount) amount = 0
           amount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
           return '$' + amount
         }
-      case 
       case 'RewardsPaid':
         {
           const loadedParticipants = dash.getIn(['Participants', 'loaded'])
