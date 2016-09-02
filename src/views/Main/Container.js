@@ -6,7 +6,7 @@ import styles from './styles.module.css'
 
 export class Container extends React.Component {
   static contextTypes = {
-    router: T.object
+    router: T.object,
   }
 
   static propTypes = {
@@ -15,11 +15,13 @@ export class Container extends React.Component {
 
   static childContextTypes = {
     notify: T.func,
+    auth: T.object,
   }
 
   getChildContext = () => {
     return {
       notify: this.notify,
+      auth: this.props.route.auth,
     }
   }
 

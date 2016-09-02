@@ -71,7 +71,6 @@ class Dashes extends Component {
       actionDialogAction: 'delete',
       actionDialogDash: dash,
     });
-    console.log('dash: ', dash);
   }
 
   onCompleteDash = (dash) => {
@@ -129,6 +128,7 @@ class Dashes extends Component {
 
   render() {
     const { dashesList, filter, loadingList } = this.props
+    // console.log('rendering: ', dashesList)
     if (loadingList) {
       return (
         <LoadingSpinner/>

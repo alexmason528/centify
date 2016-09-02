@@ -1,0 +1,14 @@
+{
+    "0001": {
+        "Name": "Deals Won",
+        "EventType": "Deal",
+        "FilterConditionPattern": "data[\"IsWon\"] == true",
+        "HasValue": true
+    },
+    "0002": {
+        "Name": "Cases Closed",
+        "EventType": "Case",
+        "FilterConditionPattern": "data[\"IsClosed\"] == true",
+        "HasValue": false
+    }
+}
