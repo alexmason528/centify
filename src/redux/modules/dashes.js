@@ -95,7 +95,9 @@ export default function dashes(state = initialState, action) {
     case DASHES_LIST_SUCCESS:
       return state.withMutations((map) => {
         const dashes = action.result ? action.result : {}
-        // console.log('mutate list from DASHES_LIST_SUCCESS: ', dashes);
+        
+        map.remove('list')
+        
         dashes.forEach(dash => {
           map.setIn(['list', dash.Id], Immutable.fromJS(dash))
         })
@@ -229,10 +231,7 @@ export function getDashesList(orgId) {
     )
     .then((res) => {
       res.map(dash => {
-        //if (dash.Status != 'Draft' && dash.Status != 'Closed') {
-          // dispatch(getDashesListRewards(orgId, dash.Id))
-          dispatch(getDashesListParticipants(orgId, dash.Id))
-        //}
+        dispatch(getDashesListParticipants(orgId, dash.Id))
       })
     })
     .catch(res => {
