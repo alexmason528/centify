@@ -89,7 +89,7 @@ class DashCreate extends Component {
     return {
       Name : "",
       Type : "OverTheLine",
-      MeasureType : "Deal",
+      MeasureEventType : "Deal",
       MeasureFilterCondition: 'data["06ry1nbzp9yn6yfj"] == "something" and data["06ry1ncypkco6lcq"] != "something else" and data["06ry1nfslir3u8uu"] < 300 and data["06ry1nfx9ax7oebn"] > 200',
       MeasureValue : 0,
       StartsAt: startDate.toISOString(),

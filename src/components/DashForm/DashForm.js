@@ -17,6 +17,11 @@ import { formatDate2, numWithSurfix } from 'utils/formatter'
 import DateInput from 'components/DateInput/DateInput'
 import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
+import basicFilters from 'basic-filters.json'
+
+const supportedStringOperators = ['==','!=']
+const supportedNumberOperators = ['==','!=','>','<']
+const supportedOperators = ['==','!=','>','<']
 
 
 class DashForm extends Component {
@@ -226,9 +231,7 @@ class DashForm extends Component {
         <div className="slds-form-element" style={basicSelectStyle}>
           <div className="slds-form-element__control">
             <div className="slds-select_container">
-              <Select value={props.input.value} onChange={e => {
-                this.onChangeBasicFilterSelect(e, props.input.onChange)
-              }>
+              <Select value={props.input.value} onChange={props.input.onChange}>
                 {basicFilterOptions}
                 <Option value="advanced">Advanced...</Option>
               </Select>
@@ -752,9 +755,8 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount } = this.props
+    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, MeasureEventType } = this.props
     const value = this.calcEstimatedRewardAmount()
-    const parsedExpression = this.parse(value)
     this.convertBasicFilters()
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
@@ -798,8 +800,8 @@ class DashForm extends Component {
             <Col padded cols={6}>
               <Field name="MeasureEventType" component={this.basicFilterSelect} />
             </Col>
-            {
-              basicFilter == 'advanced' ?
+            {/*MeasureEventType == 'advanced'*/
+              true ?
               <Col padded cols={6} className="slds-m-top--large">
                 <Field name="MeasureFilterCondition" component={this.advancedFilterSelect}/>
               </Col>
@@ -915,6 +917,7 @@ _DashForm = connect(
       RewardTypeValue: selector(state, 'RewardType'),
       RewardAmount: selector(state, 'RewardAmount'),
       rewards: selector(state, 'rewards'),
+      MeasureEventType: selector(state, 'MeasureEventType'),
     }
   }
 )(_DashForm)

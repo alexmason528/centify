@@ -54,38 +54,7 @@ class FilterConditionInput extends Component {
     }
   }
 
-  convertBasicFilters() {
-    if (this.convertedBasicFilters) {
-      return
-    }
-    const {
-      loadedSchemas,
-      schemas,
-    } = this.props
-    if (loadedSchemas) {
-      for(const k in basicFilters) {
-        const filter = basicFilters[k]
-        filter.FilterConditionPattern = filter.FilterConditionPattern.replace(/data\[\"([A-Za-z]+)\"\]/g, (v, name) => {
-          let id = ''
-          schemas.map(schema => {
-            if (schema.get('Type') != filter.EventType) {
-              return
-            }
-            const fields = schema.get('Fields')
-            if (fields) {
-              fields.map(field => {
-                if (field.get('Name') == name) {
-                  id = field.get('Id')
-                }
-              })
-            }
-          })
-          return v.replace(name, id)
-        })
-      }
-      this.convertedBasicFilters = basicFilters
-    }
-  }
+  
 
   assert = (condition, message) => {
     if (!condition) {
