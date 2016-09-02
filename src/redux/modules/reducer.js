@@ -9,7 +9,7 @@ import budget from './budget'
 import dashtypes from './dashtypes'
 import dashbanners from './dashbanners'
 import appletv from './appletv'
-import filters from './filters'
+import schemas from './schemas'
 
 export default combineReducers({
   routing: routerReducer,
@@ -21,5 +21,5 @@ export default combineReducers({
   dashtypes,
   dashbanners,
   appletv,
-  filters,
+  schemas,
 });

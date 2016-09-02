@@ -6,22 +6,15 @@ import {
   INIT,
   REDUX_INIT,
 
-  GLOBAL_BASIC_FILTERS_GET,
-  GLOBAL_BASIC_FILTERS_GET_SUCCESS,
-  GLOBAL_BASIC_FILTERS_GET_FAIL,
-
-  ORG_BASIC_FILTERS_GET,
-  ORG_BASIC_FILTERS_GET_SUCCESS,
-  ORG_BASIC_FILTERS_GET_FAIL,
+  BASIC_FILTERS_GET,
+  BASIC_FILTERS_GET_SUCCESS,
+  BASIC_FILTERS_GET_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
-  globalBasicFilters: {},
-  loadingGlobalBasicFilters: false,
-  loadedGlobalBasicFilters: false,
-  orgBasicFilters: {},
-  loadingOrgBasicFilters: false,
-  loadedOrgBasicFilters: false,
+  BasicFilters: {},
+  loadingBasicFilters: false,
+  loadedBasicFilters: false,
 })
 
 export default function filters(state = initialState, action) {
@@ -29,43 +22,24 @@ export default function filters(state = initialState, action) {
     case INIT:
     case REDUX_INIT:
       return state
-    case GLOBAL_BASIC_FILTERS_GET:
+    case BASIC_FILTERS_GET:
       return state.withMutations((map) => {
-        map.set('loadingGlobalBasicFilters', true)
-        map.set('loadedGlobalBasicFilters', false)
+        map.set('loadingBasicFilters', true)
+        map.set('loadedBasicFilters', false)
       })
-    case GLOBAL_BASIC_FILTERS_GET_FAIL:
+    case BASIC_FILTERS_GET_FAIL:
       return state.withMutations((map) => {
         const filters = action.result
         filters.forEach((filter, index) => {
-          map.setIn(['globalBasicFilters', index], Immutable.fromJS(filter))
+          map.setIn(['basicFilters', index], Immutable.fromJS(filter))
         })
-        map.set('loadingGlobalBasicFilters', false)
-        map.set('loadedGlobalBasicFilters', false)
+        map.set('loadingBasicFilters', false)
+        map.set('loadedBasicFilters', false)
       })
-    case GLOBAL_BASIC_FILTERS_GET_FAIL:
+    case BASIC_FILTERS_GET_FAIL:
       return state.withMutations((map) => {
-        map.set('loadingGlobalBasicFilters', false)
-        map.set('loadedGlobalBasicFilters', false)
-      })
-    case ORG_BASIC_FILTERS_GET:
-      return state.withMutations((map) => {
-        map.set('loadingOrgBasicFilters', true)
-        map.set('loadedOrgBasicFilters', false)
-      })
-    case ORG_BASIC_FILTERS_GET_FAIL:
-      return state.withMutations((map) => {
-        const filters = action.result
-        filters.forEach((filter, index) => {
-          map.setIn(['orgBasicFilters', index], Immutable.fromJS(filter))
-        })
-        map.set('loadingOrgBasicFilters', false)
-        map.set('loadedOrgBasicFilters', false)
-      })
-    case ORG_BASIC_FILTERS_GET_FAIL:
-      return state.withMutations((map) => {
-        map.set('loadingOrgBasicFilters', false)
-        map.set('loadedOrgBasicFilters', false)
+        map.set('loadingBasicFilters', false)
+        map.set('loadedBasicFilters', false)
       })
     default:
       return state
@@ -74,18 +48,9 @@ export default function filters(state = initialState, action) {
 
 /* Get Centify-wide basic filters */
 
-export function getGlobalBasicFilters() {
+export function getBasicFilters() {
   return {
-    types: [GLOBAL_BASIC_FILTERS_GET, GLOBAL_BASIC_FILTERS_GET_SUCCESS, GLOBAL_BASIC_FILTERS_GET_FAIL],
+    types: [BASIC_FILTERS_GET, BASIC_FILTERS_GET_SUCCESS, BASIC_FILTERS_GET_FAIL],
     promise: (client) => client.get('/json/basic-filters.json')
-  }
-}
-
-/* Get organization-wide basic filters */
-
-export function getOrgBasicFilters(orgId) {
-  return {
-    types: [ORG_BASIC_FILTERS_GET, ORG_BASIC_FILTERS_GET_SUCCESS, ORG_BASIC_FILTERS_GET_FAIL],
-    promise: (client) => client.get(`/v1/schemas/${orgId}`)
   }
 }

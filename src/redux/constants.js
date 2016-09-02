@@ -114,10 +114,12 @@ export const APPLE_TV_ACTIVATION_FAIL = 'centify/appletv/ACTIVATION_FAIL'
 
 /* Filters module */
 
-export const GLOBAL_BASIC_FILTERS_GET = 'centify/filters/GLOBAL_BASIC_GET'
-export const GLOBAL_BASIC_FILTERS_GET_SUCCESS = 'centify/filters/GLOBAL_BASIC_GET_SUCCESS'
-export const GLOBAL_BASIC_FILTERS_GET_FAIL = 'centify/filters/GLOBAL_BASIC_GET_FAIL'
+export const BASIC_FILTERS_GET = 'centify/filters/BASIC_GET'
+export const BASIC_FILTERS_GET_SUCCESS = 'centify/filters/BASIC_GET_SUCCESS'
+export const BASIC_FILTERS_GET_FAIL = 'centify/filters/BASIC_GET_FAIL'
 
-export const ORG_BASIC_FILTERS_GET = 'centify/filters/ORG_BASIC_GET'
-export const ORG_BASIC_FILTERS_GET_SUCCESS = 'centify/filters/ORG_BASIC_GET_SUCCESS'
-export const ORG_BASIC_FILTERS_GET_FAIL = 'centify/filters/ORG_BASIC_GET_FAIL'
+/* Schemas module */
+
+export const SCHEMAS_GET = 'centify/filters/SCHEMAS_GET'
+export const SCHEMAS_GET_SUCCESS = 'centify/filters/SCHEMAS_GET_SUCCESS'
+export const SCHEMAS_GET_FAIL = 'centify/filters/SCHEMAS_GET_FAIL'
