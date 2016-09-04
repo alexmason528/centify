@@ -114,3 +114,15 @@ export const DASH_BANNERS_GET_FAIL = 'centify/dashbanners/GET_FAIL'
 export const APPLE_TV_ACTIVATION = 'centify/appletv/ACTIVATION'
 export const APPLE_TV_ACTIVATION_SUCCESS = 'centify/appletv/ACTIVATION_SUCCESS'
 export const APPLE_TV_ACTIVATION_FAIL = 'centify/appletv/ACTIVATION_FAIL'
+
+/* Filters module */
+
+export const BASIC_FILTERS_GET = 'centify/filters/BASIC_GET'
+export const BASIC_FILTERS_GET_SUCCESS = 'centify/filters/BASIC_GET_SUCCESS'
+export const BASIC_FILTERS_GET_FAIL = 'centify/filters/BASIC_GET_FAIL'
+
+/* Schemas module */
+
+export const SCHEMAS_GET = 'centify/filters/SCHEMAS_GET'
+export const SCHEMAS_GET_SUCCESS = 'centify/filters/SCHEMAS_GET_SUCCESS'
+export const SCHEMAS_GET_FAIL = 'centify/filters/SCHEMAS_GET_FAIL'
