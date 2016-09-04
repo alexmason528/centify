@@ -32,6 +32,7 @@ class DashForm extends Component {
     this.state = {
       selectedAllTodos: false,
       selectedUserId: 0,
+      advancedFilterMeasureEventType: 'Deal',
     }
 
     this.convertedBasicFilters = false
@@ -198,6 +199,25 @@ class DashForm extends Component {
     };
   }
 
+  compose = (parsedExp) => {
+    let exp = ''
+    const logicop = parsedExp.matching == 'all' ? 'and' : 'or'
+    parsedExp.expressions.forEach((expitem, index) => {
+      if (index > 0) {
+        exp += ` ${logicop} `
+      }
+      exp += 'data[\"' + expitem.fieldId + '\"] ' + expitem.operator
+      if (!isNaN(expitem.value) && isFinite(expitem.value)) {
+        exp += ' ' + expitem.value
+      } else {
+        exp += ' \"' + expitem.value + '\"'
+      }
+      
+    })
+    return exp
+  }
+
+  // not used currently
   onChangeBasicFilterSelect = (e, onChange) => {
     this.setState({
       basicFilter: e.currentTarget.value,
@@ -242,8 +262,45 @@ class DashForm extends Component {
     )
   }
 
+  onAdvancedFilterOperatorChange = (op, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.matching = (op == 'all' ? 'and' : 'or')
+    onChange(this.compose(parsedExpression))
+  }
+
+  onAdvancedFilterAddItem = (index, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.expressions.splice(index + 1, 0, parsedExpression.expressions[index])
+    onChange(this.compose(parsedExpression))
+  }
+
+  onAdvancedFilterRemoveItem = (index, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.expressions.splice(index, 1)
+    onChange(this.compose(parsedExpression))
+  }
+
+  onAdvancedFilterItemFieldChange = (index, fieldId, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.expressions[index].fieldId = fieldId
+    onChange(this.compose(parsedExpression))
+  }
+
+  onAdvancedFilterItemOperatorChange = (index, opr, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.expressions[index].operator = opr
+    onChange(this.compose(parsedExpression))
+  }
+
+  onAdvancedFilterItemValueChange = (index, expvalue, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.expressions[index].value = expvalue
+    onChange(this.compose(parsedExpression))
+  }
+
   advancedFilterSelect = (props) => {
     const parsedExpression = this.parse(props.input.value)
+    console.log('composed', this.compose(parsedExpression))
     const midTextSelectStyle = {
       display: 'inline-block',
       maxWidth: 100,
@@ -266,6 +323,9 @@ class DashForm extends Component {
     const {
       schemas
     } = this.props
+    const { advancedFilterMeasureEventType } = this.state
+    console.log(advancedFilterMeasureEventType)
+    console.log(schemas.getIn([advancedFilterMeasureEventType, 'Fields']))
     return (
       <div className="slds-m-top--medium">
         <div className="slds-form-element">
@@ -275,13 +335,17 @@ class DashForm extends Component {
               <span className="slds-radio--faux"></span>
               <span className="slds-form-element__label">
                 Include
-                <Select style={midTextSelectStyle}>
+                <Select
+                  style={midTextSelectStyle}
+                  value={advancedFilterMeasureEventType}
+                  onChange={e => this.setState({ advancedFilterMeasureEventType: e.currentTarget.value })}>
                   {schemas.valueSeq().map((schema, index) => (
-                    <Option key={index} value={schema.get('Id')}>{schema.get('Type')}</Option>
+                    <Option key={index} value={schema.get('Type')}>{schema.get('Type')}</Option>
                   ))}
                 </Select>
                 matching
-                <Select style={midTextSelectStyle} value={parsedExpression.matching}>
+                <Select style={midTextSelectStyle} value={parsedExpression.matching}
+                  onChange={e => this.onAdvancedFilterOperatorChange(e.currentTarget.value, props.input.value, props.input.onChange)}>
                   <Option value="all">All</Option>
                   <Option value="any">Any</Option>
                 </Select>
@@ -295,26 +359,35 @@ class DashForm extends Component {
           {parsedExpression.expressions.map((expression, index) => {
             return (
               <div style={ruleStyle} key={index}>
-                <Select style={ruleSelectStyle} value={expression.fieldId}>
+                <Select style={ruleSelectStyle} value={expression.fieldId}
+                  onChange={e => this.onAdvancedFilterItemFieldChange(index, e.currentTarget.value, props.input.value, props.input.onChange)}>
                   {
-                    schemas.get('Deal') ?
-                    schemas.getIn(['Deal', 'Fields']).valueSeq().map((field, index) => (
+                    schemas.get(advancedFilterMeasureEventType) ?
+                    schemas.getIn([advancedFilterMeasureEventType, 'Fields']).valueSeq().map((field, index) => (
                       <Option key={index} value={field.get('Id')}>{field.get('Name')}</Option>
                     ))
                     :
                     undefined
                   }
                 </Select>
-                <Select style={ruleSelectStyle} value={expression.operator}>
+                <Select style={ruleSelectStyle} value={expression.operator}
+                  onChange={e => this.onAdvancedFilterItemOperatorChange(index, e.currentTarget.value, props.input.value, props.input.onChange)}>
                   <Option value="==">is</Option>
                   <Option value="!=">is not</Option>
                   <Option value=">">is greater than</Option>
                   <Option value="<">is less than</Option>
                 </Select>
-                <Input type="text" style={ruleSelectStyle} value={expression.value} />
+                <Input type="text" style={ruleSelectStyle} value={expression.value}
+                  onChange={e => this.onAdvancedFilterItemValueChange(index, e.currentTarget.value, props.input.value, props.input.onChange)} />
                 <div className="slds-float--right">
-                  <Button type="icon-border" icon="add" />
-                  <Button type="icon-border" icon="dash" />
+                  <Button type="icon-border" icon="add"
+                    onClick={() => {
+                      this.onAdvancedFilterAddItem(index, props.input.value, props.input.onChange)
+                    }} />
+                  <Button type="icon-border" icon="dash"
+                    onClick={() => {
+                      this.onAdvancedFilterRemoveItem(index, props.input.value, props.input.onChange)
+                    }} />
                 </div>
               </div>
             )
@@ -654,7 +727,7 @@ class DashForm extends Component {
               }
               if (!dup) {
                 if (selectedUserId) {
-                  participants.push( {
+                  participants.push({
                     Type: "User",
                     DisplayName: "",
                     Name: users.get(selectedUserId).get('FirstName') + ' ' + users.get(selectedUserId).get('LastName'),
@@ -800,13 +873,13 @@ class DashForm extends Component {
             <Col padded cols={6}>
               <Field name="MeasureEventType" component={this.basicFilterSelect} />
             </Col>
-            {/*MeasureEventType == 'advanced'*/
-              true ?
+            {
+              MeasureEventType == 'advanced' ?
               <Col padded cols={6} className="slds-m-top--large">
                 <Field name="MeasureFilterCondition" component={this.advancedFilterSelect}/>
               </Col>
               :
-              undefined
+              ''
             }
             <Col padded cols={6} className="slds-m-top--large">
               <Field name="MeasureValue" component={this.measureValueInput}/>
