@@ -26,12 +26,20 @@ class DashForm extends Component {
     this.state = {
       selectedAllTodos: false,
       selectedUserId: 0,
+      description: ''
     }
   }
 
   nameInput = (props) => {
     return (
       <Input type="text" {...props.input}/>
+    )
+  }
+
+  descriptionInput = (props) => {
+    return (
+      //<textarea name="Description" value={description}></textarea>
+      <textarea {...props.input}></textarea>
     )
   }
 
@@ -641,7 +649,7 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount } = this.props
+    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, description } = this.props
     const value = this.calcEstimatedRewardAmount()
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
@@ -770,7 +778,7 @@ class DashForm extends Component {
               <h2 className={styles.fieldTitle}>Description</h2>
             </Col>
             <Col padded cols={6}>
-              <Field name="description" component="textarea" />
+              <Field name="Description" component={this.descriptionInput} />
             </Col>
           </Row>
 
@@ -804,6 +812,7 @@ _DashForm = connect(
       RewardTypeValue: selector(state, 'RewardType'),
       RewardAmount: selector(state, 'RewardAmount'),
       rewards: selector(state, 'rewards'),
+      description: selector(state, 'Description')
     }
   }
 )(_DashForm)

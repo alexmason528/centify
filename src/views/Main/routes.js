@@ -13,6 +13,7 @@ import DashEdit from './DashEdit/DashEdit'
 import DashReport from './DashReport/DashReport'
 import Todos from './Todos/Todos'
 import TodosEdit from './TodosEdit/TodosEdit'
+import Budget from './Budget/Budget'
 import Payouts from './Payouts/Payouts'
 import AppleTVActivation from './AppleTVActivation/AppleTVActivation'
 
@@ -41,6 +42,7 @@ export const makeMainRoutes = () => {
         <Route path="dashes/:dashId/report" component={DashReport} />
         <Route path="todos" component={Todos} />
         <Route path="todos/edit" component={TodosEdit} />
+        <Route path="budget" component={Budget} />
         <Route path="payouts" component={Payouts} />
         <Route path="appletv" component={AppleTVActivation} />
       </Route>

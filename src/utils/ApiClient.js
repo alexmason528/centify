@@ -14,6 +14,7 @@ export default class ApiClient {
   constructor() {
     methods.forEach((method) =>
       this[method] = (path, { params, data } = {}) => new Promise((resolve, reject) => {
+        console.log('request data: ', params, data)
         const request = superagent[method](formatUrl(path));
 
         if (params) {

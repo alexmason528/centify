@@ -93,6 +93,9 @@ export const TODOS_SET_STATUS = 'centify/todos/SET_STATUS'
 export const BUDGET_GET = 'centify/budget/GET'
 export const BUDGET_GET_SUCCESS = 'centify/budget/GET_SUCCESS'
 export const BUDGET_GET_FAIL = 'centify/budget/GET_FAIL'
+export const BUDGET_SET = 'centify/budget/SET'
+export const BUDGET_SET_SUCCESS = 'centify/budget/SET_SUCCESS'
+export const BUDGET_SET_FAIL = 'centify/budget/SET_FAIL'
 
 /* Dash types module */
 
