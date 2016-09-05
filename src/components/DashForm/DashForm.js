@@ -539,7 +539,13 @@ class DashForm extends Component {
               }
               */}
               <Fields
-                names={['MeasureEventType', 'MeasureEventTypeAdvanced', 'MeasureFilterCondition']}
+                names={[
+                  'MeasureEventType',
+                  'MeasureEventTypeAdvanced',
+                  'MeasureFilterCondition',
+                  'MeasureFilterCondition1',
+                  'MeasureFilterConditionType',
+                ]}
                 component={FilterConditionInput}
                 props={{ schemas }} />
             </Col>

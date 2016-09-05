@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import { 
   Input,
   Button,
-  Select, Option
+  Select, Option,
+  Radio,
 } from 'react-lightning-design-system'
 import math from 'mathjs'
 
@@ -10,9 +11,14 @@ import styles from './styles.module.css'
 import { formatDate, format2Digits } from 'utils/formatter'
 import basicFilters from 'basic-filters.json'
 
-const supportedStringOperators = ['==','!=']
-const supportedNumberOperators = ['==','!=','>','<']
-const supportedOperators = ['==','!=','>','<']
+const supportedStringOperators = ['==', '!=', '>', '<']
+const supportedNumberOperators = ['==', '!=', '>', '<']
+const supportedOperators = ['==', '!=', '>', '<']
+const emptyExpression = [{
+  fieldId: '0',
+  operator: '==',
+  value: 'something',
+}]
 
 
 class FilterConditionInput extends Component {
@@ -77,6 +83,12 @@ class FilterConditionInput extends Component {
   }
 
   parse = (expression) => {
+    if (!expression) {
+      return {
+        matching: 'all',
+        expressions: emptyExpression,
+      }
+    }
     let matching // All or Any - starts undefined
     let state = 'init' // State machine starts in init
     let expressions = [] // Expressions to store
@@ -154,23 +166,22 @@ class FilterConditionInput extends Component {
     return exp
   }
 
-  // not used currently
-  onChangeBasicFilterSelect = (e, onChange) => {
-    this.setState({
-      basicFilter: e.currentTarget.value,
-    })
-    if (e.currentTarget.value != 'advanced') {
+  onChangeBasicFilterSelect = (e, onChange, advancedEventTypeProps, advancedFilterProps) => {
+    onChange(e.currentTarget.value)
+    if (!advancedEventTypeProps.input.value) {
+      const defaultAdvEventType = e.currentTarget.value == 'advanced' ? 'Deal' : e.currentTarget.value
+      advancedEventTypeProps.input.onChange(defaultAdvEventType)
       for(const k in this.convertedBasicFilters) {
         const filter = this.convertedBasicFilters[k]
-        if (filter.EventType == e.currentTarget.value) {
-          onChange(filter.FilterConditionPattern)
+        if (filter.EventType == defaultAdvEventType) {
+          advancedFilterProps.input.onChange(filter.FilterConditionPattern)
           break
         }
       }
     }
   }
 
-  basicFilterSelect = (props) => {
+  basicFilterSelect = (props, advancedEventTypeProps, advancedFilterProps) => {
     const basicSelectStyle = {
       maxWidth: 400,
       marginTop: 5,
@@ -188,7 +199,14 @@ class FilterConditionInput extends Component {
         <div className="slds-form-element" style={basicSelectStyle}>
           <div className="slds-form-element__control">
             <div className="slds-select_container">
-              <Select value={props.input.value} onChange={props.input.onChange}>
+              <Select
+                value={props.input.value}
+                onChange={e => this.onChangeBasicFilterSelect(
+                  e,
+                  props.input.onChange,
+                  advancedEventTypeProps,
+                  advancedFilterProps )}
+                >
                 {basicFilterOptions}
                 <Option value="advanced">Advanced...</Option>
               </Select>
@@ -235,9 +253,12 @@ class FilterConditionInput extends Component {
     onChange(this.compose(parsedExpression))
   }
 
-  advancedFilterSelect = (basicFilterProps, advancedFilterEventTypeProps, props) => {
+  onAdvancedFilterSecondTypeValueChange = (newValues, props) => {
+    //
+  }
+
+  advancedFilterSelect = (basicFilterProps, advancedFilterEventTypeProps, props, props1, filterConditionTypeProps) => {
     const parsedExpression = this.parse(props.input.value)
-    console.log('composed', this.compose(parsedExpression))
     const midTextSelectStyle = {
       display: 'inline-block',
       maxWidth: 100,
@@ -260,12 +281,21 @@ class FilterConditionInput extends Component {
     const {
       schemas
     } = this.props
+    const expressions = (
+      parsedExpression.expressions.length > 0 ?
+      parsedExpression.expressions
+      :
+      emptyExpression
+    )
     return (
       <div className="slds-m-top--medium">
         <div className="slds-form-element">
           <div className="slds-form-element__control">
             <label className="slds-radio">
-              <input type="radio" name="options" />
+              <input
+                type="radio"
+                checked={!filterConditionTypeProps.input.value}
+                onChange={e => filterConditionTypeProps.input.onChange(0)} />
               <span className="slds-radio--faux"></span>
               <span className="slds-form-element__label">
                 Include
@@ -290,7 +320,7 @@ class FilterConditionInput extends Component {
         </div>
         <div style={{ paddingLeft: 35, maxWidth: 700 }}>
           <hr style={{ margin: '20px 0 10px' }} />
-          {parsedExpression.expressions.map((expression, index) => {
+          {expressions.map((expression, index) => {
             return (
               <div style={ruleStyle} key={index}>
                 <Select style={ruleSelectStyle} value={expression.fieldId}
@@ -318,10 +348,15 @@ class FilterConditionInput extends Component {
                     onClick={() => {
                       this.onAdvancedFilterAddItem(index, props.input.value, props.input.onChange)
                     }} />
-                  <Button type="icon-border" icon="dash"
-                    onClick={() => {
-                      this.onAdvancedFilterRemoveItem(index, props.input.value, props.input.onChange)
-                    }} />
+                  {
+                    expressions.length > 1 ?
+                    <Button type="icon-border" icon="dash"
+                      onClick={() => {
+                        this.onAdvancedFilterRemoveItem(index, props.input.value, props.input.onChange)
+                      }} />
+                    :
+                    ''
+                  }
                 </div>
               </div>
             )
@@ -331,16 +366,19 @@ class FilterConditionInput extends Component {
         <div className="slds-form-element">
           <div className="slds-form-element__control">
             <label className="slds-radio">
-              <input type="radio" name="options" />
+              <input
+                type="radio"
+                checked={filterConditionTypeProps.input.value}
+                onChange={e => filterConditionTypeProps.input.onChange(1)} />
               <span className="slds-radio--faux"></span>
               <span className="slds-form-element__label">
-                Include deals with
-                <Select style={midTextSelectStyle}>
-                  <Option value=">=">at least</Option>
-                  <Option value="<=">at most</Option>
-                  <Option value="=">equals</Option>
+                Include <strong>deals</strong> with
+                <Select style={midTextSelectStyle} onChange={e => this.onAdvancedFilterSecondTypeValueChange({ count: e.currentTarget.value }, props1)}>
+                  <Option value="total">at least</Option>
+                  <Option value="any">any</Option>
                 </Select>
-                <Input type="text" style={midTextSelectStyle} defaultValue={5} />
+                <Input type="number" style={midTextSelectStyle} defaultValue={5}
+                   onChange={e => this.onAdvancedFilterSecondTypeValueChange({ number: e.currentTarget.value }, props1)} />
                 products matching the following rule:
               </span>
             </label>
@@ -349,18 +387,37 @@ class FilterConditionInput extends Component {
         <div style={{ paddingLeft: 35, maxWidth: 700 }}>
           <hr style={{ margin: '20px 0 10px' }} />
           <div style={ruleStyle}>
-            <Select style={ruleSelectStyle}>
-              <Option value="productcode">Product code</Option>
-              <Option value="value">Value</Option>
-              <Option value="deals">Deals</Option>
+            <Select style={ruleSelectStyle}
+               onChange={e => this.onAdvancedFilterSecondTypeValueChange({ field: e.currentTarget.value }, props1)}>
+              {
+                schemas.get('Deal') ?
+                schemas.getIn(['Deal', 'Fields']).valueSeq().map((field, index) => {
+                  let name = field.get('Name')
+                  if (name.substr(0, 9).toLowerCase() == 'products.') {
+                    name = name.substr(9)
+                    // if (name.substr(0, 7) == 'Product') {
+                    //   name = name.replace('Product', 'Product ')
+                    // } else {
+                    //   name = 'Product ' + name
+                    // }
+                    return (
+                      <Option key={index} value={field.get('Id')}>{name}</Option>
+                    )
+                  }
+                })
+                :
+                undefined
+              }
             </Select>
-            <Select style={ruleSelectStyle}>
+            <Select style={ruleSelectStyle}
+              onChange={e => this.onAdvancedFilterSecondTypeValueChange({ operator: e.currentTarget.value }, props1)} >
               <Option value="==">is</Option>
               <Option value="!=">is not</Option>
               <Option value=">">is greater than</Option>
               <Option value="<">is less than</Option>
             </Select>
-            <Input type="text" style={ruleSelectStyle} />
+            <Input type="text" style={ruleSelectStyle}
+              onChange={e => this.onAdvancedFilterSecondTypeValueChange({ value: e.currentTarget.value }, props1)} />
           </div>
           <hr style={{ margin: '10px 0 20px' }} />
         </div>
@@ -369,13 +426,13 @@ class FilterConditionInput extends Component {
   }
 
   render() {
-    const { MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition } = this.props
+    const { MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType } = this.props
     return (
       <div>
-        {this.basicFilterSelect(MeasureEventType)}
+        {this.basicFilterSelect(MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1)}
         {
           MeasureEventType.input.value == 'advanced' ?
-          this.advancedFilterSelect(MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition)
+          this.advancedFilterSelect(MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType)
           :
           ''
         }

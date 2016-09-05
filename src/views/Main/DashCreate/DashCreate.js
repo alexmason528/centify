@@ -90,7 +90,10 @@ class DashCreate extends Component {
       Name : "",
       Type : "OverTheLine",
       MeasureEventType : "Deal",
-      MeasureFilterCondition: 'data["06ry1nbzp9yn6yfj"] == "something" and data["06ry1ncypkco6lcq"] != "something else" and data["06ry1nfslir3u8uu"] < 300 and data["06ry1nfx9ax7oebn"] > 200',
+      MeasureEventTypeAdvanced : "",
+      MeasureFilterCondition: "",
+      MeasureFilterCondition1: "",
+      MeasureFilterConditionType: 0,
       MeasureValue : 0,
       StartsAt: startDate.toISOString(),
       EndsAt: endDate.toISOString(),
@@ -119,9 +122,11 @@ class DashCreate extends Component {
   }
 
   onSubmit = (model) => {
+    console.log(model)
+    return  ///
     const auth = this.props.auth
     const profile = auth.getProfile()
-    const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model
+    const { MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, rewards, participants, todos, ...modelData } = model
     const _rewards = rewards ? JSON.parse(rewards) : []
     const data = {
       Description : "",
@@ -141,8 +146,8 @@ class DashCreate extends Component {
       EstimatedRewardAmount: this.calcEstimatedRewardAmount(model),
       Measure : {
         Name : "string",
-        EventType : model.MeasureType,
-        FilterCondition : "string",
+        EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
+        FilterCondition: MeasureFilterCondition,
         CalcMethod : "Sum",
         SumFields : "string",
         Units : "string",

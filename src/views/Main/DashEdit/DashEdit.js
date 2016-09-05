@@ -109,13 +109,19 @@ class DashEdit extends Component {
       const _rewards = currentDash.get('Rewards').sortBy(reward => reward.get('Position'))
       const _participants = currentDash.get('Participants')
       const _todos = currentDash.get('ToDos')
+      const eventType = currentDash.getIn(['Measure', 'EventType'], '')
+      const filterCond = currentDash.getIn(['Measure', 'FilterCondition'], '')
+      const filterIsFirstType = (filterCond.substr(0, 4).toLowerCase() == 'data')
       return {
         Name : currentDash.get('Name'),
         Type : currentDash.get('Type'),
         DashTypeId: currentDash.get('DashTypeId'),
         DashBannerId: currentDash.get('DashBannerId'),
-        MeasureEventType: currentDash.getIn(['Measure', 'EventType'], ''),
-        MeasureFilterCondition: 'data["06ry1nbzp9yn6yfj"] == "something" and data["06ry1ncypkco6lcq"] != "something else" and data["06ry1nfslir3u8uu"] < 300 and data["06ry1nfx9ax7oebn"] > 200',
+        MeasureEventType: eventType,
+        MeasureEventTypeAdvanced : eventType,
+        MeasureFilterCondition: filterIsFirstType ? filterCond : '',
+        MeasureFilterCondition1: filterIsFirstType ? '' : filterCond,
+        MeasureFilterConditionType: filterIsFirstType ? 0 : 1,
         MeasureValue: currentDash.get('TargetThreshold'),
         StartsAt: new Date(currentDash.get('StartsAt')).toISOString(),
         EndsAt: new Date(currentDash.get('EndsAt')).toISOString(),
@@ -134,7 +140,10 @@ class DashEdit extends Component {
         Name : "",
         Type : "OverTheLine",
         MeasureEventType : "Deal",
-        MeasureFilterCondition: 'data["06ry1nbzp9yn6yfj"] == "something" and data["06ry1ncypkco6lcq"] != "something else" and data["06ry1nfslir3u8uu"] < 300 and data["06ry1nfx9ax7oebn"] > 200',
+        MeasureEventTypeAdvanced : "",
+        MeasureFilterCondition: "",
+        MeasureFilterCondition1: "",
+        MeasureFilterConditionType: 0,
         MeasureValue : 0,
         StartsAt: startDate.toISOString(),
         EndsAt: endDate.toISOString(),
@@ -185,11 +194,9 @@ class DashEdit extends Component {
     if (!editable) {
       return
     }
-    console.log(model)
-    return  ///
     const auth = this.props.auth
     const profile = auth.getProfile()
-    const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model
+    const { MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, rewards, participants, todos, ...modelData } = model
     const _rewards = rewards ? JSON.parse(rewards) : []
     const data = {
       Description : "",
@@ -208,13 +215,13 @@ class DashEdit extends Component {
       MinimumUsersInTeam : 1,
       EstimatedRewardAmount: this.calcEstimatedRewardAmount(model),
       Measure : {
-        Name : "string",
-        EventType : model.MeasureType,
-        FilterCondition : "string",
-        CalcMethod : "Sum",
-        SumFields : "string",
-        Units : "string",
-        "Value": 0,
+        Name: "string",
+        EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
+        FilterCondition: MeasureFilterCondition,
+        CalcMethod: "Sum",
+        SumFields: "string",
+        Units: "string",
+        Value: 0,
       },
       IsBash : false,
       DashIdAssociatedToBash : null,
