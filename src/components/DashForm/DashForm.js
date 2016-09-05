@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
-import { Field, reduxForm, formValueSelector } from 'redux-form'
+import { Field, Fields, reduxForm, formValueSelector } from 'redux-form'
 import { Icon } from 'react-fa'
 import { 
   Grid, Row, Col,
@@ -11,17 +11,12 @@ import {
   Button,
   Container,
 } from 'react-lightning-design-system'
-import math from 'mathjs'
 
 import { formatDate2, numWithSurfix } from 'utils/formatter'
 import DateInput from 'components/DateInput/DateInput'
+import FilterConditionInput from 'components/FilterConditionInput/FilterConditionInput'
 import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
-import basicFilters from 'basic-filters.json'
-
-const supportedStringOperators = ['==','!=']
-const supportedNumberOperators = ['==','!=','>','<']
-const supportedOperators = ['==','!=','>','<']
 
 
 class DashForm extends Component {
@@ -32,10 +27,7 @@ class DashForm extends Component {
     this.state = {
       selectedAllTodos: false,
       selectedUserId: 0,
-      advancedFilterMeasureEventType: 'Deal',
     }
-
-    this.convertedBasicFilters = false
   }
 
   nameInput = (props) => {
@@ -94,341 +86,6 @@ class DashForm extends Component {
               }
             </Field>
           </div>
-        </div>
-      </div>
-    )
-  }
-
-  convertBasicFilters() {
-    if (this.convertedBasicFilters) {
-      return
-    }
-    const {
-      schemas,
-    } = this.props
-    for(const k in basicFilters) {
-      const filter = basicFilters[k]
-      filter.FilterConditionPattern = filter.FilterConditionPattern.replace(/data\[\"([A-Za-z]+)\"\]/g, (v, name) => {
-        let id = ''
-        schemas.map(schema => {
-          if (schema.get('Type') != filter.EventType) {
-            return
-          }
-          const fields = schema.get('Fields')
-          if (fields) {
-            fields.map(field => {
-              if (field.get('Name') == name) {
-                id = field.get('Id')
-              }
-            })
-          }
-        })
-        return v.replace(name, id)
-      })
-    }
-    this.convertedBasicFilters = basicFilters
-  }
-
-  assert = (condition, message) => {
-    if (!condition) {
-      message = message || 'Assertion failed'
-      if (typeof Error !== 'undefined') {
-        throw new Error(message)
-      }
-      throw message // Fallback
-    }
-  }
-
-  parse = (expression) => {
-    let matching // All or Any - starts undefined
-    let state = 'init' // State machine starts in init
-    let expressions = [] // Expressions to store
-    let rootNode = math.parse(expression)
-    rootNode.traverse((node, path, parent) => {
-      switch (node.type) {
-        case 'OperatorNode':
-          if(node.op == 'and') {
-            this.assert(state == 'init', "Unexpected AND - No nested logic permitted")
-            this.assert(!matching || (matching === 'all'), "Unexpected AND - Must be all ANDs or all ORs")
-            matching = 'all'
-          } else if(node.op == 'or') {
-            this.assert(state == 'init', "Unexpected OR - No nested logic permitted")
-            this.assert(!matching || (matching === 'any'), "Unexpected OR - Must be all ANDs or all ORs")
-            matching = 'any'
-          } else if(supportedOperators.includes(node.op)) {
-            // Now a string of math ops
-            state = 'expressions'
-            this.assert(node.args[0].object.name == 'data', "Left hand side must be data[]")
-            this.assert(node.args[0].index, "Left hand side must be an index into data[]")
-            this.assert(node.args[0].index.dimensions.length == 1, "Must be only 1 index into array")
-            this.assert(node.args[0].index.dimensions[0].valueType == 'string', "Index into data[] must be a string")
-            switch(node.args[1].valueType) {
-              case 'string':
-                this.assert(supportedStringOperators.includes(node.op), "Unsupported operator for string")
-                break
-              case 'number':
-                this.assert(supportedNumberOperators.includes(node.op), "Unsupported operator for number")
-                break
-              default:
-                throw("Unsupported value - only strings and numbers are supported")
-            }
-            expressions.push({
-              'fieldId': node.args[0].index.dimensions[0].value,
-              'operator': node.op,
-              'value': node.args[1].value 
-            })
-          } else {
-            throw("Unsupported operator " + node.op)
-          }
-          break
-        case 'ConstantNode':
-          break;
-        case 'SymbolNode':
-          break;
-        case 'IndexNode':
-          break;
-        case 'AccessorNode':
-          break;
-        default:
-          throw("Unexpected element " + node.type)
-      }
-    });
-    return {
-      'matching': matching,
-      'expressions': expressions
-    };
-  }
-
-  compose = (parsedExp) => {
-    let exp = ''
-    const logicop = parsedExp.matching == 'all' ? 'and' : 'or'
-    parsedExp.expressions.forEach((expitem, index) => {
-      if (index > 0) {
-        exp += ` ${logicop} `
-      }
-      exp += 'data[\"' + expitem.fieldId + '\"] ' + expitem.operator
-      if (!isNaN(expitem.value) && isFinite(expitem.value)) {
-        exp += ' ' + expitem.value
-      } else {
-        exp += ' \"' + expitem.value + '\"'
-      }
-      
-    })
-    return exp
-  }
-
-  // not used currently
-  onChangeBasicFilterSelect = (e, onChange) => {
-    this.setState({
-      basicFilter: e.currentTarget.value,
-    })
-    if (e.currentTarget.value != 'advanced') {
-      for(const k in this.convertedBasicFilters) {
-        const filter = this.convertedBasicFilters[k]
-        if (filter.EventType == e.currentTarget.value) {
-          onChange(filter.FilterConditionPattern)
-          break
-        }
-      }
-    }
-  }
-
-  basicFilterSelect = (props) => {
-    const basicSelectStyle = {
-      maxWidth: 400,
-      marginTop: 5,
-    }
-    const basicFilterOptions = []
-    for(const k in this.convertedBasicFilters) {
-      const filter = this.convertedBasicFilters[k]
-      basicFilterOptions.push(
-        <Option key={k} value={filter.EventType}>{filter.EventType}</Option>
-      )
-    }
-    return (
-      <div>
-        What is the metric?
-        <div className="slds-form-element" style={basicSelectStyle}>
-          <div className="slds-form-element__control">
-            <div className="slds-select_container">
-              <Select value={props.input.value} onChange={props.input.onChange}>
-                {basicFilterOptions}
-                <Option value="advanced">Advanced...</Option>
-              </Select>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  onAdvancedFilterOperatorChange = (op, value, onChange) => {
-    const parsedExpression = this.parse(value)
-    parsedExpression.matching = (op == 'all' ? 'and' : 'or')
-    onChange(this.compose(parsedExpression))
-  }
-
-  onAdvancedFilterAddItem = (index, value, onChange) => {
-    const parsedExpression = this.parse(value)
-    parsedExpression.expressions.splice(index + 1, 0, parsedExpression.expressions[index])
-    onChange(this.compose(parsedExpression))
-  }
-
-  onAdvancedFilterRemoveItem = (index, value, onChange) => {
-    const parsedExpression = this.parse(value)
-    parsedExpression.expressions.splice(index, 1)
-    onChange(this.compose(parsedExpression))
-  }
-
-  onAdvancedFilterItemFieldChange = (index, fieldId, value, onChange) => {
-    const parsedExpression = this.parse(value)
-    parsedExpression.expressions[index].fieldId = fieldId
-    onChange(this.compose(parsedExpression))
-  }
-
-  onAdvancedFilterItemOperatorChange = (index, opr, value, onChange) => {
-    const parsedExpression = this.parse(value)
-    parsedExpression.expressions[index].operator = opr
-    onChange(this.compose(parsedExpression))
-  }
-
-  onAdvancedFilterItemValueChange = (index, expvalue, value, onChange) => {
-    const parsedExpression = this.parse(value)
-    parsedExpression.expressions[index].value = expvalue
-    onChange(this.compose(parsedExpression))
-  }
-
-  advancedFilterSelect = (props) => {
-    const parsedExpression = this.parse(props.input.value)
-    console.log('composed', this.compose(parsedExpression))
-    const midTextSelectStyle = {
-      display: 'inline-block',
-      maxWidth: 100,
-      margin: '0 10px',
-    }
-    const ruleSelectStyle = {
-      display: 'inline-block',
-      maxWidth: 160,
-      marginRight: 15,
-    }
-    const ruleStyle = {
-      padding: '5px 0',
-    }
-    const ruleButtonStyle = {
-      width: 30,
-      marginLeft: 5,
-      padding: 0,
-      textAlign: 'center',
-    }
-    const {
-      schemas
-    } = this.props
-    const { advancedFilterMeasureEventType } = this.state
-    console.log(advancedFilterMeasureEventType)
-    console.log(schemas.getIn([advancedFilterMeasureEventType, 'Fields']))
-    return (
-      <div className="slds-m-top--medium">
-        <div className="slds-form-element">
-          <div className="slds-form-element__control">
-            <label className="slds-radio">
-              <input type="radio" name="options" />
-              <span className="slds-radio--faux"></span>
-              <span className="slds-form-element__label">
-                Include
-                <Select
-                  style={midTextSelectStyle}
-                  value={advancedFilterMeasureEventType}
-                  onChange={e => this.setState({ advancedFilterMeasureEventType: e.currentTarget.value })}>
-                  {schemas.valueSeq().map((schema, index) => (
-                    <Option key={index} value={schema.get('Type')}>{schema.get('Type')}</Option>
-                  ))}
-                </Select>
-                matching
-                <Select style={midTextSelectStyle} value={parsedExpression.matching}
-                  onChange={e => this.onAdvancedFilterOperatorChange(e.currentTarget.value, props.input.value, props.input.onChange)}>
-                  <Option value="all">All</Option>
-                  <Option value="any">Any</Option>
-                </Select>
-                of the following values:
-              </span>
-            </label>
-          </div>
-        </div>
-        <div style={{ paddingLeft: 35, maxWidth: 700 }}>
-          <hr style={{ margin: '20px 0 10px' }} />
-          {parsedExpression.expressions.map((expression, index) => {
-            return (
-              <div style={ruleStyle} key={index}>
-                <Select style={ruleSelectStyle} value={expression.fieldId}
-                  onChange={e => this.onAdvancedFilterItemFieldChange(index, e.currentTarget.value, props.input.value, props.input.onChange)}>
-                  {
-                    schemas.get(advancedFilterMeasureEventType) ?
-                    schemas.getIn([advancedFilterMeasureEventType, 'Fields']).valueSeq().map((field, index) => (
-                      <Option key={index} value={field.get('Id')}>{field.get('Name')}</Option>
-                    ))
-                    :
-                    undefined
-                  }
-                </Select>
-                <Select style={ruleSelectStyle} value={expression.operator}
-                  onChange={e => this.onAdvancedFilterItemOperatorChange(index, e.currentTarget.value, props.input.value, props.input.onChange)}>
-                  <Option value="==">is</Option>
-                  <Option value="!=">is not</Option>
-                  <Option value=">">is greater than</Option>
-                  <Option value="<">is less than</Option>
-                </Select>
-                <Input type="text" style={ruleSelectStyle} value={expression.value}
-                  onChange={e => this.onAdvancedFilterItemValueChange(index, e.currentTarget.value, props.input.value, props.input.onChange)} />
-                <div className="slds-float--right">
-                  <Button type="icon-border" icon="add"
-                    onClick={() => {
-                      this.onAdvancedFilterAddItem(index, props.input.value, props.input.onChange)
-                    }} />
-                  <Button type="icon-border" icon="dash"
-                    onClick={() => {
-                      this.onAdvancedFilterRemoveItem(index, props.input.value, props.input.onChange)
-                    }} />
-                </div>
-              </div>
-            )
-          })}
-          <hr style={{ margin: '10px 0 20px' }} />
-        </div>
-        <div className="slds-form-element">
-          <div className="slds-form-element__control">
-            <label className="slds-radio">
-              <input type="radio" name="options" />
-              <span className="slds-radio--faux"></span>
-              <span className="slds-form-element__label">
-                Include deals with
-                <Select style={midTextSelectStyle}>
-                  <Option value=">=">at least</Option>
-                  <Option value="<=">at most</Option>
-                  <Option value="=">equals</Option>
-                </Select>
-                <Input type="text" style={midTextSelectStyle} defaultValue={5} />
-                products matching the following rule:
-              </span>
-            </label>
-          </div>
-        </div>
-        <div style={{ paddingLeft: 35, maxWidth: 700 }}>
-          <hr style={{ margin: '20px 0 10px' }} />
-          <div style={ruleStyle}>
-            <Select style={ruleSelectStyle}>
-              <Option value="productcode">Product code</Option>
-              <Option value="value">Value</Option>
-              <Option value="deals">Deals</Option>
-            </Select>
-            <Select style={ruleSelectStyle}>
-              <Option value="==">is</Option>
-              <Option value="!=">is not</Option>
-              <Option value=">">is greater than</Option>
-              <Option value="<">is less than</Option>
-            </Select>
-            <Input type="text" style={ruleSelectStyle} />
-          </div>
-          <hr style={{ margin: '10px 0 20px' }} />
         </div>
       </div>
     )
@@ -829,8 +486,8 @@ class DashForm extends Component {
 
   render() {
     const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, MeasureEventType } = this.props
+    const { schemas } = this.props
     const value = this.calcEstimatedRewardAmount()
-    this.convertBasicFilters()
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
         <Grid>
@@ -871,16 +528,21 @@ class DashForm extends Component {
               <h2 className={styles.fieldTitle}>Goal</h2>
             </Col>
             <Col padded cols={6}>
-              <Field name="MeasureEventType" component={this.basicFilterSelect} />
+              {/*<Field name="MeasureEventType" component={this.basicFilterSelect} />
+              {
+                MeasureEventType == 'advanced' ?
+                <div className="slds-m-top--large">
+                  <Field name="MeasureFilterCondition" component={this.advancedFilterSelect}/>
+                </div>
+                :
+                ''
+              }
+              */}
+              <Fields
+                names={['MeasureEventType', 'MeasureEventTypeAdvanced', 'MeasureFilterCondition']}
+                component={FilterConditionInput}
+                props={{ schemas }} />
             </Col>
-            {
-              MeasureEventType == 'advanced' ?
-              <Col padded cols={6} className="slds-m-top--large">
-                <Field name="MeasureFilterCondition" component={this.advancedFilterSelect}/>
-              </Col>
-              :
-              ''
-            }
             <Col padded cols={6} className="slds-m-top--large">
               <Field name="MeasureValue" component={this.measureValueInput}/>
             </Col>

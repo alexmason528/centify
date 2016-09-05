@@ -185,6 +185,8 @@ class DashEdit extends Component {
     if (!editable) {
       return
     }
+    console.log(model)
+    return  ///
     const auth = this.props.auth
     const profile = auth.getProfile()
     const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model
