@@ -94,7 +94,7 @@ class DashCreate extends Component {
       MeasureFilterCondition: "",
       MeasureFilterCondition1: "",
       MeasureFilterConditionType: 0,
-      MeasureValue : 0,
+      TargetThreshold : 0,
       StartsAt: startDate.toISOString(),
       EndsAt: endDate.toISOString(),
       RewardType : "All over the line",
@@ -126,6 +126,7 @@ class DashCreate extends Component {
     const profile = auth.getProfile()
     const {
       MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
+      MeasureCalcMethod, MeasureSumField, MeasureValue,
       rewards, participants, todos,
       ...modelData
     } = model
@@ -135,7 +136,6 @@ class DashCreate extends Component {
       ImageURL : "",
       IsTeamDash : false,
       GameType : "RocketLaunch",
-      TargetThreshold : parseInt(model.MeasureValue),
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : 30,
       ScoreFormula : "",
@@ -150,10 +150,10 @@ class DashCreate extends Component {
         Name : "string",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
         FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
-        CalcMethod : "Sum",
-        SumFields : "string",
+        CalcMethod : MeasureCalcMethod,
+        SumField : MeasureSumField,
         Units : "string",
-        "Value": 0,
+        Value: MeasureValue,
       },
       IsBash : false,
       DashIdAssociatedToBash : null,

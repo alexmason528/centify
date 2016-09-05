@@ -122,7 +122,7 @@ class DashEdit extends Component {
         MeasureFilterCondition: filterIsFirstType ? filterCond : '',
         MeasureFilterCondition1: filterIsFirstType ? '' : filterCond,
         MeasureFilterConditionType: filterIsFirstType ? 0 : 1,
-        MeasureValue: currentDash.get('TargetThreshold'),
+        TargetThreshold: currentDash.get('TargetThreshold'),
         StartsAt: new Date(currentDash.get('StartsAt')).toISOString(),
         EndsAt: new Date(currentDash.get('EndsAt')).toISOString(),
         RewardType : "All over the line",
@@ -144,7 +144,7 @@ class DashEdit extends Component {
         MeasureFilterCondition: "",
         MeasureFilterCondition1: "",
         MeasureFilterConditionType: 0,
-        MeasureValue : 0,
+        TargetThreshold : 0,
         StartsAt: startDate.toISOString(),
         EndsAt: endDate.toISOString(),
         RewardType : "All over the line",
@@ -198,6 +198,7 @@ class DashEdit extends Component {
     const profile = auth.getProfile()
     const {
       MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
+      MeasureCalcMethod, MeasureSumField, MeasureValue,
       rewards, participants, todos,
       ...modelData
     } = model
@@ -207,7 +208,6 @@ class DashEdit extends Component {
       ImageURL : "",
       IsTeamDash : false,
       GameType : "RocketLaunch",
-      TargetThreshold : parseInt(model.MeasureValue),
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : 30,
       ScoreFormula : "",
@@ -222,10 +222,10 @@ class DashEdit extends Component {
         Name: "string",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
         FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
-        CalcMethod: "Sum",
-        SumFields: "string",
-        Units: "string",
-        Value: 0,
+        CalcMethod : MeasureCalcMethod,
+        SumField : MeasureSumField,
+        Units : "string",
+        Value: MeasureValue,
       },
       IsBash : false,
       DashIdAssociatedToBash : null,

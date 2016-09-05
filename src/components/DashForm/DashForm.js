@@ -91,7 +91,93 @@ class DashForm extends Component {
     )
   }
 
-  measureValueInput = (props) => {
+  getAmountFieldId = (fieldName) => {
+    const { schemas } = this.props
+    const fields = schemas.getIn([fieldName, 'Fields'])
+    if (!fields) {
+      return false
+    }
+    let id = false
+    fields.map(field => {
+      if (field.get('Name') == 'Amount') {
+        id = field.get('Id')
+      }
+    })
+    return id
+  }
+
+  measureTargetInput = ({ MeasureCalcMethod, MeasureSumField, MeasureValue, MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterConditionType }) => {
+    let fieldName = 'Deal'
+    if (MeasureEventType.input.value == 'advanced') {
+      if (!MeasureFilterConditionType.input.value) {
+        fieldName = MeasureEventTypeAdvanced.input.value
+      }
+    } else {
+      fieldName = MeasureEventType.input.value
+    }
+    const fieldNamePlural = fieldName + 's'
+    const midTextSelectStyle = {
+      display: 'inline-block',
+      maxWidth: 100,
+    }
+    const amountFieldId = this.getAmountFieldId(fieldName)
+    return (
+      <fieldset className="slds-form-element">
+        <div>What is the target?</div>
+        <div className="slds-form-element__control">
+          {
+            amountFieldId ?
+            <label className="slds-radio slds-m-top--medium">
+              <input
+                type="radio"
+                name="options"
+                value={MeasureCalcMethod.input.value == 'Sum'}
+                onChange={e => {
+                  MeasureCalcMethod.input.onChange('Sum')
+                  MeasureSumField.input.onChange(amountFieldId)
+                }} />
+              <span className="slds-radio--faux"></span>
+              <span className="slds-form-element__label" style={{ color: 'inherit' }}>
+                Value of the {fieldNamePlural}: $&nbsp;
+                <Input
+                  style={midTextSelectStyle}
+                  onChange={e => {
+                    if (MeasureCalcMethod.input.value == 'Sum') {
+                      MeasureValue.input.onChange(e.currentTarget.value)
+                    }
+                  }} />
+              </span>
+            </label>
+            :
+            ''
+          }
+          <label className="slds-radio slds-m-top--medium">
+            <input
+              type="radio"
+              name="options"
+              value={MeasureCalcMethod.input.value == 'Increment'}
+              onChange={e => {
+                MeasureCalcMethod.input.onChange('Increment')
+                MeasureSumField.input.onChange(null)
+              }} />
+            <span className="slds-radio--faux"></span>
+            <span className="slds-form-element__label" style={{ color: 'inherit' }}>
+              Number of {fieldNamePlural}:&nbsp;
+              <Input
+                style={midTextSelectStyle}
+                onChange={e => {
+                  if (MeasureCalcMethod.input.value == 'Increment') {
+                    MeasureValue.input.onChange(e.currentTarget.value)
+                  }
+                }} />
+            </span>
+          </label>
+        </div>
+      </fieldset>
+    )
+  }
+
+  targetThresholdInput = (props) => {
     const {value, ...otherProps} = props.input
     const _value = value ? value : 0
     const valueStyle = {
@@ -101,7 +187,7 @@ class DashForm extends Component {
     }
     return (
       <div>
-        <span>What is the target value? </span>
+        <span>Target Threshold value</span>
         <Input type="text" style={valueStyle} {...props.input}/>
       </div>
     )
@@ -550,7 +636,25 @@ class DashForm extends Component {
                 props={{ schemas }} />
             </Col>
             <Col padded cols={6} className="slds-m-top--large">
-              <Field name="MeasureValue" component={this.measureValueInput}/>
+              <Fields
+                names={[
+                  'MeasureCalcMethod',
+                  'MeasureSumField',
+                  'MeasureValue',
+                  'MeasureEventType',
+                  'MeasureEventTypeAdvanced',
+                  'MeasureFilterConditionType',
+                ]}
+                component={this.measureTargetInput} />
+            </Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--medium">
+              <h2 className={styles.fieldTitle}>Target Threshold</h2>
+            </Col>
+            <Col padded cols={6}>
+              <Field name="TargetThreshold" component={this.targetThresholdInput}/>
             </Col>
           </Row>
 
