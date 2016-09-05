@@ -196,7 +196,11 @@ class DashEdit extends Component {
     }
     const auth = this.props.auth
     const profile = auth.getProfile()
-    const { MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, rewards, participants, todos, ...modelData } = model
+    const {
+      MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
+      rewards, participants, todos,
+      ...modelData
+    } = model
     const _rewards = rewards ? JSON.parse(rewards) : []
     const data = {
       Description : "",
@@ -217,7 +221,7 @@ class DashEdit extends Component {
       Measure : {
         Name: "string",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
-        FilterCondition: MeasureFilterCondition,
+        FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
         CalcMethod: "Sum",
         SumFields: "string",
         Units: "string",

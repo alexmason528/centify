@@ -122,11 +122,13 @@ class DashCreate extends Component {
   }
 
   onSubmit = (model) => {
-    console.log(model)
-    return  ///
     const auth = this.props.auth
     const profile = auth.getProfile()
-    const { MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, rewards, participants, todos, ...modelData } = model
+    const {
+      MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
+      rewards, participants, todos,
+      ...modelData
+    } = model
     const _rewards = rewards ? JSON.parse(rewards) : []
     const data = {
       Description : "",
@@ -147,7 +149,7 @@ class DashCreate extends Component {
       Measure : {
         Name : "string",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
-        FilterCondition: MeasureFilterCondition,
+        FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
         CalcMethod : "Sum",
         SumFields : "string",
         Units : "string",
