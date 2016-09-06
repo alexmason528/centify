@@ -1,6 +1,6 @@
 {
   "name": "mycentify",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MyCentify",
   "license": "MIT",
   "scripts": {
@@ -17,8 +17,8 @@
     "test": "cross-env NODE_ENV=test karma start karma.conf.js",
     "test:watch": "npm run test -- --watch",
     "build_dev": "npm run clean && cross-env NODE_ENV=development webpack",
-    "build_stg": "npm run clean && cross-env NODE_ENV=staging webpack",
-    "build_prd": "npm run clean && cross-env NODE_ENV=production webpack"
+    "build_stg": "npm version patch && npm run clean && cross-env NODE_ENV=staging NPM_PACKAGE_VERSION=`node scripts/version.js` webpack",
+    "build_prd": "npm version minor && npm run clean && cross-env NODE_ENV=production NPM_PACKAGE_VERSION=`node scripts/version.js` webpack"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",

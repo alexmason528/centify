@@ -1,4 +1,5 @@
 const NODE_ENV = process.env.NODE_ENV;
+const NPM_PACKAGE_VERSION = process.env.NPM_PACKAGE_VERSION;
 const dotenv = require('dotenv');
 
 const webpack = require('webpack');
@@ -64,7 +65,8 @@ const defines =
     memo[`__${key.toUpperCase()}__`] = val;
     return memo;
   }, {
-    __NODE_ENV__: JSON.stringify(NODE_ENV)
+    __NODE_ENV__: JSON.stringify(NODE_ENV),
+    __NPM_PACKAGE_VERSION__: JSON.stringify(NPM_PACKAGE_VERSION)
   });
 
 config.plugins = [
