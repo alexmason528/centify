@@ -732,6 +732,15 @@ class DashForm extends Component {
             </Col>
           </Row>
 
+          <Row cols={6} className="slds-m-top--large">
+            <Col padded cols={6} className="slds-m-bottom--small">
+              <h2 className={styles.fieldTitle}>Description</h2>
+            </Col>
+            <Col padded cols={6}>
+              <Field name="description" component="textarea" />
+            </Col>
+          </Row>
+
           <Row cols={6} className="slds-m-vertical--x-large">
             <Col padded>
               <div style={{ textAlign: 'right' }}>
