@@ -94,7 +94,7 @@ class DashCreate extends Component {
       MeasureFilterCondition: "",
       MeasureFilterCondition1: "",
       MeasureFilterConditionType: 0,
-      TargetThreshold : 0,
+      TargetThreshold: 0,
       StartsAt: startDate.toISOString(),
       EndsAt: endDate.toISOString(),
       RewardType : "All over the line",
@@ -126,7 +126,7 @@ class DashCreate extends Component {
     const profile = auth.getProfile()
     const {
       MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
-      MeasureCalcMethod, MeasureSumField, MeasureValue,
+      MeasureCalcMethod, MeasureSumField,
       rewards, participants, todos,
       ...modelData
     } = model
@@ -153,7 +153,7 @@ class DashCreate extends Component {
         CalcMethod : MeasureCalcMethod,
         SumField : MeasureSumField,
         Units : "string",
-        Value: MeasureValue,
+        Value: 0,
       },
       IsBash : false,
       DashIdAssociatedToBash : null,

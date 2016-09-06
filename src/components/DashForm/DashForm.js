@@ -106,7 +106,7 @@ class DashForm extends Component {
     return id
   }
 
-  measureTargetInput = ({ MeasureCalcMethod, MeasureSumField, MeasureValue, MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterConditionType }) => {
+  measureTargetInput = ({ MeasureCalcMethod, MeasureSumField, TargetThreshold, MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterConditionType }) => {
     let fieldName = 'Deal'
     if (MeasureEventType.input.value == 'advanced') {
       if (!MeasureFilterConditionType.input.value) {
@@ -143,7 +143,7 @@ class DashForm extends Component {
                   style={midTextSelectStyle}
                   onChange={e => {
                     if (MeasureCalcMethod.input.value == 'Sum') {
-                      MeasureValue.input.onChange(e.currentTarget.value)
+                      TargetThreshold.input.onChange(e.currentTarget.value)
                     }
                   }} />
               </span>
@@ -167,7 +167,7 @@ class DashForm extends Component {
                 style={midTextSelectStyle}
                 onChange={e => {
                   if (MeasureCalcMethod.input.value == 'Increment') {
-                    MeasureValue.input.onChange(e.currentTarget.value)
+                    TargetThreshold.input.onChange(e.currentTarget.value)
                   }
                 }} />
             </span>
@@ -640,7 +640,7 @@ class DashForm extends Component {
                 names={[
                   'MeasureCalcMethod',
                   'MeasureSumField',
-                  'MeasureValue',
+                  'TargetThreshold',
                   'MeasureEventType',
                   'MeasureEventTypeAdvanced',
                   'MeasureFilterConditionType',
@@ -649,14 +649,14 @@ class DashForm extends Component {
             </Col>
           </Row>
 
-          <Row cols={6} className="slds-m-top--xx-large">
+          {/*<Row cols={6} className="slds-m-top--xx-large">
             <Col padded cols={6} className="slds-m-bottom--medium">
               <h2 className={styles.fieldTitle}>Target Threshold</h2>
             </Col>
             <Col padded cols={6}>
               <Field name="TargetThreshold" component={this.targetThresholdInput}/>
             </Col>
-          </Row>
+          </Row>*/}
 
           <Row cols={6} className="slds-m-top--xx-large">
             <Col padded cols={6} className="slds-m-bottom--medium">

@@ -199,7 +199,7 @@ class DashEdit extends Component {
     const profile = auth.getProfile()
     const {
       MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
-      MeasureCalcMethod, MeasureSumField, MeasureValue,
+      MeasureCalcMethod, MeasureSumField,
       rewards, participants, todos,
       ...modelData
     } = model
@@ -226,7 +226,7 @@ class DashEdit extends Component {
         CalcMethod : MeasureCalcMethod,
         SumField : MeasureSumField,
         Units : "string",
-        Value: MeasureValue,
+        Value: 0,
       },
       IsBash : false,
       DashIdAssociatedToBash : null,
