@@ -23,11 +23,14 @@ class FakeIt extends Component {
   }
 
   sendEvent = (user) => {
-    var externalOrgId = user.getIn(['ExternalUsers', 0, 'ExternalId'])
+    var externalUserId = user.getIn(['ExternalUsers', 0, 'ExternalId'])
+    if (!externalUserId) externalUserId = "0"
+    var externalOrgId = user.getIn(['ExternalUsers', 0, 'ExternalOrgId'])
+    if (!externalOrgId) externalOrgId = "0"
+    // console.log('external org id: ', externalOrgId)
     var objectUniqueId = Date.now().toString()
     var date = new Date()
     var dateStr = date.toISOString()
-    var userId = user.get('Id');
     var body = [{
       "Type": "Deal",
       "EventID": "Fake-" + objectUniqueId,
@@ -43,7 +46,7 @@ class FakeIt extends Component {
         "IsClosed": true,
         "Amount": 1,
         "Type": "X",
-        "Owner": externalOrgId,
+        "Owner": externalUserId,
         "CloseDate": dateStr,
         "Name": "Motorcycle " + objectUniqueId,
         "ObjectId": objectUniqueId
