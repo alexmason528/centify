@@ -7,7 +7,8 @@ import styles from './styles.module.css'
 
 export class Budget extends React.Component {
   static contextTypes = {
-    router: T.object
+    router: T.object,
+    notify: React.PropTypes.func
   }
 
   state = {
@@ -43,6 +44,12 @@ export class Budget extends React.Component {
   setBudget = () => {
     const profile = this.props.auth.getProfile()
     this.props.setBudget(profile.centifyOrgId, this.state.budget)
+    .then(() => {
+      this.context.notify('Budget has been saved successfully.', 'success')
+    })
+    .catch(() => {
+      this.context.notify('Failed to save budget.', 'error')
+    })
   }
 
   render() {
