@@ -10,5 +10,29 @@
         "EventType": "Case",
         "FilterConditionPattern": "data[\"IsClosed\"] == \"true\"",
         "HasValue": false
+    },
+    "0003": {
+        "Name": "Calls Made",
+        "EventType": "Call",
+        "FilterConditionPattern": "data[\"IsClosed\"] == \"true\"",
+        "HasValue": false
+    },
+    "0004": {
+        "Name": "Emails Sent",
+        "EventType": "Email",
+        "FilterConditionPattern": "data[\"IsClosed\"] == \"true\"",
+        "HasValue": false
+    },
+    "0005": {
+        "Name": "Leads Qualified",
+        "EventType": "Lead",
+        "FilterConditionPattern": "data[\"IsQualified\"] == \"true\"",
+        "HasValue": false
+    },
+    "0006": {
+        "Name": "New Account",
+        "EventType": "Account",
+        "FilterConditionPattern": "",
+        "HasValue": false
     }
 }

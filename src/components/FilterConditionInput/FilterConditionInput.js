@@ -190,7 +190,7 @@ class FilterConditionInput extends Component {
     for(const k in this.convertedBasicFilters) {
       const filter = this.convertedBasicFilters[k]
       basicFilterOptions.push(
-        <Option key={k} value={filter.EventType}>{filter.EventType}</Option>
+        <Option key={k} value={filter.EventType}>{filter.Name}</Option>
       )
     }
     return (
@@ -414,9 +414,14 @@ class FilterConditionInput extends Component {
                   onChange={e => this.onAdvancedFilterItemFieldChange(index, e.currentTarget.value, props.input.value, props.input.onChange)}>
                   {
                     schemas.get(advancedFilterEventTypeProps.input.value) ?
-                    schemas.getIn([advancedFilterEventTypeProps.input.value, 'Fields']).valueSeq().map((field, index) => (
-                      <Option key={index} value={field.get('Id')}>{field.get('Name')}</Option>
-                    ))
+                    schemas.getIn([advancedFilterEventTypeProps.input.value, 'Fields']).valueSeq().map((field, index) => {
+                      const name = field.get('Name')
+                      if (name.indexOf('.') == -1 && field.get('Type').toLowerCase() != 'datetime') {
+                        return (
+                          <Option key={index} value={field.get('Id')}>{name}</Option>
+                        )
+                      }
+                    })
                     :
                     undefined
                   }
