@@ -52,6 +52,13 @@ class DashesListItem extends Component {
           const { participantCount } = this.props
           return dash.get('ParticipantsJoined') + ' / ' + participantCount
         }
+      case 'EstimatedRewardAmount':
+        {
+          let amount = dash.get(column)
+          if (!amount) amount = 0
+          amount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          return '$' + amount
+        }
       case 'RewardsPaid':
         {
           const loadedParticipants = dash.getIn(['Participants', 'loaded'])
@@ -276,7 +283,7 @@ class DashesListItem extends Component {
         {columns.map((column, index) => {
           const value = this.getFieldValue(dash, column.field)
           return (
-            <td data-label={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {}}>
+            <td data-label={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {}, column.label == 'Reward Amount' ? {textAlign: 'right'} : {} }>
               <div className="slds-truncate">{value}</div>
             </td>
           )
