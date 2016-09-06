@@ -49,7 +49,7 @@ export class Container extends React.Component {
     if (this.removeTimer) {
       clearTimeout(this.removeTimer)
     }
-    this.removeTimer = setTimeout(this.removeLastNotification, 3000)
+    this.removeTimer = setTimeout(this.removeLastNotification, 5000)
   }
 
   onCloseToast = (index) => {
@@ -67,7 +67,7 @@ export class Container extends React.Component {
       this.setState({
         notifications
       })
-      this.removeTimer = setTimeout(this.removeLastNotification, 3000)
+      this.removeTimer = setTimeout(this.removeLastNotification, 5000)
     } else {
       clearTimeout(this.removeTimer)
       this.removeTimer = 0
