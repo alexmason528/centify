@@ -27,7 +27,7 @@ export default class ApiClient {
         }
         request.set('Accept', 'application/json')
         request.set('Content-Type', 'application/json')
-        console.log('send request: ', id_token);
+        // console.log('send request: ', id_token);
         if (data) {
           request.send(data);
         }

@@ -24,7 +24,7 @@ class FakeIt extends Component {
 
   sendEvent = (user) => {
     var externalOrgId = user.getIn(['ExternalUsers', 0, 'ExternalId'])
-    var objectUniqueId = Date.now()
+    var objectUniqueId = Date.now().toString()
     var date = new Date()
     var dateStr = date.toISOString()
     var userId = user.get('Id');
