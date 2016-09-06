@@ -195,7 +195,7 @@ class FilterConditionInput extends Component {
     }
     return (
       <div>
-        What is the metric?
+        What do you want to include in dash?
         <div className="slds-form-element" style={basicSelectStyle}>
           <div className="slds-form-element__control">
             <div className="slds-select_container">
