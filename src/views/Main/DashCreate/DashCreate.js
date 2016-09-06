@@ -116,7 +116,7 @@ class DashCreate extends Component {
       Description : model.Description,
       ImageURL : "",
       IsTeamDash : false,
-      GameType : "RocketLaunch",
+      GameTypeId : "08m7blbrrg7rcxtf",
       TargetThreshold : parseInt(model.MeasureValue),
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : 30,
