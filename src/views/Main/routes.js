@@ -11,6 +11,7 @@ import Dashes from './Dashes/Dashes'
 import DashCreate from './DashCreate/DashCreate'
 import DashEdit from './DashEdit/DashEdit'
 import DashReport from './DashReport/DashReport'
+import FakeIt from './FakeIt/FakeIt'
 import Todos from './Todos/Todos'
 import TodosEdit from './TodosEdit/TodosEdit'
 import Budget from './Budget/Budget'
@@ -40,6 +41,7 @@ export const makeMainRoutes = () => {
         <Route path="dashes/new" component={DashCreate} />
         <Route path="dashes/:dashId" component={DashEdit} />
         <Route path="dashes/:dashId/report" component={DashReport} />
+        <Route path="dashes/:dashId/fakeit" component={FakeIt} />
         <Route path="todos" component={Todos} />
         <Route path="todos/edit" component={TodosEdit} />
         <Route path="budget" component={Budget} />

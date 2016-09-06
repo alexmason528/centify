@@ -8,7 +8,7 @@ import styles from './styles.module.css'
 import hoc from './hoc'
 
 
-class DashReport extends Component {
+class FakeIt extends Component {
 
   static contextTypes = {
     notify: React.PropTypes.func
@@ -20,6 +20,40 @@ class DashReport extends Component {
       sum += parseInt(user.get(field) ? user.get(field) : 0)
     })
     return sum
+  }
+
+  sendEvent = (user) => {
+    var externalOrgId = user.getIn(['ExternalUsers', 0, 'ExternalId'])
+    var objectUniqueId = Date.now()
+    var date = new Date()
+    var dateStr = date.toISOString()
+    var userId = user.get('Id');
+    var body = [{
+      "Type": "Deal",
+      "EventID": "Fake-" + objectUniqueId,
+      "RecordUrl": "https://test.centify.com",
+      "ExternalOrgId": externalOrgId,
+      "Data": {
+        "RegistrationStage": null,
+        "Created": dateStr,
+        "LastUpdated": dateStr,
+        "LastContacted": dateStr,
+        "SalesStage": "Sold",
+        "IsWon": true,
+        "IsClosed": true,
+        "Amount": 1,
+        "Type": "X",
+        "Owner": externalOrgId,
+        "CloseDate": dateStr,
+        "Name": "Motorcycle " + objectUniqueId,
+        "ObjectId": objectUniqueId
+      }
+    }];
+    var profile = this.props.auth.getProfile();
+    this.props.sendFakeEvent(profile.centifyOrgId, body)
+    .then(() => {
+      this.context.notify('Sent event successfully', 'success')
+    })
   }
 
   renderJoinedParticipants = () => {
@@ -80,6 +114,11 @@ class DashReport extends Component {
                         </div>
                       </div>
                     </div>
+                  </td>
+                  <td>
+                    <Button
+                      type="brand"
+                      onClick={() => this.sendEvent(user)}>Send Event</Button>
                   </td>
                   <td data-label="Score">
                     {this.sumOfOneField(participant, 'Score')}
@@ -177,18 +216,19 @@ class DashReport extends Component {
     }
   }
 
-  goToFakeIt = () => {
-    this.props.push(`/dashes/` + this.props.params.dashId + `/fakeit`)
-  }
-
   componentDidMount() {
     const auth = this.props.auth
+    var that = this;
     if (auth) {
       const profile = auth.getProfile()
       // Get users
       const { getUsers, loadedUsers, getDash } = this.props
       if (!loadedUsers) {
         getUsers(profile.centifyOrgId)
+        /*.then((response) => {
+          console.log('user response: ', response)
+          that.users = response
+        })*/
         .catch(res => {
           this.context.notify('Failed to get users from server', 'error')
         })
@@ -232,12 +272,9 @@ class DashReport extends Component {
                 <h2 className={styles.pageTitle1 + ' slds-text-align--right'} style={{ flexGrow: 1 }}>Estimated Reward: ${currentDash.get('EstimatedRewardAmount')}</h2>
               </div>
               <div className="slds-p-vertical--medium slds-text-align--right">
-                <Button
+                {/*<Button
                   type="brand"
-                  onClick={() => this.refresh()}>Refresh Dash</Button>
-                <Button
-                  type="brand"
-                  onClick={() => this.goToFakeIt()}>Fake It</Button>
+                  onClick={() => this.refresh()}>Refresh Dash</Button>*/}
               </div>
               {this.renderJoinedParticipants()}
               {this.renderNotJoinedParticipants()}
@@ -250,4 +287,4 @@ class DashReport extends Component {
 
 }
 
-export default hoc(DashReport)
+export default hoc(FakeIt)
