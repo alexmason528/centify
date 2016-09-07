@@ -398,9 +398,6 @@ export function createDash(orgId, model) {
         updateTodos(dispatch, orgId, res.Id, todos)
         dispatch(push('/dashes'))
       })
-      .catch(res => {
-        throw new SubmissionError({ _error: res.error })
-      })
   }
 }
 
@@ -422,9 +419,6 @@ export function updateDash(orgId, dashId, model) {
     )
     .then(() => {
       dispatch(push('/dashes'))
-    })
-    .catch(res => {
-      throw new SubmissionError({ _error: res.error })
     })
   }
 }

@@ -180,7 +180,15 @@ class DashCreate extends Component {
       this.context.notify('Dash created successfully', 'success')
     })
     .catch(res => {
-      this.context.notify('Failed to create dash due to errors', 'error')
+      let errors = (
+        <span>
+          Failed to create dash due to following errors:<br/>
+          {res.errors.map(error => (
+            <span><strong>{error.Message}</strong><br/></span>
+          ))}
+        </span>
+      )
+      this.context.notify(errors, 'error')
     })
   }
 
