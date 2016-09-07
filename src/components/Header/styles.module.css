@@ -13,3 +13,7 @@
 .profileMenu {
   display: inline-block;
 }
+
+.disabledLink {
+	color: #777777;
+}

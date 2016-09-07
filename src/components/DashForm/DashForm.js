@@ -10,6 +10,7 @@ import {
   Checkbox, CheckboxGroup,
   Button,
   Container,
+  Textarea
 } from 'react-lightning-design-system'
 
 import { formatDate2, numWithSurfix } from 'utils/formatter'
@@ -27,12 +28,19 @@ class DashForm extends Component {
     this.state = {
       selectedAllTodos: false,
       selectedUserId: 0,
+      description: ''
     }
   }
 
   nameInput = (props) => {
     return (
       <Input type="text" {...props.input}/>
+    )
+  }
+
+  descriptionInput = (props) => {
+    return (
+      <Textarea {...props.input} />
     )
   }
 
@@ -491,7 +499,7 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount } = this.props
+    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, description } = this.props
     const value = this.calcEstimatedRewardAmount()
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
@@ -503,6 +511,17 @@ class DashForm extends Component {
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}>
               <Field name="Name" component={this.nameInput}/>
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={4}>
+            </Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--large">
+            <Col padded cols={6} className="slds-m-bottom--small">
+              <h2 className={styles.fieldTitle}>Description</h2>
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={2}>
+              <Field name="Description" component={this.descriptionInput} />
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={4}>
             </Col>
@@ -614,15 +633,6 @@ class DashForm extends Component {
             </Col>
           </Row>
 
-          <Row cols={6} className="slds-m-top--large">
-            <Col padded cols={6} className="slds-m-bottom--small">
-              <h2 className={styles.fieldTitle}>Description</h2>
-            </Col>
-            <Col padded cols={6}>
-              <Field name="description" component="textarea" />
-            </Col>
-          </Row>
-
           <Row cols={6} className="slds-m-vertical--x-large">
             <Col padded>
               <div style={{ textAlign: 'right' }}>
@@ -653,6 +663,7 @@ _DashForm = connect(
       RewardTypeValue: selector(state, 'RewardType'),
       RewardAmount: selector(state, 'RewardAmount'),
       rewards: selector(state, 'rewards'),
+      description: selector(state, 'Description')
     }
   }
 )(_DashForm)

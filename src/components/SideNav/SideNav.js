@@ -80,7 +80,7 @@ const SideNav = ({ routeName, notLinked }) => {
         <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
           <Icon fixedWidth name="line-chart"/> Data Analysis
         </Link></li>
-        <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
+        <li className={routeName == 'budget' ? "slds-is-active" : ""}><Link to="/budget"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
           <Icon fixedWidth name="university"/> Budget
         </Link></li>
         <li className={routeName == 'appletv' ? "slds-is-active" : ""}><Link to="/appletv"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
