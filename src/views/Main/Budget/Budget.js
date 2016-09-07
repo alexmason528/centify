@@ -69,13 +69,14 @@ export class Budget extends React.Component {
         <h2 style={titleStyle}>Budget</h2>
         <div className="slds-m-top--xx-large">
           <span className="slds-m-right--small" style={labelStyle}>
-            Budget
+            Budget 
           </span>
-          <Input
+          $ <Input
             type="text"
             value={this.state.budget}
             onChange={this.onBudgetChange}
-            style={{ maxWidth: 350 }} />
+            style={{ maxWidth: 350 }}
+            placeholder="Monthly total budget for dashes" />
           <span className="slds-m-left--large">
             <Button type="brand" onClick={this.setBudget}>Set Budget</Button>
           </span>
