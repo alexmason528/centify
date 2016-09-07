@@ -109,6 +109,10 @@ export const DASH_BANNERS_GET = 'centify/dashbanners/GET'
 export const DASH_BANNERS_GET_SUCCESS = 'centify/dashbanners/GET_SUCCESS'
 export const DASH_BANNERS_GET_FAIL = 'centify/dashbanners/GET_FAIL'
 
+/* FakeIt module */
+export const FAKE_IT_SUCCESS = 'centify/fakeit/FAKE_IT_SUCCESS'
+export const FAKE_IT_FAIL = 'centify/fakeit/FAKE_IT_FAIL'
+
 /* Apple TV module */
 
 export const APPLE_TV_ACTIVATION = 'centify/appletv/ACTIVATION'
