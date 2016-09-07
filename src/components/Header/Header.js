@@ -57,12 +57,12 @@ class Header extends Component {
                   </a>
                 </li>
                 <li className={styles.rightSideIcons}>
-                  <a href="#">
+                  <a className={styles.disabledLink}>
                     <Icon name="cog" />
                   </a>
                 </li>
                 <li className={styles.rightSideIcons}>
-                  <a href="#">
+                  <a className={styles.disabledLink}>
                     <Icon name="comment-o" />
                   </a>
                 </li>
