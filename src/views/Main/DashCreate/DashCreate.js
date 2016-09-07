@@ -141,6 +141,7 @@ class DashCreate extends Component {
       rewards, participants, todos,
       ...modelData
     } = model
+    const measureUnits = (MeasureCalcMethod == 'Add' || MeasureCalcMethod == 'Subtract') ? '$' : MeasureEventType + 's'
     const _rewards = rewards ? JSON.parse(rewards) : []
     const data = {
       Description : model.description,
@@ -150,7 +151,7 @@ class DashCreate extends Component {
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : 30,
       ScoreFormula : "",
-      ScoreUnits : "string",
+      ScoreUnits : measureUnits,
       IsPublic : false,
       AreRewardsShared : false,
       AreTeamRewardsShared : false,
@@ -163,7 +164,7 @@ class DashCreate extends Component {
         FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
         CalcMethod : MeasureCalcMethod,
         SumField : MeasureSumField,
-        Units : "string",
+        Units : measureUnits,
         Value: 0,
       },
       IsBash : false,
