@@ -6,42 +6,37 @@ import {
   INIT,
   REDUX_INIT,
 
-  SCHEMAS_GET,
-  SCHEMAS_GET_SUCCESS,
-  SCHEMAS_GET_FAIL,
+  GAME_TYPES_GET,
+  GAME_TYPES_GET_SUCCESS,
+  GAME_TYPES_GET_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
-  schemas: {},
+  gametypes: {},
   loading: false,
   loaded: false,
 })
 
-export default function schemas(state = initialState, action) {
+export default function gametypes(state = initialState, action) {
   switch (action.type) {
     case INIT:
     case REDUX_INIT:
       return state
-    case SCHEMAS_GET:
+    case GAME_TYPES_GET:
       return state.withMutations((map) => {
         map.set('loading', true)
         map.set('loaded', false)
       })
-    case SCHEMAS_GET_SUCCESS:
+    case GAME_TYPES_GET_SUCCESS:
       return state.withMutations((map) => {
-        const schemas = action.result
-        schemas.forEach(schema => {
-          const fields = {}
-          schema.Fields.forEach(field => {
-            fields[field.Id] = field
-          })
-          schema.Fields = fields
-          map.setIn(['schemas', schema.Type], Immutable.fromJS(schema))
+        const gametypes = action.result
+        gametypes.forEach(gametype => {
+          map.setIn(['gametypes', gametype.Id], Immutable.fromJS(gametype))
         })
         map.set('loading', false)
         map.set('loaded', true)
       })
-    case SCHEMAS_GET_FAIL:
+    case GAME_TYPES_GET_FAIL:
       return state.withMutations((map) => {
         map.set('loading', false)
         map.set('loaded', false)
@@ -51,11 +46,11 @@ export default function schemas(state = initialState, action) {
   }
 }
 
-/* Get organization-wide schemas */
+/* Get game types */
 
-export function getSchemas(orgId) {
+export function getGameTypes() {
   return {
-    types: [SCHEMAS_GET, SCHEMAS_GET_SUCCESS, SCHEMAS_GET_FAIL],
-    promise: (client) => client.get(`/v1/${orgId}/schemas`)
+    types: [GAME_TYPES_GET, GAME_TYPES_GET_SUCCESS, GAME_TYPES_GET_FAIL],
+    promise: (client) => client.get('v1/dashes/game-types')
   }
 }
