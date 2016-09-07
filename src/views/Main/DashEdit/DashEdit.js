@@ -71,6 +71,17 @@ class DashEdit extends Component {
           this.context.notify('Failed to get organization-wide basic filters', 'error')
         })
       }
+      // Get game types
+      const {
+        loadedGameTypes,
+        getGameTypes,
+      } = this.props
+      if (!loadedGameTypes) {
+        getGameTypes()
+        .catch(() => {
+          this.context.notify('Failed to get organization-wide basic filters', 'error')
+        })
+      }
     }
   }
 
@@ -116,6 +127,7 @@ class DashEdit extends Component {
         Name : currentDash.get('Name'),
         Type : currentDash.get('Type'),
         DashTypeId: currentDash.get('DashTypeId'),
+        GameTypeId: currentDash.get('GameTypeId'),
         DashBannerId: currentDash.get('DashBannerId'),
         MeasureEventType: eventType,
         MeasureEventTypeAdvanced : eventType,
@@ -254,11 +266,12 @@ class DashEdit extends Component {
       loadingDashTypes, loadedDashTypes, dashtypes,
       loadingDashBanners, dashbanners,
       loadingSchemas, schemas,
+      loadingGameTypes, gametypes,
     } = this.props
     if (loading || loadingParticipants || loadingRewards
       || loadingUsers || loadingTodos || loadingDashTypes
       || loadingDashBanners || !loadedDashTypes
-      || loadingSchemas) {
+      || loadingSchemas || loadingGameTypes) {
       return (
         <LoadingSpinner/>
       )
@@ -282,7 +295,8 @@ class DashEdit extends Component {
           budgetAmount={budgetAmount}
           dashtypes={dashtypes}
           dashbanners={dashbanners}
-          schemas={schemas} />
+          schemas={schemas}
+          gametypes={gametypes} />
       </div>
     )
   }
