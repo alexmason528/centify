@@ -10,6 +10,7 @@ import {
   Checkbox, CheckboxGroup,
   Button,
   Container,
+  Textarea
 } from 'react-lightning-design-system'
 
 import { formatDate2, numWithSurfix } from 'utils/formatter'
@@ -39,8 +40,7 @@ class DashForm extends Component {
 
   descriptionInput = (props) => {
     return (
-      //<textarea name="Description" value={description}></textarea>
-      <textarea {...props.input}></textarea>
+      <Textarea {...props.input} />
     )
   }
 
@@ -516,6 +516,17 @@ class DashForm extends Component {
             </Col>
           </Row>
 
+          <Row cols={6} className="slds-m-top--large">
+            <Col padded cols={6} className="slds-m-bottom--small">
+              <h2 className={styles.fieldTitle}>Description</h2>
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={2}>
+              <Field name="Description" component={this.descriptionInput} />
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={4}>
+            </Col>
+          </Row>
+
           <Row cols={6} className="slds-m-top--xx-large">
             <Col padded cols={6} className="slds-m-bottom--small">
               <h2 className={styles.fieldTitle}>Type</h2>
@@ -619,15 +630,6 @@ class DashForm extends Component {
             </Col>
             <Col padded cols={6}>
               <Field name="participants" component={this.participantList} />
-            </Col>
-          </Row>
-
-          <Row cols={6} className="slds-m-top--large">
-            <Col padded cols={6} className="slds-m-bottom--small">
-              <h2 className={styles.fieldTitle}>Description</h2>
-            </Col>
-            <Col padded cols={6}>
-              <Field name="Description" component={this.descriptionInput} />
             </Col>
           </Row>
 
