@@ -389,6 +389,7 @@ class DashForm extends Component {
           checked={selectedAllTodos}
           onChange={(e) => {
             const selectedAll = e.currentTarget.checked
+            console.log(selectedAll)
             for(let i = 0; i < allTodos.size; i++) {
               todos[i] = todos[i] ? todos[i] : { value: false, existed: false }
               todos[i].value = selectedAll
@@ -396,7 +397,7 @@ class DashForm extends Component {
             this.setState({
               selectedAllTodos: selectedAll
             })
-            onChange(JSON.stringify(todos))
+            onChange(JSON.stringify(todos) + ' ')
           }} />
         <div className="slds-m-top--medium">
           {allTodos.map((todo, index) => (
