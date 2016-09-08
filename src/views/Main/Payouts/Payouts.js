@@ -19,7 +19,6 @@ class Payouts extends Component {
       const profile = auth.getProfile()
       const url = formatUrl(`/v1/${profile.centifyOrgId}/dashes/payout`)
       this.client.get(url).then((res) => {
-        console.log(res)
         window.location.href = res.url
       })
     }

@@ -129,7 +129,6 @@ class Dashes extends Component {
 
   render() {
     const { dashesList, filter, loadingList } = this.props
-    // console.log('rendering: ', dashesList)
     if (loadingList) {
       return (
         <LoadingSpinner/>

@@ -2,18 +2,23 @@ import React, { Component } from 'react'
 import { 
   Input,
   Button,
-  Select, Option
+  Select, Option,
+  Radio,
 } from 'react-lightning-design-system'
 import math from 'mathjs'
 
-import hoc from './hoc'
 import styles from './styles.module.css'
 import { formatDate, format2Digits } from 'utils/formatter'
 import basicFilters from 'basic-filters.json'
 
-const supportedStringOperators = ['==','!=']
-const supportedNumberOperators = ['==','!=','>','<']
-const supportedOperators = ['==','!=','>','<']
+const supportedStringOperators = ['==', '!=', '>', '<']
+const supportedNumberOperators = ['==', '!=', '>', '<']
+const supportedOperators = ['==', '!=', '>', '<']
+const emptyExpression = [{
+  fieldId: '0',
+  operator: '==',
+  value: 'something',
+}]
 
 
 class FilterConditionInput extends Component {
@@ -33,25 +38,8 @@ class FilterConditionInput extends Component {
     this.convertedBasicFilters = false
   }
 
-  componentDidMount() {
-    const auth = this.context.auth
-    if (auth) {
-      const profile = auth.getProfile()
-      if (!profile.centifyOrgId) {
-        this.context.notify('No organization ID available')
-        return;
-      }
-      const {
-        loadedSchemas,
-        getSchemas,
-      } = this.props
-      if (!loadedSchemas) {
-        getSchemas(profile.centifyOrgId)
-        .catch(() => {
-          this.context.notify('Failed to get Centify-wide basic filters', 'error')
-        })
-      }
-    }
+  componentWillMount() {
+    this.convertBasicFilters()
   }
 
   convertBasicFilters() {
@@ -59,32 +47,29 @@ class FilterConditionInput extends Component {
       return
     }
     const {
-      loadedSchemas,
       schemas,
     } = this.props
-    if (loadedSchemas) {
-      for(const k in basicFilters) {
-        const filter = basicFilters[k]
-        filter.FilterConditionPattern = filter.FilterConditionPattern.replace(/data\[\"([A-Za-z]+)\"\]/g, (v, name) => {
-          let id = ''
-          schemas.map(schema => {
-            if (schema.get('Type') != filter.EventType) {
-              return
-            }
-            const fields = schema.get('Fields')
-            if (fields) {
-              fields.map(field => {
-                if (field.get('Name') == name) {
-                  id = field.get('Id')
-                }
-              })
-            }
-          })
-          return v.replace(name, id)
+    for(const k in basicFilters) {
+      const filter = basicFilters[k]
+      filter.FilterConditionPattern = filter.FilterConditionPattern.replace(/data\[\"([A-Za-z]+)\"\]/g, (v, name) => {
+        let id = ''
+        schemas.map(schema => {
+          if (schema.get('Type') != filter.EventType) {
+            return
+          }
+          const fields = schema.get('Fields')
+          if (fields) {
+            fields.map(field => {
+              if (field.get('Name') == name) {
+                id = field.get('Id')
+              }
+            })
+          }
         })
-      }
-      this.convertedBasicFilters = basicFilters
+        return v.replace(name, id)
+      })
     }
+    this.convertedBasicFilters = basicFilters
   }
 
   assert = (condition, message) => {
@@ -98,6 +83,12 @@ class FilterConditionInput extends Component {
   }
 
   parse = (expression) => {
+    if (!expression) {
+      return {
+        matching: 'all',
+        expressions: emptyExpression,
+      }
+    }
     let matching // All or Any - starts undefined
     let state = 'init' // State machine starts in init
     let expressions = [] // Expressions to store
@@ -157,22 +148,40 @@ class FilterConditionInput extends Component {
     };
   }
 
-  onChangeBasicFilterSelect = (e) => {
-    this.setState({
-      basicFilter: e.currentTarget.value,
+  compose = (parsedExp) => {
+    let exp = ''
+    const logicop = parsedExp.matching == 'all' ? 'and' : 'or'
+    parsedExp.expressions.forEach((expitem, index) => {
+      if (index > 0) {
+        exp += ` ${logicop} `
+      }
+      exp += 'data[\"' + expitem.fieldId + '\"] ' + expitem.operator
+      if (!isNaN(expitem.value) && isFinite(expitem.value)) {
+        exp += ' ' + expitem.value
+      } else {
+        exp += ' \"' + expitem.value + '\"'
+      }
+      
     })
-    if (e.currentTarget.value != 'advanced') {
+    return exp
+  }
+
+  onChangeBasicFilterSelect = (e, onChange, advancedEventTypeProps, advancedFilterProps) => {
+    onChange(e.currentTarget.value)
+    if (!advancedEventTypeProps.input.value) {
+      const defaultAdvEventType = e.currentTarget.value == 'advanced' ? 'Deal' : e.currentTarget.value
+      advancedEventTypeProps.input.onChange(defaultAdvEventType)
       for(const k in this.convertedBasicFilters) {
         const filter = this.convertedBasicFilters[k]
-        if (filter.EventType == e.currentTarget.value) {
-          this.props.onChange(filter.FilterConditionPattern)
+        if (filter.EventType == defaultAdvEventType) {
+          advancedFilterProps.input.onChange(filter.FilterConditionPattern)
           break
         }
       }
     }
   }
 
-  basicFilterSelect = (value) => {
+  basicFilterSelect = (props, advancedEventTypeProps, advancedFilterProps) => {
     const basicSelectStyle = {
       maxWidth: 400,
       marginTop: 5,
@@ -181,16 +190,23 @@ class FilterConditionInput extends Component {
     for(const k in this.convertedBasicFilters) {
       const filter = this.convertedBasicFilters[k]
       basicFilterOptions.push(
-        <Option key={k} value={filter.EventType}>{filter.EventType}</Option>
+        <Option key={k} value={filter.EventType}>{filter.Name}</Option>
       )
     }
     return (
       <div>
-        What is the metric?
+        What do you want to include in dash?
         <div className="slds-form-element" style={basicSelectStyle}>
           <div className="slds-form-element__control">
             <div className="slds-select_container">
-              <Select value={this.state.basicFilter} onChange={this.onChangeBasicFilterSelect}>
+              <Select
+                value={props.input.value}
+                onChange={e => this.onChangeBasicFilterSelect(
+                  e,
+                  props.input.onChange,
+                  advancedEventTypeProps,
+                  advancedFilterProps )}
+                >
                 {basicFilterOptions}
                 <Option value="advanced">Advanced...</Option>
               </Select>
@@ -201,7 +217,134 @@ class FilterConditionInput extends Component {
     )
   }
 
-  advancedFilterSelect = (parsedExpression) => {
+  onAdvancedFilterOperatorChange = (op, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.matching = (op == 'all' ? 'and' : 'or')
+    onChange(this.compose(parsedExpression))
+  }
+
+  onAdvancedFilterAddItem = (index, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.expressions.splice(index + 1, 0, parsedExpression.expressions[index])
+    onChange(this.compose(parsedExpression))
+  }
+
+  onAdvancedFilterRemoveItem = (index, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.expressions.splice(index, 1)
+    onChange(this.compose(parsedExpression))
+  }
+
+  onAdvancedFilterItemFieldChange = (index, fieldId, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.expressions[index].fieldId = fieldId
+    onChange(this.compose(parsedExpression))
+  }
+
+  onAdvancedFilterItemOperatorChange = (index, opr, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.expressions[index].operator = opr
+    onChange(this.compose(parsedExpression))
+  }
+
+  onAdvancedFilterItemValueChange = (index, expvalue, value, onChange) => {
+    const parsedExpression = this.parse(value)
+    parsedExpression.expressions[index].value = expvalue
+    onChange(this.compose(parsedExpression))
+  }
+
+  parseSecondType = (value) => {
+    // let parsedExp = {
+    //   func: 'total',
+    //   count: 5,
+    //   field: '',
+    //   operator: '==',
+    //   value: 'something'
+    // }
+    let parsedExp = {
+      func: 'total',
+      count: 5,
+      field: '06ry1nfhxnabawkv',
+      operator: '==',
+      value: 'something'
+    }
+    if (!value) {
+      return parsedExp
+    }
+    // func
+    if (value.substr(0, 5) == 'total') {
+      parsedExp.func = 'total'
+      value = value.substr(6)
+    } else if (value.substr(0, 3) == 'any') {
+      parsedExp.func = 'any'
+      value = value.substr(4)
+    }
+    // field 
+    const fieldStart = value.indexOf('"')
+    if (fieldStart == -1) {
+      throw("Invalid syntax - No field ID found")
+    }
+    value = value.substr(fieldStart + 1)
+    const fieldEnd = value.indexOf('"')
+    if (fieldEnd == -1) {
+      throw('Invalid syntax - field ID is not enquoted')
+    }
+    parsedExp.field = value.substr(0, fieldEnd)
+    value = value.substr(fieldEnd + 2).trim()
+    // operator
+    const oprEnd = value.indexOf(' ')
+    parsedExp.operator = value.substr(0, oprEnd)
+    value = value.substr(oprEnd + 1).trim()
+    // value
+    const valueStart = value.indexOf('"')
+    if (valueStart == -1) {
+      throw("Invalid syntax - No value ID found")
+    }
+    value = value.substr(valueStart + 1)
+    const valueEnd = value.indexOf('"')
+    if (valueEnd == -1) {
+      throw('Invalid syntax - value ID is not enquoted')
+    }
+    parsedExp.value = value.substr(0, valueEnd)
+    value = value.substr(valueEnd + 2).trim()
+    // count - only if func == total
+    if (parsedExp.func == 'total') {
+      const oprPos = value.indexOf('>=')
+      if (oprPos == -1) {
+        throw('Invalid syntax - no criteria found for total()')
+      }
+      parsedExp.count = parseInt(value.substr(oprPos + 2).trim())
+    }
+    return parsedExp
+  }
+
+  composeSecondType = (value) => {
+    let exp = ''
+    exp += 'Data.Products[0:]["'
+    exp += value.field
+    exp += '"] '
+    exp += value.operator
+    exp += ' "'
+    exp += value.value
+    exp += '"'
+    if (value.func == 'total') {
+      exp = 'total(' + exp + ') >= ' + value.count
+    } else {
+      exp = 'any(' + exp + ')'
+    }
+    return exp
+  }
+
+  onAdvancedFilterSecondTypeValueChange = (newValues, props) => {
+    const expValues = this.parseSecondType(props.input.value)
+    for(const k in newValues) {
+      expValues[k] = newValues[k]
+    }
+    props.input.onChange(this.composeSecondType(expValues))
+  }
+
+  advancedFilterSelect = (basicFilterProps, advancedFilterEventTypeProps, props, props1, filterConditionTypeProps) => {
+    const parsedExpression = this.parse(props.input.value)
     const midTextSelectStyle = {
       display: 'inline-block',
       maxWidth: 100,
@@ -224,22 +367,36 @@ class FilterConditionInput extends Component {
     const {
       schemas
     } = this.props
+    const expressions = (
+      parsedExpression.expressions.length > 0 ?
+      parsedExpression.expressions
+      :
+      emptyExpression
+    )
+    const parsedExp2 = this.parseSecondType(props1.input.value)
     return (
       <div className="slds-m-top--medium">
         <div className="slds-form-element">
           <div className="slds-form-element__control">
             <label className="slds-radio">
-              <input type="radio" name="options" />
+              <input
+                type="radio"
+                checked={!filterConditionTypeProps.input.value}
+                onChange={e => filterConditionTypeProps.input.onChange(0)} />
               <span className="slds-radio--faux"></span>
               <span className="slds-form-element__label">
                 Include
-                <Select style={midTextSelectStyle}>
+                <Select
+                  style={midTextSelectStyle}
+                  value={advancedFilterEventTypeProps.input.value}
+                  onChange={advancedFilterEventTypeProps.input.onChange}>
                   {schemas.valueSeq().map((schema, index) => (
-                    <Option key={index} value={schema.get('Id')}>{schema.get('Type')}</Option>
+                    <Option key={index} value={schema.get('Type')}>{schema.get('Type')}</Option>
                   ))}
                 </Select>
                 matching
-                <Select style={midTextSelectStyle} value={parsedExpression.matching}>
+                <Select style={midTextSelectStyle} value={parsedExpression.matching}
+                  onChange={e => this.onAdvancedFilterOperatorChange(e.currentTarget.value, props.input.value, props.input.onChange)}>
                   <Option value="all">All</Option>
                   <Option value="any">Any</Option>
                 </Select>
@@ -250,29 +407,48 @@ class FilterConditionInput extends Component {
         </div>
         <div style={{ paddingLeft: 35, maxWidth: 700 }}>
           <hr style={{ margin: '20px 0 10px' }} />
-          {parsedExpression.expressions.map((expression, index) => {
+          {expressions.map((expression, index) => {
             return (
               <div style={ruleStyle} key={index}>
-                <Select style={ruleSelectStyle} value={expression.fieldId}>
+                <Select style={ruleSelectStyle} value={expression.fieldId}
+                  onChange={e => this.onAdvancedFilterItemFieldChange(index, e.currentTarget.value, props.input.value, props.input.onChange)}>
                   {
-                    schemas.get('Deal') ?
-                    schemas.getIn(['Deal', 'Fields']).valueSeq().map((field, index) => (
-                      <Option key={index} value={field.get('Id')}>{field.get('Name')}</Option>
-                    ))
+                    schemas.get(advancedFilterEventTypeProps.input.value) ?
+                    schemas.getIn([advancedFilterEventTypeProps.input.value, 'Fields']).valueSeq().map((field, index) => {
+                      const name = field.get('Name')
+                      if (name.indexOf('.') == -1 && field.get('Type').toLowerCase() != 'datetime') {
+                        return (
+                          <Option key={index} value={field.get('Id')}>{name}</Option>
+                        )
+                      }
+                    })
                     :
                     undefined
                   }
                 </Select>
-                <Select style={ruleSelectStyle} value={expression.operator}>
+                <Select style={ruleSelectStyle} value={expression.operator}
+                  onChange={e => this.onAdvancedFilterItemOperatorChange(index, e.currentTarget.value, props.input.value, props.input.onChange)}>
                   <Option value="==">is</Option>
                   <Option value="!=">is not</Option>
                   <Option value=">">is greater than</Option>
                   <Option value="<">is less than</Option>
                 </Select>
-                <Input type="text" style={ruleSelectStyle} value={expression.value} />
+                <Input type="text" style={ruleSelectStyle} value={expression.value}
+                  onChange={e => this.onAdvancedFilterItemValueChange(index, e.currentTarget.value, props.input.value, props.input.onChange)} />
                 <div className="slds-float--right">
-                  <Button type="icon-border" icon="add" />
-                  <Button type="icon-border" icon="dash" />
+                  <Button type="icon-border" icon="add"
+                    onClick={() => {
+                      this.onAdvancedFilterAddItem(index, props.input.value, props.input.onChange)
+                    }} />
+                  {
+                    expressions.length > 1 ?
+                    <Button type="icon-border" icon="dash"
+                      onClick={() => {
+                        this.onAdvancedFilterRemoveItem(index, props.input.value, props.input.onChange)
+                      }} />
+                    :
+                    ''
+                  }
                 </div>
               </div>
             )
@@ -282,16 +458,26 @@ class FilterConditionInput extends Component {
         <div className="slds-form-element">
           <div className="slds-form-element__control">
             <label className="slds-radio">
-              <input type="radio" name="options" />
+              <input
+                type="radio"
+                checked={filterConditionTypeProps.input.value}
+                onChange={e => filterConditionTypeProps.input.onChange(1)} />
               <span className="slds-radio--faux"></span>
               <span className="slds-form-element__label">
-                Include deals with
-                <Select style={midTextSelectStyle}>
-                  <Option value=">=">at least</Option>
-                  <Option value="<=">at most</Option>
-                  <Option value="=">equals</Option>
+                Include <strong>deals</strong> with
+                <Select
+                  style={midTextSelectStyle}
+                  value={parsedExp2.func}
+                  onChange={e => this.onAdvancedFilterSecondTypeValueChange({ func: e.currentTarget.value }, props1)}
+                  >
+                  <Option value="total">at least</Option>
+                  <Option value="any">any</Option>
                 </Select>
-                <Input type="text" style={midTextSelectStyle} defaultValue={5} />
+                <Input
+                  type="number"
+                  style={midTextSelectStyle}
+                  value={parsedExp2.count}
+                  onChange={e => this.onAdvancedFilterSecondTypeValueChange({ count: e.currentTarget.value }, props1)} />
                 products matching the following rule:
               </span>
             </label>
@@ -300,18 +486,45 @@ class FilterConditionInput extends Component {
         <div style={{ paddingLeft: 35, maxWidth: 700 }}>
           <hr style={{ margin: '20px 0 10px' }} />
           <div style={ruleStyle}>
-            <Select style={ruleSelectStyle}>
-              <Option value="productcode">Product code</Option>
-              <Option value="value">Value</Option>
-              <Option value="deals">Deals</Option>
+            <Select
+              style={ruleSelectStyle}
+              value={parsedExp2.field}
+              onChange={e => this.onAdvancedFilterSecondTypeValueChange({ field: e.currentTarget.value }, props1)}
+              >
+              {
+                schemas.get('Deal') ?
+                schemas.getIn(['Deal', 'Fields']).valueSeq().map((field, index) => {
+                  let name = field.get('Name')
+                  if (name.substr(0, 9).toLowerCase() == 'products.') {
+                    name = name.substr(9)
+                    // if (name.substr(0, 7) == 'Product') {
+                    //   name = name.replace('Product', 'Product ')
+                    // } else {
+                    //   name = 'Product ' + name
+                    // }
+                    return (
+                      <Option key={index} value={field.get('Id')}>{name}</Option>
+                    )
+                  }
+                })
+                :
+                undefined
+              }
             </Select>
-            <Select style={ruleSelectStyle}>
+            <Select
+              style={ruleSelectStyle}
+              value={parsedExp2.operator}
+              onChange={e => this.onAdvancedFilterSecondTypeValueChange({ operator: e.currentTarget.value }, props1)} >
               <Option value="==">is</Option>
               <Option value="!=">is not</Option>
               <Option value=">">is greater than</Option>
               <Option value="<">is less than</Option>
             </Select>
-            <Input type="text" style={ruleSelectStyle} />
+            <Input
+              type="text"
+              style={ruleSelectStyle}
+              value={parsedExp2.value}
+              onChange={e => this.onAdvancedFilterSecondTypeValueChange({ value: e.currentTarget.value }, props1)} />
           </div>
           <hr style={{ margin: '10px 0 20px' }} />
         </div>
@@ -320,28 +533,15 @@ class FilterConditionInput extends Component {
   }
 
   render() {
-    const {
-      loadedSchemas,
-    } = this.props
-    if (!loadedSchemas) {
-      return (
-        <div style={{ border: '1px solid #f0f0f1', padding: '10px 25px' }}>
-          Loading data...
-        </div>
-      )
-    }
-    const { basicFilter } = this.state
-    const { value } = this.props
-    const parsedExpression = this.parse(value)
-    this.convertBasicFilters()
+    const { MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType } = this.props
     return (
       <div>
-        {this.basicFilterSelect(value)}
+        {this.basicFilterSelect(MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1)}
         {
-          basicFilter == 'advanced' ?
-          this.advancedFilterSelect(parsedExpression)
+          MeasureEventType.input.value == 'advanced' ?
+          this.advancedFilterSelect(MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType)
           :
-          undefined
+          ''
         }
       </div>
     )
@@ -349,4 +549,4 @@ class FilterConditionInput extends Component {
 
 }
 
-export default hoc(FilterConditionInput)
+export default FilterConditionInput

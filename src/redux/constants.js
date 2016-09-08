@@ -123,3 +123,9 @@ export const BASIC_FILTERS_GET_FAIL = 'centify/filters/BASIC_GET_FAIL'
 export const SCHEMAS_GET = 'centify/filters/SCHEMAS_GET'
 export const SCHEMAS_GET_SUCCESS = 'centify/filters/SCHEMAS_GET_SUCCESS'
 export const SCHEMAS_GET_FAIL = 'centify/filters/SCHEMAS_GET_FAIL'
+
+/* Game types module */
+
+export const GAME_TYPES_GET = 'centify/filters/GAME_TYPES_GET'
+export const GAME_TYPES_GET_SUCCESS = 'centify/filters/GAME_TYPES_GET_SUCCESS'
+export const GAME_TYPES_GET_FAIL = 'centify/filters/GAME_TYPES_GET_FAIL'

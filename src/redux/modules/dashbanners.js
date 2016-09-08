@@ -1,6 +1,6 @@
 import { push } from 'react-router-redux'
 import Immutable from 'immutable'
-import {SubmissionError} from 'redux-form'
+import { SubmissionError } from 'redux-form'
 
 import {
   INIT,
