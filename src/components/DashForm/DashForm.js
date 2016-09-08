@@ -571,12 +571,33 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, MeasureEventType } = this.props
+    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, MeasureEventType, errors } = this.props
     const { schemas } = this.props
     const value = this.calcEstimatedRewardAmount()
+    const errorStyle = {
+      color: '#ff5d07'
+    }
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
         <Grid>
+
+          {
+            errors ?
+            <Row cols={6} className="slds-m-top--large">
+              <Col padded cols={6} className="slds-m-bottom--small">
+                <div style={errorStyle}>
+                  <h2 className={styles.fieldTitle}>Error saving dash</h2>
+                  <ul>
+                    {errors.map((error, index) => (
+                      <li key={index}>{error.Message}</li>
+                    ))}
+                  </ul>
+                </div>
+              </Col>
+            </Row>
+            :
+            undefined
+          }
 
           <Row cols={6} className="slds-m-top--large">
             <Col padded cols={6} className="slds-m-bottom--small">

@@ -13,6 +13,16 @@ class DashCreate extends Component {
     notify: React.PropTypes.func
   }
 
+  state = {
+    errors: false
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      errors: false
+    })
+  }
+
   componentDidMount() {
     const auth = this.props.auth
     if (auth) {
@@ -168,15 +178,9 @@ class DashCreate extends Component {
       this.context.notify('Dash created successfully', 'success')
     })
     .catch(res => {
-      let errors = (
-        <span>
-          Failed to create dash due to following errors:<br/>
-          {res.errors.map(error => (
-            <span><strong>{error.Message}</strong><br/></span>
-          ))}
-        </span>
-      )
-      this.context.notify(errors, 'error')
+      this.setState({
+        errors: res.errors
+      })
     })
   }
 
@@ -216,7 +220,8 @@ class DashCreate extends Component {
           budgetAmount={budgetAmount}
           dashtypes={dashtypes}
           dashbanners={dashbanners}
-          schemas={schemas} />
+          schemas={schemas}
+          errors={this.state.errors} />
       </div>
     )
   }
