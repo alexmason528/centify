@@ -15,6 +15,7 @@ import Todos from './Todos/Todos'
 import TodosEdit from './TodosEdit/TodosEdit'
 import Payouts from './Payouts/Payouts'
 import AppleTVActivation from './AppleTVActivation/AppleTVActivation'
+import Signup from './Signup/Signup'
 
 const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DOMAIN__);
 
@@ -31,6 +32,7 @@ export const makeMainRoutes = () => {
       <IndexRedirect to="/dashes" />
       <Route path="login" component={Login} />
       <Route path="access_token=:token" component={LoggingIn} />
+      <Route path="signup/:token" component={Signup} />
 
       <Route component={LayoutContainer} onEnter={requireAuth}>
         <Route path="account-not-linked" component={AccountNotLinked} />
