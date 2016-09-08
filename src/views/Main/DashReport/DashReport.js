@@ -3,6 +3,7 @@ import { Button, Grid, Row, Col } from 'react-lightning-design-system'
 
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import DashReportTimer from 'components/DashReportTimer/DashReportTimer'
+import DashesListActionDialog from 'components/DashesListActionDialog/DashesListActionDialog'
 import { numWithSurfix } from 'utils/formatter'
 import styles from './styles.module.css'
 import hoc from './hoc'
@@ -12,6 +13,12 @@ class DashReport extends Component {
 
   static contextTypes = {
     notify: React.PropTypes.func
+  }
+
+  state = {
+    actionDialogOpen: false,
+    actionDialogAction: '',
+    actionDialogSubmitting: false,
   }
 
   sumOfOneField(participant, field) {
@@ -156,6 +163,33 @@ class DashReport extends Component {
     )
   }
 
+  approvePayment = () => {
+    console.log('approve button clicked')
+    this.setState({
+      actionDialogOpen: true,
+      actionDialogAction: 'approve'
+    });
+  }
+
+  renderActionButton = () => {
+    const { currentDash } = this.props
+    if (currentDash.get("Status") == "Review") {
+      return (
+        <Button
+          type="brand"
+          onClick={() => this.approvePayment()}>Approve Dash for Payment</Button>
+      );
+    } else if (currentDash.get("Status") == "Closed"){
+      return false;
+    } else {
+      return (
+        <Button
+          type="brand"
+          onClick={() => this.refresh()}>Refresh Dash</Button>
+      );
+    }
+  }
+
   estimatedRewardAmount = () => {
     const { currentDash } = this.props
     let amt = 0
@@ -175,6 +209,36 @@ class DashReport extends Component {
         this.props.getDash(profile.centifyOrgId, this.props.params.dashId)
       }
     }
+  }
+
+  onClose = () => {
+    this.setState({
+      actionDialogOpen: false,
+    })
+  }
+
+  onApprovePayment = () => {
+    const { auth, approveDash, currentDash } = this.props
+    const dashId = currentDash.get('Id')
+    const profile = auth.getProfile()
+    this.setState({
+      actionDialogSubmitting: true,
+    })
+    approveDash(profile.centifyOrgId, dashId)
+    .then(() => {
+      this.setState({
+        actionDialogOpen: false,
+        actionDialogSubmitting: false,
+      })
+      this.context.notify('Successfully approved dash for payment.', 'success')
+    })
+    .catch(() => {
+      this.setState({
+        actionDialogOpen: false,
+        actionDialogSubmitting: false,
+      })
+      this.context.notify('Failed to approve dash for payment', 'error')
+    })
   }
 
   goToFakeIt = () => {
@@ -198,13 +262,14 @@ class DashReport extends Component {
         getDash(profile.centifyOrgId, this.props.params.dashId)
         .catch(res => {
           this.context.notify('Failed to get dashes from server', 'error')
-        })
+        }) 
       }
     }
   }
 
   render() {
     const { currentDash, loading, loaded, loadingParticipants, loadingRewards, loadingUsers, users } = this.props
+    const { actionDialogAction, actionDialogOpen, actionDialogSubmitting } = this.state
     if (loading || loadingParticipants || loadingRewards || loadingUsers || !loaded) {
       return (
         <LoadingSpinner/>
@@ -221,6 +286,7 @@ class DashReport extends Component {
       flexGrow: 1,
     }
     const endDate = new Date(currentDash.get('EndsAt'))
+
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium" style={containerStyle}>
         <Grid>
@@ -232,9 +298,7 @@ class DashReport extends Component {
                 <h2 className={styles.pageTitle1 + ' slds-text-align--right'} style={{ flexGrow: 1 }}>Estimated Reward: ${currentDash.get('EstimatedRewardAmount')}</h2>
               </div>
               <div className="slds-p-vertical--medium slds-text-align--right">
-                <Button
-                  type="brand"
-                  onClick={() => this.refresh()}>Refresh Dash</Button>
+                { this.renderActionButton() }
                 <Button
                   type="brand"
                   onClick={() => this.goToFakeIt()}>Fake It</Button>
@@ -244,6 +308,13 @@ class DashReport extends Component {
             </Col>
           </Row>
         </Grid>
+        <DashesListActionDialog
+          open={actionDialogOpen}
+          submitting={actionDialogSubmitting}
+          action={actionDialogAction}
+          dash={currentDash}
+          onClose={this.onClose}
+          onYes={this.onApprovePayment} />
       </div>
     )
   }

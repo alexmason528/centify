@@ -1,6 +1,6 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { getDash } from 'redux/modules/dashes'
+import { getDash, approveDash } from 'redux/modules/dashes'
 import { getUsers } from 'redux/modules/users'
 import { push } from 'react-router-redux';
 
@@ -21,7 +21,8 @@ const mapStateToProps = ({ dashes, users, todos }) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   getDash,
   getUsers,
-  push
+  push,
+  approveDash
 }, dispatch)
 
 export default (container) => connect(

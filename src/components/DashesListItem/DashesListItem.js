@@ -147,7 +147,7 @@ class DashesListItem extends Component {
       marginRight: 7,
     }
     const id = dash.get('Id')
-    const { onActivate, onComplete, onDelete } = this.props
+    const { onActivate, onComplete, onDelete, onApprove } = this.props
     if (filter == 'Draft') {
       return (
         <span>
@@ -252,7 +252,7 @@ class DashesListItem extends Component {
           )}
         </span>
       )
-    }*/ else if (filter == 'Closed') {
+    }*/ else if (filter == 'Review') {
       return (
         <span>
           {this.createLinkIcon(
@@ -266,6 +266,12 @@ class DashesListItem extends Component {
             "info-circle",
             iconStyle,
             'View Details'
+          )}
+          {this.createLinkIcon(
+            onApprove,
+            "check",
+            { ...iconStyle, ...greenIcon },
+            'Approve for Payment'
           )}
         </span>
       )
