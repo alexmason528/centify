@@ -143,7 +143,7 @@ class DashForm extends Component {
                   style={midTextSelectStyle}
                   onChange={e => {
                     if (MeasureCalcMethod.input.value == 'Sum') {
-                      TargetThreshold.input.onChange(e.currentTarget.value)
+                      TargetThreshold.input.onChange(parseInt(e.currentTarget.value))
                     }
                   }} />
               </span>
@@ -167,7 +167,7 @@ class DashForm extends Component {
                 style={midTextSelectStyle}
                 onChange={e => {
                   if (MeasureCalcMethod.input.value == 'Increment') {
-                    TargetThreshold.input.onChange(e.currentTarget.value)
+                    TargetThreshold.input.onChange(parseInt(e.currentTarget.value))
                   }
                 }} />
             </span>
