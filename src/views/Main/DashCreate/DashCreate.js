@@ -144,10 +144,11 @@ class DashCreate extends Component {
     const measureUnits = (MeasureCalcMethod == 'Add' || MeasureCalcMethod == 'Subtract') ? '$' : MeasureEventType + 's'
     const _rewards = rewards ? JSON.parse(rewards) : []
     const data = {
-      Description : model.description,
+      Description : model.Description,
       ImageURL : "",
       IsTeamDash : false,
-      GameType : "RocketLaunch",
+      GameTypeId : "08m7blbrrg7rcxtf",
+      TargetThreshold : parseInt(model.MeasureValue),
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : 30,
       ScoreFormula : "",

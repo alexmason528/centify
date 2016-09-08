@@ -93,6 +93,9 @@ export const TODOS_SET_STATUS = 'centify/todos/SET_STATUS'
 export const BUDGET_GET = 'centify/budget/GET'
 export const BUDGET_GET_SUCCESS = 'centify/budget/GET_SUCCESS'
 export const BUDGET_GET_FAIL = 'centify/budget/GET_FAIL'
+export const BUDGET_SET = 'centify/budget/SET'
+export const BUDGET_SET_SUCCESS = 'centify/budget/SET_SUCCESS'
+export const BUDGET_SET_FAIL = 'centify/budget/SET_FAIL'
 
 /* Dash types module */
 
@@ -105,6 +108,10 @@ export const DASH_TYPES_GET_FAIL = 'centify/dashtypes/GET_FAIL'
 export const DASH_BANNERS_GET = 'centify/dashbanners/GET'
 export const DASH_BANNERS_GET_SUCCESS = 'centify/dashbanners/GET_SUCCESS'
 export const DASH_BANNERS_GET_FAIL = 'centify/dashbanners/GET_FAIL'
+
+/* FakeIt module */
+export const FAKE_IT_SUCCESS = 'centify/fakeit/FAKE_IT_SUCCESS'
+export const FAKE_IT_FAIL = 'centify/fakeit/FAKE_IT_FAIL'
 
 /* Apple TV module */
 
