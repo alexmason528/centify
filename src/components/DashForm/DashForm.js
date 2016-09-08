@@ -55,9 +55,7 @@ class DashForm extends Component {
   }
 
   themeSelect = () => {
-    const { dashtypes, dashbanners, DashTypeId } = this.props
-    const dashType = dashtypes.get(DashTypeId)
-    const themesAllowed = dashType ? dashType.get('GameThemesAllowed') : false
+    const { dashbanners } = this.props
     return (
       <div className="slds-form-element">
         <div className="slds-form-element__control">
@@ -65,24 +63,43 @@ class DashForm extends Component {
             <Field name={"DashBannerId"} component="select" className="slds-select">
               <option value="">- Select theme -</option>
               {
-                // themesAllowed ?
-                // dashbanners.valueSeq().map((banner, index) => {
-                //   const name = banner.get('Name')
-                //   return (
-                //     themesAllowed.find(t => t == name) ?
-                //     <option key={index} value={banner.get('Id')}>{name}</option>
-                //     :
-                //     undefined
-                //   )
-                // })
-                // :
-                // undefined
                 dashbanners.valueSeq().map((banner, index) => {
                   const name = banner.get('Name')
                   return (
                     <option key={index} value={banner.get('Id')}>{name}</option>
                   )
                 })
+              }
+            </Field>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  gameTypeSelect = () => {
+    const { gametypes, dashtypes, dashbanners, DashTypeId } = this.props
+    const dashType = dashtypes.get(DashTypeId)
+    const gameTypesAllowed = dashType ? dashType.get('GameTypesAllowed') : false
+    return (
+      <div className="slds-form-element">
+        <div className="slds-form-element__control">
+          <div className="slds-select_container">
+            <Field name={"GameTypeId"} component="select" className="slds-select">
+              <option value="">- Select Game Type -</option>
+              {
+                gameTypesAllowed ?
+                gametypes.valueSeq().map((game, index) => {
+                  const id = game.get('Id')
+                  return (
+                    gameTypesAllowed.find(t => t == id) ?
+                    <option key={index} value={id}>{game.get('Name')}</option>
+                    :
+                    undefined
+                  )
+                })
+                :
+                undefined
               }
             </Field>
           </div>
@@ -372,6 +389,7 @@ class DashForm extends Component {
           checked={selectedAllTodos}
           onChange={(e) => {
             const selectedAll = e.currentTarget.checked
+            console.log(selectedAll)
             for(let i = 0; i < allTodos.size; i++) {
               todos[i] = todos[i] ? todos[i] : { value: false, existed: false }
               todos[i].value = selectedAll
@@ -379,7 +397,7 @@ class DashForm extends Component {
             this.setState({
               selectedAllTodos: selectedAll
             })
-            onChange(JSON.stringify(todos))
+            onChange(JSON.stringify(todos) + ' ')
           }} />
         <div className="slds-m-top--medium">
           {allTodos.map((todo, index) => (
@@ -601,6 +619,16 @@ class DashForm extends Component {
 
           <Row cols={6} className="slds-m-top--xx-large">
             <Col padded cols={6} className="slds-m-bottom--small">
+              <h2 className={styles.fieldTitle}>Game</h2>
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={2}>
+              {this.gameTypeSelect()}
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--small">
               <h2 className={styles.fieldTitle}>Theme</h2>
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}>
@@ -614,16 +642,6 @@ class DashForm extends Component {
               <h2 className={styles.fieldTitle}>Goal</h2>
             </Col>
             <Col padded cols={6}>
-              {/*<Field name="MeasureEventType" component={this.basicFilterSelect} />
-              {
-                MeasureEventType == 'advanced' ?
-                <div className="slds-m-top--large">
-                  <Field name="MeasureFilterCondition" component={this.advancedFilterSelect}/>
-                </div>
-                :
-                ''
-              }
-              */}
               <Fields
                 names={[
                   'MeasureEventType',
