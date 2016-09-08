@@ -1,6 +1,6 @@
 import { push } from 'react-router-redux'
 import Immutable from 'immutable'
-import {SubmissionError} from 'redux-form'
+import { SubmissionError } from 'redux-form'
 
 import {
   INIT,
@@ -95,13 +95,10 @@ export default function dashes(state = initialState, action) {
     case DASHES_LIST_SUCCESS:
       return state.withMutations((map) => {
         const dashes = action.result ? action.result : {}
-
-        map.remove('list')
-
+        map.set('list', Immutable.fromJS({}))
         dashes.forEach(dash => {
           map.setIn(['list', dash.Id], Immutable.fromJS(dash))
         })
-        
         map.set('filter', 'Draft')
         map.set('loadingList', false)
         map.set('loadedList', true)
@@ -127,7 +124,6 @@ export default function dashes(state = initialState, action) {
         const dashId = action.data.dashId
         const rewards = action.result
         return state.withMutations((map) => {
-          console.log('mutate list from DASHES_LIST_ITEM_REWARDS_SUCCESS');
           map.setIn(['list', dashId, 'Rewards', 'items'], Immutable.fromJS(rewards))
           map.setIn(['list', dashId, 'Rewards', 'loaded'], true)
           map.set('storeUpdateIndicator', Math.random())
@@ -402,9 +398,6 @@ export function createDash(orgId, model) {
         updateTodos(dispatch, orgId, res.Id, todos)
         dispatch(push('/dashes'))
       })
-      .catch(res => {
-        throw new SubmissionError({ _error: res.error })
-      })
   }
 }
 
@@ -426,9 +419,6 @@ export function updateDash(orgId, dashId, model) {
     )
     .then(() => {
       dispatch(push('/dashes'))
-    })
-    .catch(res => {
-      throw new SubmissionError({ _error: res.error })
     })
   }
 }

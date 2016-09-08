@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
-import { Field, reduxForm, formValueSelector } from 'redux-form'
+import { Field, Fields, reduxForm, formValueSelector } from 'redux-form'
 import { Icon } from 'react-fa'
 import { 
   Grid, Row, Col,
@@ -63,9 +63,7 @@ class DashForm extends Component {
   }
 
   themeSelect = () => {
-    const { dashtypes, dashbanners, DashTypeId } = this.props
-    const dashType = dashtypes.get(DashTypeId)
-    const themesAllowed = dashType ? dashType.get('GameThemesAllowed') : false
+    const { dashbanners } = this.props
     return (
       <div className="slds-form-element">
         <div className="slds-form-element__control">
@@ -73,18 +71,6 @@ class DashForm extends Component {
             <Field name={"DashBannerId"} component="select" className="slds-select">
               <option value="">- Select theme -</option>
               {
-                // themesAllowed ?
-                // dashbanners.valueSeq().map((banner, index) => {
-                //   const name = banner.get('Name')
-                //   return (
-                //     themesAllowed.find(t => t == name) ?
-                //     <option key={index} value={banner.get('Id')}>{name}</option>
-                //     :
-                //     undefined
-                //   )
-                // })
-                // :
-                // undefined
                 dashbanners.valueSeq().map((banner, index) => {
                   const name = banner.get('Name')
                   return (
@@ -99,13 +85,124 @@ class DashForm extends Component {
     )
   }
 
-  filterConditionInput = (props) => {
+  gameTypeSelect = () => {
+    const { gametypes, dashtypes, dashbanners, DashTypeId } = this.props
+    const dashType = dashtypes.get(DashTypeId)
+    const gameTypesAllowed = dashType ? dashType.get('GameTypesAllowed') : false
     return (
-      <FilterConditionInput {...props.input} />
+      <div className="slds-form-element">
+        <div className="slds-form-element__control">
+          <div className="slds-select_container">
+            <Field name={"GameTypeId"} component="select" className="slds-select">
+              <option value="">- Select Game Type -</option>
+              {
+                gameTypesAllowed ?
+                gametypes.valueSeq().map((game, index) => {
+                  const id = game.get('Id')
+                  return (
+                    gameTypesAllowed.find(t => t == id) ?
+                    <option key={index} value={id}>{game.get('Name')}</option>
+                    :
+                    undefined
+                  )
+                })
+                :
+                undefined
+              }
+            </Field>
+          </div>
+        </div>
+      </div>
     )
   }
 
-  measureValueInput = (props) => {
+  getAmountFieldId = (fieldName) => {
+    const { schemas } = this.props
+    const fields = schemas.getIn([fieldName, 'Fields'])
+    if (!fields) {
+      return false
+    }
+    let id = false
+    fields.map(field => {
+      if (field.get('Name') == 'Amount') {
+        id = field.get('Id')
+      }
+    })
+    return id
+  }
+
+  measureTargetInput = ({ MeasureCalcMethod, MeasureSumField, TargetThreshold, MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterConditionType }) => {
+    let fieldName = 'Deal'
+    if (MeasureEventType.input.value == 'advanced') {
+      if (!MeasureFilterConditionType.input.value) {
+        fieldName = MeasureEventTypeAdvanced.input.value
+      }
+    } else {
+      fieldName = MeasureEventType.input.value
+    }
+    const fieldNamePlural = fieldName + 's'
+    const midTextSelectStyle = {
+      display: 'inline-block',
+      maxWidth: 100,
+    }
+    const amountFieldId = this.getAmountFieldId(fieldName)
+    return (
+      <fieldset className="slds-form-element">
+        <div>What is the target?</div>
+        <div className="slds-form-element__control">
+          {
+            amountFieldId ?
+            <label className="slds-radio slds-m-top--medium">
+              <input
+                type="radio"
+                name="options"
+                value={MeasureCalcMethod.input.value == 'Sum'}
+                onChange={e => {
+                  MeasureCalcMethod.input.onChange('Sum')
+                  MeasureSumField.input.onChange(amountFieldId)
+                }} />
+              <span className="slds-radio--faux"></span>
+              <span className="slds-form-element__label" style={{ color: 'inherit' }}>
+                Value of the {fieldNamePlural}: $&nbsp;
+                <Input
+                  style={midTextSelectStyle}
+                  onChange={e => {
+                    if (MeasureCalcMethod.input.value == 'Sum') {
+                      TargetThreshold.input.onChange(e.currentTarget.value)
+                    }
+                  }} />
+              </span>
+            </label>
+            :
+            ''
+          }
+          <label className="slds-radio slds-m-top--medium">
+            <input
+              type="radio"
+              name="options"
+              value={MeasureCalcMethod.input.value == 'Increment'}
+              onChange={e => {
+                MeasureCalcMethod.input.onChange('Increment')
+                MeasureSumField.input.onChange(null)
+              }} />
+            <span className="slds-radio--faux"></span>
+            <span className="slds-form-element__label" style={{ color: 'inherit' }}>
+              Number of {fieldNamePlural}:&nbsp;
+              <Input
+                style={midTextSelectStyle}
+                onChange={e => {
+                  if (MeasureCalcMethod.input.value == 'Increment') {
+                    TargetThreshold.input.onChange(e.currentTarget.value)
+                  }
+                }} />
+            </span>
+          </label>
+        </div>
+      </fieldset>
+    )
+  }
+
+  targetThresholdInput = (props) => {
     const {value, ...otherProps} = props.input
     const _value = value ? value : 0
     const valueStyle = {
@@ -115,7 +212,7 @@ class DashForm extends Component {
     }
     return (
       <div>
-        <span>What is the target value? </span>
+        <span>Target Threshold value</span>
         <Input type="text" style={valueStyle} {...props.input}/>
       </div>
     )
@@ -300,6 +397,7 @@ class DashForm extends Component {
           checked={selectedAllTodos}
           onChange={(e) => {
             const selectedAll = e.currentTarget.checked
+            console.log(selectedAll)
             for(let i = 0; i < allTodos.size; i++) {
               todos[i] = todos[i] ? todos[i] : { value: false, existed: false }
               todos[i].value = selectedAll
@@ -307,7 +405,7 @@ class DashForm extends Component {
             this.setState({
               selectedAllTodos: selectedAll
             })
-            onChange(JSON.stringify(todos))
+            onChange(JSON.stringify(todos) + ' ')
           }} />
         <div className="slds-m-top--medium">
           {allTodos.map((todo, index) => (
@@ -398,7 +496,7 @@ class DashForm extends Component {
               }
               if (!dup) {
                 if (selectedUserId) {
-                  participants.push( {
+                  participants.push({
                     Type: "User",
                     DisplayName: "",
                     Name: users.get(selectedUserId).get('FirstName') + ' ' + users.get(selectedUserId).get('LastName'),
@@ -499,7 +597,12 @@ class DashForm extends Component {
   }
 
   render() {
+<<<<<<< HEAD
+    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, MeasureEventType } = this.props
+    const { schemas } = this.props
+=======
     const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, description } = this.props
+>>>>>>> origin/dev
     const value = this.calcEstimatedRewardAmount()
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
@@ -539,6 +642,16 @@ class DashForm extends Component {
 
           <Row cols={6} className="slds-m-top--xx-large">
             <Col padded cols={6} className="slds-m-bottom--small">
+              <h2 className={styles.fieldTitle}>Game</h2>
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={2}>
+              {this.gameTypeSelect()}
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--small">
               <h2 className={styles.fieldTitle}>Theme</h2>
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}>
@@ -552,12 +665,39 @@ class DashForm extends Component {
               <h2 className={styles.fieldTitle}>Goal</h2>
             </Col>
             <Col padded cols={6}>
-              <Field name="MeasureFilterCondition" component={this.filterConditionInput} />
+              <Fields
+                names={[
+                  'MeasureEventType',
+                  'MeasureEventTypeAdvanced',
+                  'MeasureFilterCondition',
+                  'MeasureFilterCondition1',
+                  'MeasureFilterConditionType',
+                ]}
+                component={FilterConditionInput}
+                props={{ schemas }} />
             </Col>
             <Col padded cols={6} className="slds-m-top--large">
-              <Field name="MeasureValue" component={this.measureValueInput}/>
+              <Fields
+                names={[
+                  'MeasureCalcMethod',
+                  'MeasureSumField',
+                  'TargetThreshold',
+                  'MeasureEventType',
+                  'MeasureEventTypeAdvanced',
+                  'MeasureFilterConditionType',
+                ]}
+                component={this.measureTargetInput} />
             </Col>
           </Row>
+
+          {/*<Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--medium">
+              <h2 className={styles.fieldTitle}>Target Threshold</h2>
+            </Col>
+            <Col padded cols={6}>
+              <Field name="TargetThreshold" component={this.targetThresholdInput}/>
+            </Col>
+          </Row>*/}
 
           <Row cols={6} className="slds-m-top--xx-large">
             <Col padded cols={6} className="slds-m-bottom--medium">
@@ -663,6 +803,7 @@ _DashForm = connect(
       RewardTypeValue: selector(state, 'RewardType'),
       RewardAmount: selector(state, 'RewardAmount'),
       rewards: selector(state, 'rewards'),
+      MeasureEventType: selector(state, 'MeasureEventType'),
       description: selector(state, 'Description')
     }
   }
