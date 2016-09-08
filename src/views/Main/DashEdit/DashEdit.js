@@ -14,6 +14,16 @@ class DashEdit extends Component {
     notify: React.PropTypes.func
   }
 
+  state = {
+    errors: false
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      errors: false
+    })
+  }
+
   componentDidMount() {
     const auth = this.props.auth
     if (auth) {
@@ -254,7 +264,9 @@ class DashEdit extends Component {
       this.context.notify('Dash updated successfully', 'success')
     })
     .catch(res => {
-      this.context.notify('Failed to update dash due to errors', 'error')
+      this.setState({
+        errors: res.errors
+      })
     })
   }
 
@@ -297,7 +309,8 @@ class DashEdit extends Component {
           dashtypes={dashtypes}
           dashbanners={dashbanners}
           schemas={schemas}
-          gametypes={gametypes} />
+          gametypes={gametypes}
+          errors={this.state.errors} />
       </div>
     )
   }
