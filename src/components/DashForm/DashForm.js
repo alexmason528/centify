@@ -597,12 +597,8 @@ class DashForm extends Component {
   }
 
   render() {
-<<<<<<< HEAD
-    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, MeasureEventType } = this.props
+    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, MeasureEventType, description } = this.props
     const { schemas } = this.props
-=======
-    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, description } = this.props
->>>>>>> origin/dev
     const value = this.calcEstimatedRewardAmount()
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
