@@ -253,7 +253,7 @@ class DashEdit extends Component {
       MinimumParticipants : 1,
       MinimumUsersInTeam : 1,
       Measure : {
-        Name: "string",
+        Name: "points",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
         FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
         CalcMethod : MeasureCalcMethod,

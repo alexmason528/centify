@@ -94,7 +94,7 @@ class DashCreate extends Component {
     return {
       Name : "",
       Type : "OverTheLine",
-      MeasureEventType : "Deal",
+      MeasureEventType : "",
       MeasureEventTypeAdvanced : "",
       MeasureFilterCondition: "",
       MeasureFilterCondition1: "",
@@ -176,7 +176,7 @@ class DashCreate extends Component {
       MinimumParticipants : 1,
       MinimumUsersInTeam : 1,
       Measure : {
-        Name : "string",
+        Name : "points",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
         FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
         CalcMethod : MeasureCalcMethod,

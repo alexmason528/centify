@@ -168,20 +168,20 @@ class FilterConditionInput extends Component {
 
   onChangeBasicFilterSelect = (e, onChange, advancedEventTypeProps, advancedFilterProps) => {
     onChange(e.currentTarget.value)
-    if (!advancedEventTypeProps.input.value) {
-      const defaultAdvEventType = e.currentTarget.value == 'advanced' ? 'Deal' : e.currentTarget.value
-      advancedEventTypeProps.input.onChange(defaultAdvEventType)
-      for(const k in this.convertedBasicFilters) {
-        const filter = this.convertedBasicFilters[k]
-        if (filter.EventType == defaultAdvEventType) {
-          advancedFilterProps.input.onChange(filter.FilterConditionPattern)
-          break
-        }
+    // if (!advancedEventTypeProps.input.value) {
+    const defaultAdvEventType = e.currentTarget.value == 'advanced' ? 'Deal' : e.currentTarget.value
+    advancedEventTypeProps.input.onChange(defaultAdvEventType)
+    for(const k in this.convertedBasicFilters) {
+      const filter = this.convertedBasicFilters[k]
+      if (filter.EventType == defaultAdvEventType) {
+        advancedFilterProps.input.onChange(filter.FilterConditionPattern)
+        break
       }
     }
+    // }
   }
 
-  basicFilterSelect = (props, advancedEventTypeProps, advancedFilterProps) => {
+  basicFilterSelect = (props, advancedEventTypeProps, advancedFilterProps, advancedFilterProps1) => {
     const basicSelectStyle = {
       maxWidth: 400,
       marginTop: 5,
@@ -207,6 +207,7 @@ class FilterConditionInput extends Component {
                   advancedEventTypeProps,
                   advancedFilterProps )}
                 >
+                <Option value="">- Select filter -</Option>
                 {basicFilterOptions}
                 <Option value="advanced">Advanced...</Option>
               </Select>
