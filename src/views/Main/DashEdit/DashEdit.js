@@ -135,6 +135,7 @@ class DashEdit extends Component {
       const filterIsFirstType = (filterCond.substr(0, 4).toLowerCase() == 'data')
       const dashTypeId = currentDash.get('DashTypeId')
       const rewardType = dashtypes.getIn([dashTypeId, 'Name']) == 'Race' ? 'Limited number of different rewards' : 'One reward one amount'
+      const rewards = JSON.stringify(_rewards ? _rewards : [])
       return {
         Name : currentDash.get('Name'),
         Type : currentDash.get('Type'),
@@ -152,8 +153,8 @@ class DashEdit extends Component {
         StartsAt: new Date(currentDash.get('StartsAt')).toISOString(),
         EndsAt: new Date(currentDash.get('EndsAt')).toISOString(),
         RewardType : rewardType,
-        RewardAmount : currentDash.get('EstimatedRewardAmount') ? parseInt(currentDash.get('EstimatedRewardAmount')) : 0,
-        rewards: JSON.stringify(_rewards ? _rewards : []),
+        RewardAmount : _rewards.getIn([0, 'EstimatedRewardAmount']),
+        rewards: rewards,
         participants: JSON.stringify(_participants ? _participants : []),
         todos: JSON.stringify(this.getTodosArrayFromList(_todos ? _todos : [])),
       }
@@ -197,20 +198,29 @@ class DashEdit extends Component {
     return list
   }
 
-  calcEstimatedRewardAmount = (model) => {
-    let thisDash = 0
-    const { RewardType, RewardAmount, rewards } = model
-    if (RewardType == 'Limited number of different rewards') {
-      const _rewards = rewards ? JSON.parse(rewards) : []
-      for(let i = 0; i < _rewards.length; i++) {
-        if (!_rewards[i].deleted) {
-          thisDash += _rewards[i].EstimatedRewardAmount ? parseInt(_rewards[i].EstimatedRewardAmount) : 0
-        }
-      }
+  rewardsArrayCalculate = (rewards, model) => {
+    if (model.RewardType == 'Limited number of different rewards') {
+      return rewards
     } else {
-      thisDash = parseInt(RewardAmount)
+      const newReward = {
+        Type: "Cash",
+        Description: "",
+        Position: 1,
+        EstimatedRewardAmount: parseInt(model.RewardAmount),
+        MaximumRewardAmount: parseInt(model.RewardAmount),
+        ExternalURL: "",
+        Formula: "{}",
+        saveStatus: 1,  // 0: saved, 1: new, 2: modified
+        deleted: false,
+      }
+      const newRewards = []
+      newRewards.push(newReward)
+      for(let i = 0; i < rewards.length; i++) {
+        rewards[i].deleted = true
+        newRewards.push(rewards[i])
+      }
+      return newRewards
     }
-    return thisDash
   }
 
   onSubmit = (model) => {
@@ -228,7 +238,7 @@ class DashEdit extends Component {
       ...modelData
     } = model
     const measureUnits = (MeasureCalcMethod == 'Add' || MeasureCalcMethod == 'Subtract') ? '$' : MeasureEventType + 's'
-    const _rewards = rewards ? JSON.parse(rewards) : []
+    const _rewards = this.rewardsArrayCalculate(rewards ? JSON.parse(rewards) : [], model)
     const data = {
       Description : model.description,
       ImageURL : "",
@@ -242,7 +252,6 @@ class DashEdit extends Component {
       AreTeamRewardsShared : false,
       MinimumParticipants : 1,
       MinimumUsersInTeam : 1,
-      EstimatedRewardAmount: this.calcEstimatedRewardAmount(model),
       Measure : {
         Name: "string",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,

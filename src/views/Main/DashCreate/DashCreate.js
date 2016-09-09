@@ -87,22 +87,6 @@ class DashCreate extends Component {
     }
   }
 
-  calcEstimatedRewardAmount = (model) => {
-    let thisDash = 0
-    const { RewardType, RewardAmount, rewards } = model
-    if (RewardType == 'Limited number of different rewards') {
-      const _rewards = rewards ? JSON.parse(rewards) : []
-      for(let i = 0; i < _rewards.length; i++) {
-        if (!_rewards[i].deleted) {
-          thisDash += _rewards[i].EstimatedRewardAmount ? parseInt(_rewards[i].EstimatedRewardAmount) : 0
-        }
-      }
-    } else {
-      thisDash = RewardAmount
-    }
-    return thisDash
-  }
-
   initialValues() {
     const startDate = new Date()
     const endDate = new Date()
@@ -142,6 +126,31 @@ class DashCreate extends Component {
     return list
   }
 
+  rewardsArrayCalculate = (rewards, model) => {
+    if (model.RewardType == 'Limited number of different rewards') {
+      return rewards
+    } else {
+      const newReward = {
+        Type: "Cash",
+        Description: "",
+        Position: 1,
+        EstimatedRewardAmount: parseInt(model.RewardAmount),
+        MaximumRewardAmount: parseInt(model.RewardAmount),
+        ExternalURL: "",
+        Formula: "{}",
+        saveStatus: 1,  // 0: saved, 1: new, 2: modified
+        deleted: false,
+      }
+      const newRewards = []
+      newRewards.push(newReward)
+      for(let i = 1; i < rewards.length; i++) {
+        rewards[i].deleted = true
+        newRewards.push(rewards[i])
+      }
+      return newRewards
+    }
+  }
+
   onSubmit = (model) => {
     const auth = this.props.auth
     const profile = auth.getProfile()
@@ -152,7 +161,7 @@ class DashCreate extends Component {
       ...modelData
     } = model
     const measureUnits = (MeasureCalcMethod == 'Add' || MeasureCalcMethod == 'Subtract') ? '$' : MeasureEventType + 's'
-    const _rewards = rewards ? JSON.parse(rewards) : []
+    const _rewards = this.rewardsArrayCalculate(rewards ? JSON.parse(rewards) : [], model)
     const data = {
       Description : model.description,
       ImageURL : "",
@@ -166,7 +175,6 @@ class DashCreate extends Component {
       AreTeamRewardsShared : false,
       MinimumParticipants : 1,
       MinimumUsersInTeam : 1,
-      EstimatedRewardAmount: this.calcEstimatedRewardAmount(model),
       Measure : {
         Name : "string",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,

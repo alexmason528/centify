@@ -371,7 +371,7 @@ class DashForm extends Component {
   calcEstimatedRewardAmount = () => {
     let thisDash = 0
     const { RewardType, RewardAmount, rewards } = this.props
-    if (RewardType == 'Multiple reward positions') {
+    if (RewardType == 'Limited number of different rewards') {
       const _rewards = rewards ? JSON.parse(rewards) : []
       for(let i = 0; i < _rewards.length; i++) {
         if (!_rewards[i].deleted) {
@@ -602,7 +602,7 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, MeasureEventType, errors } = this.props
+    const { handleSubmit, submitting, RewardType, RewardAmount, editable, budgetAmount, MeasureEventType, errors } = this.props
     const { schemas } = this.props
     const value = this.calcEstimatedRewardAmount()
     const errorStyle = {
@@ -757,7 +757,7 @@ class DashForm extends Component {
             </Col>
             <Col padded cols={6} className="slds-m-top--small">
               {
-                RewardTypeValue == 'Limited number of different rewards' ?
+                RewardType == 'Limited number of different rewards' ?
                 <Field name="rewards" component={this.rewardList} />
                 :
                 <div>
@@ -826,7 +826,7 @@ _DashForm = connect(
   state => {
     return {
       DashTypeId: selector(state, 'DashTypeId'),
-      RewardTypeValue: selector(state, 'RewardType'),
+      RewardType: selector(state, 'RewardType'),
       RewardAmount: selector(state, 'RewardAmount'),
       rewards: selector(state, 'rewards'),
       MeasureEventType: selector(state, 'MeasureEventType'),
