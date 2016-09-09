@@ -36,18 +36,30 @@ class DashForm extends Component {
     )
   }
 
-  typeSelect = () => {
+  typeSelect = ({ DashTypeId, RewardType }) => {
     const { dashtypes } = this.props
     return (
       <div className="slds-form-element">
         <div className="slds-form-element__control">
           <div className="slds-select_container">
-            <Field name={"DashTypeId"} component="select" className="slds-select">
+            <select
+              className="slds-select"
+              value={DashTypeId.input.value}
+              onChange={e => {
+                const dtid = e.currentTarget.value
+                DashTypeId.input.onChange(dtid)
+                const dtname = dashtypes.getIn([dtid, 'Name'])
+                if (dtname == 'Race') {
+                  RewardType.input.onChange('Limited number of different rewards')
+                } else {
+                  RewardType.input.onChange('One reward one amount')
+                }
+              }}>
               <option value="">- Select dash type -</option>
               {dashtypes.valueSeq().map((type, index) => (
                 <option key={index} value={type.get('Id')}>{type.get('Name')}</option>
               ))}
-            </Field>
+            </select>
           </div>
         </div>
       </div>
@@ -228,23 +240,23 @@ class DashForm extends Component {
     )
   }
 
-  rewardTypeSelect = () => {
-    return (
-      <div className="slds-form-element">
-        <div className="slds-form-element__control">
-          <div className="slds-select_container">
-            <Field name="RewardType" component="select" className="slds-select">
-              <option value="">- Select Reward Type -</option>
-              <option value="All over the line">All participants must be over the line to win the reward</option>
-              <option value="Any over the line">Any participants over the line to win the reward</option>
-              <option value="One reward only">Only one winner</option>
-              <option value="Multiple reward positions">Specify the rewards for each winning position</option>
-            </Field>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // rewardTypeSelect = () => {
+  //   return (
+  //     <div className="slds-form-element">
+  //       <div className="slds-form-element__control">
+  //         <div className="slds-select_container">
+  //           <Field name="RewardType" component="select" className="slds-select">
+  //             <option value="">- Select Reward Type -</option>
+  //             <option value="All over the line">All participants must be over the line to win the reward</option>
+  //             <option value="Any over the line">Any participants over the line to win the reward</option>
+  //             <option value="One reward only">Only one winner</option>
+  //             <option value="Multiple reward positions">Specify the rewards for each winning position</option>
+  //           </Field>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   rewardInput = (props) => {
     const value = props.input.value ? props.input.value : 0
@@ -633,7 +645,12 @@ class DashForm extends Component {
               <h2 className={styles.fieldTitle}>Type</h2>
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}>
-              {this.typeSelect()}
+              <Fields
+                names={[
+                  'DashTypeId',
+                  'RewardType',
+                ]}
+                component={this.typeSelect} />
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
           </Row>
@@ -724,9 +741,6 @@ class DashForm extends Component {
             <Col padded cols={6} className="slds-m-bottom--medium">
               <h2 className={styles.fieldTitle}>Rewards</h2>
             </Col>
-            <Col padded cols={6} colsMedium={4}>
-              {this.rewardTypeSelect()}
-            </Col>
             <Col padded cols={6} colsMedium={2}>
               <table>
                 <tbody>
@@ -742,7 +756,7 @@ class DashForm extends Component {
             </Col>
             <Col padded cols={6} className="slds-m-top--small">
               {
-                RewardTypeValue == 'Multiple reward positions' ?
+                RewardTypeValue == 'Limited number of different rewards' ?
                 <Field name="rewards" component={this.rewardList} />
                 :
                 <div>
