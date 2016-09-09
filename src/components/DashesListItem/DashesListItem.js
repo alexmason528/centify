@@ -31,6 +31,8 @@ class DashesListItem extends Component {
               return <Icon name="bomb" style={typeIconStyle} />
             case 'Countdown':
               return <Icon name="clock-o" style={typeIconStyle} />
+            case 'Race':
+              return <Icon name="flag-checkered" style={typeIconStyle} />
             default:
               return undefined
           }
