@@ -89,8 +89,8 @@ class DashCreate extends Component {
 
   calcEstimatedRewardAmount = (model) => {
     let thisDash = 0
-    const { RewardTypeValue, RewardAmount, rewards } = model
-    if (RewardTypeValue == 'Multiple reward positions') {
+    const { RewardType, RewardAmount, rewards } = model
+    if (RewardType == 'Limited number of different rewards') {
       const _rewards = rewards ? JSON.parse(rewards) : []
       for(let i = 0; i < _rewards.length; i++) {
         if (!_rewards[i].deleted) {
@@ -120,7 +120,7 @@ class DashCreate extends Component {
       EndsAt: endDate.toISOString(),
       RewardType : "All over the line",
       RewardAmount : 0,
-      EstimatedRewardAmount: 0,
+      TargetThreshold: 0,
       rewards: null,
       participants: null,
       todos: null,
@@ -148,7 +148,7 @@ class DashCreate extends Component {
     const {
       MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
       MeasureCalcMethod, MeasureSumField,
-      rewards, participants, todos,
+      RewardAmount, rewards, participants, todos,
       ...modelData
     } = model
     const measureUnits = (MeasureCalcMethod == 'Add' || MeasureCalcMethod == 'Subtract') ? '$' : MeasureEventType + 's'
@@ -157,7 +157,6 @@ class DashCreate extends Component {
       Description : model.description,
       ImageURL : "",
       IsTeamDash : false,
-      GameType : "RocketLaunch",
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : 30,
       ScoreFormula : "",

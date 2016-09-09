@@ -160,7 +160,7 @@ class DashForm extends Component {
               <input
                 type="radio"
                 name="options"
-                value={MeasureCalcMethod.input.value == 'Sum'}
+                checked={MeasureCalcMethod.input.value == 'Sum'}
                 onChange={e => {
                   MeasureCalcMethod.input.onChange('Sum')
                   MeasureSumField.input.onChange(amountFieldId)
@@ -169,6 +169,7 @@ class DashForm extends Component {
               <span className="slds-form-element__label" style={{ color: 'inherit' }}>
                 Value of the {fieldNamePlural}: $&nbsp;
                 <Input
+                  value={TargetThreshold.input.value}
                   style={midTextSelectStyle}
                   onChange={e => {
                     if (MeasureCalcMethod.input.value == 'Sum') {
@@ -184,7 +185,7 @@ class DashForm extends Component {
             <input
               type="radio"
               name="options"
-              value={MeasureCalcMethod.input.value == 'Increment'}
+              checked={MeasureCalcMethod.input.value == 'Increment'}
               onChange={e => {
                 MeasureCalcMethod.input.onChange('Increment')
                 MeasureSumField.input.onChange(null)
@@ -193,6 +194,7 @@ class DashForm extends Component {
             <span className="slds-form-element__label" style={{ color: 'inherit' }}>
               Number of {fieldNamePlural}:&nbsp;
               <Input
+                value={TargetThreshold.input.value}
                 style={midTextSelectStyle}
                 onChange={e => {
                   if (MeasureCalcMethod.input.value == 'Increment') {
@@ -368,8 +370,8 @@ class DashForm extends Component {
 
   calcEstimatedRewardAmount = () => {
     let thisDash = 0
-    const { RewardTypeValue, RewardAmount, rewards } = this.props
-    if (RewardTypeValue == 'Multiple reward positions') {
+    const { RewardType, RewardAmount, rewards } = this.props
+    if (RewardType == 'Multiple reward positions') {
       const _rewards = rewards ? JSON.parse(rewards) : []
       for(let i = 0; i < _rewards.length; i++) {
         if (!_rewards[i].deleted) {
@@ -401,7 +403,6 @@ class DashForm extends Component {
           checked={selectedAllTodos}
           onChange={(e) => {
             const selectedAll = e.currentTarget.checked
-            console.log(selectedAll)
             for(let i = 0; i < allTodos.size; i++) {
               todos[i] = todos[i] ? todos[i] : { value: false, existed: false }
               todos[i].value = selectedAll
@@ -790,7 +791,11 @@ class DashForm extends Component {
               <h2 className={styles.fieldTitle}>Description</h2>
             </Col>
             <Col padded cols={6}>
-              <Field name="description" component="textarea" />
+              <div className="slds-form-element">
+                <div className="slds-form-element__control">
+                  <Field name="Description" component="textarea" className="slds-textarea" />
+                </div>
+              </div>
             </Col>
           </Row>
 

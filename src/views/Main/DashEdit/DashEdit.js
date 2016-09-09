@@ -125,7 +125,7 @@ class DashEdit extends Component {
   }
 
   initialValues() {
-    const { currentDash } = this.props
+    const { currentDash, dashtypes } = this.props
     if (currentDash.get('Id')) {
       const _rewards = currentDash.get('Rewards').sortBy(reward => reward.get('Position'))
       const _participants = currentDash.get('Participants')
@@ -133,6 +133,8 @@ class DashEdit extends Component {
       const eventType = currentDash.getIn(['Measure', 'EventType'], '')
       const filterCond = currentDash.getIn(['Measure', 'FilterCondition'], '')
       const filterIsFirstType = (filterCond.substr(0, 4).toLowerCase() == 'data')
+      const dashTypeId = currentDash.get('DashTypeId')
+      const rewardType = dashtypes.getIn([dashTypeId, 'Name']) == 'Race' ? 'Limited number of different rewards' : 'One reward one amount'
       return {
         Name : currentDash.get('Name'),
         Type : currentDash.get('Type'),
@@ -144,12 +146,13 @@ class DashEdit extends Component {
         MeasureFilterCondition: filterIsFirstType ? filterCond : '',
         MeasureFilterCondition1: filterIsFirstType ? '' : filterCond,
         MeasureFilterConditionType: filterIsFirstType ? 0 : 1,
+        MeasureCalcMethod: currentDash.getIn(['Measure', 'CalcMethod']),
+        MeasureSumField: currentDash.getIn(['Measure', 'SumField']),
         TargetThreshold: currentDash.get('TargetThreshold'),
         StartsAt: new Date(currentDash.get('StartsAt')).toISOString(),
         EndsAt: new Date(currentDash.get('EndsAt')).toISOString(),
-        RewardType : "All over the line",
-        RewardAmount : 0,
-        EstimatedRewardAmount: currentDash.get('EstimatedRewardAmount') ? parseInt(currentDash.get('EstimatedRewardAmount')) : 0,
+        RewardType : rewardType,
+        RewardAmount : currentDash.get('EstimatedRewardAmount') ? parseInt(currentDash.get('EstimatedRewardAmount')) : 0,
         rewards: JSON.stringify(_rewards ? _rewards : []),
         participants: JSON.stringify(_participants ? _participants : []),
         todos: JSON.stringify(this.getTodosArrayFromList(_todos ? _todos : [])),
@@ -171,7 +174,7 @@ class DashEdit extends Component {
         EndsAt: endDate.toISOString(),
         RewardType : "All over the line",
         RewardAmount : 0,
-        EstimatedRewardAmount: 0,
+        TargetThreshold: 0,
         rewards: null,
         participants: null,
         todos: null,
@@ -196,8 +199,8 @@ class DashEdit extends Component {
 
   calcEstimatedRewardAmount = (model) => {
     let thisDash = 0
-    const { RewardTypeValue, RewardAmount, rewards } = model
-    if (RewardTypeValue == 'Multiple reward positions') {
+    const { RewardType, RewardAmount, rewards } = model
+    if (RewardType == 'Limited number of different rewards') {
       const _rewards = rewards ? JSON.parse(rewards) : []
       for(let i = 0; i < _rewards.length; i++) {
         if (!_rewards[i].deleted) {
@@ -205,13 +208,12 @@ class DashEdit extends Component {
         }
       }
     } else {
-      thisDash = RewardAmount
+      thisDash = parseInt(RewardAmount)
     }
     return thisDash
   }
 
   onSubmit = (model) => {
-    console.log('data: ', model)
     const { currentDash } = this.props
     const editable = currentDash.get('Status') && currentDash.get('Status').toLowerCase() == 'draft'
     if (!editable) {
@@ -222,7 +224,7 @@ class DashEdit extends Component {
     const {
       MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
       MeasureCalcMethod, MeasureSumField,
-      rewards, participants, todos,
+      RewardAmount, rewards, participants, todos,
       ...modelData
     } = model
     const measureUnits = (MeasureCalcMethod == 'Add' || MeasureCalcMethod == 'Subtract') ? '$' : MeasureEventType + 's'
@@ -231,7 +233,6 @@ class DashEdit extends Component {
       Description : model.description,
       ImageURL : "",
       IsTeamDash : false,
-      GameType : "RocketLaunch",
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : 30,
       ScoreFormula : "",
