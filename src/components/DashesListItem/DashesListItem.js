@@ -252,7 +252,24 @@ class DashesListItem extends Component {
           )}
         </span>
       )
-    }*/ else if (filter == 'Review') {
+    }*/ else if (filter == 'Closed') {
+      return (
+        <span>
+          {this.createLinkIcon(
+            this.showDashReport.bind(this, id),
+            "line-chart",
+            iconStyle,
+            'Dash Report'
+          )}
+          {this.createLinkIcon(
+            this.viewDashDetails.bind(this, id),
+            "info-circle",
+            iconStyle,
+            'View Details'
+          )}
+        </span>
+      )
+    } else if (filter == 'Review') {
       return (
         <span>
           {this.createLinkIcon(
