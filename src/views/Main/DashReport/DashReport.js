@@ -164,7 +164,6 @@ class DashReport extends Component {
   }
 
   approvePayment = () => {
-    console.log('approve button clicked')
     this.setState({
       actionDialogOpen: true,
       actionDialogAction: 'approve'
@@ -218,7 +217,7 @@ class DashReport extends Component {
   }
 
   onApprovePayment = () => {
-    const { auth, approveDash, currentDash } = this.props
+    const { auth, approveDash, currentDash, getDash } = this.props
     const dashId = currentDash.get('Id')
     const profile = auth.getProfile()
     this.setState({
@@ -231,6 +230,14 @@ class DashReport extends Component {
         actionDialogSubmitting: false,
       })
       this.context.notify('Successfully approved dash for payment.', 'success')
+      
+      // Refresh dash
+      if (this.props.params.dashId) {
+        getDash(profile.centifyOrgId, this.props.params.dashId)
+        .catch(res => {
+          this.context.notify('Failed to get dashes from server', 'error')
+        }) 
+      }
     })
     .catch(() => {
       this.setState({

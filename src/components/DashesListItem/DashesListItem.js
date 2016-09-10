@@ -38,7 +38,18 @@ class DashesListItem extends Component {
           }
         }
       case 'GameType':
-        return <Icon name="rocket" style={gameTypeIconStyle} />
+        {
+          const val = dash.getIn([column, 'Name'])
+          switch(val) {
+            case 'To the Moon':
+              return <Icon name="rocket" style={gameTypeIconStyle} />
+            case 'Carnival Ducks':
+              return <Icon name="bullseye" style={gameTypeIconStyle} />
+            default:
+              return undefined
+          }
+          
+        }
       case 'StartsAt':
       case 'EndsAt':
       case 'CompletedAt':
