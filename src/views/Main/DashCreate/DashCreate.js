@@ -87,22 +87,6 @@ class DashCreate extends Component {
     }
   }
 
-  calcEstimatedRewardAmount = (model) => {
-    let thisDash = 0
-    const { RewardTypeValue, RewardAmount, rewards } = model
-    if (RewardTypeValue == 'Multiple reward positions') {
-      const _rewards = rewards ? JSON.parse(rewards) : []
-      for(let i = 0; i < _rewards.length; i++) {
-        if (!_rewards[i].deleted) {
-          thisDash += _rewards[i].EstimatedRewardAmount ? parseInt(_rewards[i].EstimatedRewardAmount) : 0
-        }
-      }
-    } else {
-      thisDash = RewardAmount
-    }
-    return thisDash
-  }
-
   initialValues() {
     const startDate = new Date()
     const endDate = new Date()
@@ -110,7 +94,7 @@ class DashCreate extends Component {
     return {
       Name : "",
       Type : "OverTheLine",
-      MeasureEventType : "Deal",
+      MeasureEventType : "",
       MeasureEventTypeAdvanced : "",
       MeasureFilterCondition: "",
       MeasureFilterCondition1: "",
@@ -120,7 +104,7 @@ class DashCreate extends Component {
       EndsAt: endDate.toISOString(),
       RewardType : "All over the line",
       RewardAmount : 0,
-      EstimatedRewardAmount: 0,
+      TargetThreshold: 0,
       rewards: null,
       participants: null,
       todos: null,
@@ -142,17 +126,42 @@ class DashCreate extends Component {
     return list
   }
 
+  rewardsArrayCalculate = (rewards, model) => {
+    if (model.RewardType == 'Limited number of different rewards') {
+      return rewards
+    } else {
+      const newReward = {
+        Type: "Cash",
+        Description: "",
+        Position: 1,
+        EstimatedRewardAmount: parseInt(model.RewardAmount),
+        MaximumRewardAmount: parseInt(model.RewardAmount),
+        ExternalURL: "",
+        Formula: "{}",
+        saveStatus: 1,  // 0: saved, 1: new, 2: modified
+        deleted: false,
+      }
+      const newRewards = []
+      newRewards.push(newReward)
+      for(let i = 1; i < rewards.length; i++) {
+        rewards[i].deleted = true
+        newRewards.push(rewards[i])
+      }
+      return newRewards
+    }
+  }
+
   onSubmit = (model) => {
     const auth = this.props.auth
     const profile = auth.getProfile()
     const {
       MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
       MeasureCalcMethod, MeasureSumField,
-      rewards, participants, todos,
+      RewardAmount, rewards, participants, todos,
       ...modelData
     } = model
     const measureUnits = (MeasureCalcMethod == 'Add' || MeasureCalcMethod == 'Subtract') ? '$' : MeasureEventType + 's'
-    const _rewards = rewards ? JSON.parse(rewards) : []
+    const _rewards = this.rewardsArrayCalculate(rewards ? JSON.parse(rewards) : [], model)
     const data = {
       Description : model.Description,
       ImageURL : "",
@@ -168,9 +177,8 @@ class DashCreate extends Component {
       AreTeamRewardsShared : false,
       MinimumParticipants : 1,
       MinimumUsersInTeam : 1,
-      EstimatedRewardAmount: this.calcEstimatedRewardAmount(model),
       Measure : {
-        Name : "string",
+        Name : "points",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
         FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
         CalcMethod : MeasureCalcMethod,

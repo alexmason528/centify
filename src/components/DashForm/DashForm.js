@@ -44,18 +44,30 @@ class DashForm extends Component {
     )
   }
 
-  typeSelect = () => {
+  typeSelect = ({ DashTypeId, RewardType }) => {
     const { dashtypes } = this.props
     return (
       <div className="slds-form-element">
         <div className="slds-form-element__control">
           <div className="slds-select_container">
-            <Field name={"DashTypeId"} component="select" className="slds-select">
+            <select
+              className="slds-select"
+              value={DashTypeId.input.value}
+              onChange={e => {
+                const dtid = e.currentTarget.value
+                DashTypeId.input.onChange(dtid)
+                const dtname = dashtypes.getIn([dtid, 'Name'])
+                if (dtname == 'Race') {
+                  RewardType.input.onChange('Limited number of different rewards')
+                } else {
+                  RewardType.input.onChange('One reward one amount')
+                }
+              }}>
               <option value="">- Select dash type -</option>
               {dashtypes.valueSeq().map((type, index) => (
                 <option key={index} value={type.get('Id')}>{type.get('Name')}</option>
               ))}
-            </Field>
+            </select>
           </div>
         </div>
       </div>
@@ -156,7 +168,7 @@ class DashForm extends Component {
               <input
                 type="radio"
                 name="options"
-                value={MeasureCalcMethod.input.value == 'Sum'}
+                checked={MeasureCalcMethod.input.value == 'Sum'}
                 onChange={e => {
                   MeasureCalcMethod.input.onChange('Sum')
                   MeasureSumField.input.onChange(amountFieldId)
@@ -165,6 +177,7 @@ class DashForm extends Component {
               <span className="slds-form-element__label" style={{ color: 'inherit' }}>
                 Value of the {fieldNamePlural}: $&nbsp;
                 <Input
+                  value={TargetThreshold.input.value}
                   style={midTextSelectStyle}
                   onChange={e => {
                     if (MeasureCalcMethod.input.value == 'Sum') {
@@ -180,7 +193,7 @@ class DashForm extends Component {
             <input
               type="radio"
               name="options"
-              value={MeasureCalcMethod.input.value == 'Increment'}
+              checked={MeasureCalcMethod.input.value == 'Increment'}
               onChange={e => {
                 MeasureCalcMethod.input.onChange('Increment')
                 MeasureSumField.input.onChange(null)
@@ -189,6 +202,7 @@ class DashForm extends Component {
             <span className="slds-form-element__label" style={{ color: 'inherit' }}>
               Number of {fieldNamePlural}:&nbsp;
               <Input
+                value={TargetThreshold.input.value}
                 style={midTextSelectStyle}
                 onChange={e => {
                   if (MeasureCalcMethod.input.value == 'Increment') {
@@ -364,8 +378,8 @@ class DashForm extends Component {
 
   calcEstimatedRewardAmount = () => {
     let thisDash = 0
-    const { RewardTypeValue, RewardAmount, rewards } = this.props
-    if (RewardTypeValue == 'Multiple reward positions') {
+    const { RewardType, RewardAmount, rewards } = this.props
+    if (RewardType == 'Limited number of different rewards') {
       const _rewards = rewards ? JSON.parse(rewards) : []
       for(let i = 0; i < _rewards.length; i++) {
         if (!_rewards[i].deleted) {
@@ -397,7 +411,6 @@ class DashForm extends Component {
           checked={selectedAllTodos}
           onChange={(e) => {
             const selectedAll = e.currentTarget.checked
-            console.log(selectedAll)
             for(let i = 0; i < allTodos.size; i++) {
               todos[i] = todos[i] ? todos[i] : { value: false, existed: false }
               todos[i].value = selectedAll
@@ -597,7 +610,7 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, description, MeasureEventType, errors } = this.props
+    const { handleSubmit, submitting, RewardType, RewardAmount, editable, budgetAmount, description, MeasureEventType, errors } = this.props
     const { schemas } = this.props
     const value = this.calcEstimatedRewardAmount()
     const errorStyle = {
@@ -652,7 +665,12 @@ class DashForm extends Component {
               <h2 className={styles.fieldTitle}>Type</h2>
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}>
-              {this.typeSelect()}
+              <Fields
+                names={[
+                  'DashTypeId',
+                  'RewardType',
+                ]}
+                component={this.typeSelect} />
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
           </Row>
@@ -743,9 +761,6 @@ class DashForm extends Component {
             <Col padded cols={6} className="slds-m-bottom--medium">
               <h2 className={styles.fieldTitle}>Rewards</h2>
             </Col>
-            <Col padded cols={6} colsMedium={4}>
-              {this.rewardTypeSelect()}
-            </Col>
             <Col padded cols={6} colsMedium={2}>
               <table>
                 <tbody>
@@ -761,7 +776,7 @@ class DashForm extends Component {
             </Col>
             <Col padded cols={6} className="slds-m-top--small">
               {
-                RewardTypeValue == 'Multiple reward positions' ?
+                RewardType == 'Limited number of different rewards' ?
                 <Field name="rewards" component={this.rewardList} />
                 :
                 <div>
@@ -817,7 +832,7 @@ _DashForm = connect(
   state => {
     return {
       DashTypeId: selector(state, 'DashTypeId'),
-      RewardTypeValue: selector(state, 'RewardType'),
+      RewardType: selector(state, 'RewardType'),
       RewardAmount: selector(state, 'RewardAmount'),
       rewards: selector(state, 'rewards'),
       MeasureEventType: selector(state, 'MeasureEventType'),
