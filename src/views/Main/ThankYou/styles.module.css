@@ -1,0 +1,7 @@
+.todosTable {
+  font: inherit;
+}
+
+.todosTable tr:hover .tooltip {
+  visibility: visible !important;
+}

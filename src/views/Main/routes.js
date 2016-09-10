@@ -11,11 +11,14 @@ import Dashes from './Dashes/Dashes'
 import DashCreate from './DashCreate/DashCreate'
 import DashEdit from './DashEdit/DashEdit'
 import DashReport from './DashReport/DashReport'
+import FakeIt from './FakeIt/FakeIt'
 import Todos from './Todos/Todos'
 import TodosEdit from './TodosEdit/TodosEdit'
+import Budget from './Budget/Budget'
 import Payouts from './Payouts/Payouts'
 import AppleTVActivation from './AppleTVActivation/AppleTVActivation'
 import Signup from './Signup/Signup'
+import Thankyou from './ThankYou/ThankYou'
 
 const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DOMAIN__);
 
@@ -37,12 +40,15 @@ export const makeMainRoutes = () => {
       <Route component={LayoutContainer} onEnter={requireAuth}>
         <Route path="account-not-linked" component={AccountNotLinked} />
         <Route path="home" component={Home} />
+        <Route path="thankyou" component={Thankyou} />
         <Route path="dashes" component={Dashes} />
         <Route path="dashes/new" component={DashCreate} />
         <Route path="dashes/:dashId" component={DashEdit} />
         <Route path="dashes/:dashId/report" component={DashReport} />
+        <Route path="dashes/:dashId/fakeit" component={FakeIt} />
         <Route path="todos" component={Todos} />
         <Route path="todos/edit" component={TodosEdit} />
+        <Route path="budget" component={Budget} />
         <Route path="payouts" component={Payouts} />
         <Route path="appletv" component={AppleTVActivation} />
       </Route>

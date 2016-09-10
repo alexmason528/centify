@@ -81,6 +81,14 @@ class Dashes extends Component {
     });
   }
 
+  onApproveDash = (dash) => {
+    this.setState({
+      actionDialogOpen: true,
+      actionDialogAction: 'approve',
+      actionDialogDash: dash,
+    });
+  }
+
   onClose = () => {
     this.setState({
       actionDialogOpen: false,
@@ -94,9 +102,10 @@ class Dashes extends Component {
       actionDispatcher = this.props.activateDash
     } else if (actionDialogAction == 'complete') {
       actionDispatcher = this.props.completeDash
-    }
-    else if (actionDialogAction == 'delete') {
+    } else if (actionDialogAction == 'delete') {
       actionDispatcher = this.props.deleteDash
+    } else if (actionDialogAction == 'approve') {
+      actionDispatcher = this.props.approveDash
     }
 
     if (actionDispatcher) {
@@ -142,10 +151,11 @@ class Dashes extends Component {
           <ButtonGroup>
             <Button type={filter == 'Draft' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Draft')}>Draft</Button>
             <Button type={filter == 'Upcoming' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Upcoming')}>Upcoming</Button>
-            <Button type={filter == 'Running' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Running')}>Running</Button>
+            <Button type={filter == 'Running' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Running')}>Games</Button>
             <Button type={filter == 'Finalizing' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Finalizing')}>Finalizing</Button>
             {/*<Button type={filter == 'Completed' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Completed')}>Completed</Button>*/}
-            <Button type={filter == 'Closed' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Closed')}>Closed</Button>
+            <Button type={filter == 'Review' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Review')}>In Review</Button>
+            <Button type={filter == 'Closed' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Closed')}>Done</Button>
           </ButtonGroup>
         </div>
         <div className="slds-clearfix slds-m-vertical--x-large">
@@ -179,7 +189,8 @@ class Dashes extends Component {
                     participantCount={participantCount ? participantCount : 0}
                     onActivate={this.onActivateDash.bind(this, dash)}
                     onDelete={this.onDeleteDash.bind(this, dash)}
-                    onComplete={this.onCompleteDash.bind(this, dash)} />
+                    onComplete={this.onCompleteDash.bind(this, dash)}
+                    onApprove={this.onApproveDash.bind(this,dash)} />
                   :
                   false
               })}

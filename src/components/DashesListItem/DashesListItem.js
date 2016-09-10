@@ -31,6 +31,8 @@ class DashesListItem extends Component {
               return <Icon name="bomb" style={typeIconStyle} />
             case 'Countdown':
               return <Icon name="clock-o" style={typeIconStyle} />
+            case 'Race':
+              return <Icon name="flag-checkered" style={typeIconStyle} />
             default:
               return undefined
           }
@@ -147,7 +149,7 @@ class DashesListItem extends Component {
       marginRight: 7,
     }
     const id = dash.get('Id')
-    const { onActivate, onComplete, onDelete } = this.props
+    const { onActivate, onComplete, onDelete, onApprove } = this.props
     if (filter == 'Draft') {
       return (
         <span>
@@ -266,6 +268,29 @@ class DashesListItem extends Component {
             "info-circle",
             iconStyle,
             'View Details'
+          )}
+        </span>
+      )
+    } else if (filter == 'Review') {
+      return (
+        <span>
+          {this.createLinkIcon(
+            this.showDashReport.bind(this, id),
+            "line-chart",
+            iconStyle,
+            'Dash Report'
+          )}
+          {this.createLinkIcon(
+            this.viewDashDetails.bind(this, id),
+            "info-circle",
+            iconStyle,
+            'View Details'
+          )}
+          {this.createLinkIcon(
+            onApprove,
+            "check",
+            { ...iconStyle, ...greenIcon },
+            'Approve for Payment'
           )}
         </span>
       )

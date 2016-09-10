@@ -43,6 +43,9 @@ import {
   DASHES_COMPLETE,
   DASHES_COMPLETE_SUCCESS,
   DASHES_COMPLETE_FAIL,
+  DASHES_APPROVE,
+  DASHES_APPROVE_SUCCESS,
+  DASHES_APPROVE_FAIL,
 
   DASHES_REWARD_CREATE,
   DASHES_REWARD_CREATE_SUCCESS,
@@ -476,5 +479,12 @@ export function completeDash(orgId, dashId) {
   return {
     types: [DASHES_COMPLETE, DASHES_COMPLETE_SUCCESS, DASHES_COMPLETE_FAIL],
     promise: (client) => client.put(`/v1/${orgId}/dashes/${dashId}/complete`)
+  }
+}
+
+export function approveDash(orgId, dashId) {
+  return {
+    types: [DASHES_APPROVE, DASHES_APPROVE_SUCCESS, DASHES_APPROVE_FAIL],
+    promise: (client) => client.put(`/v1/${orgId}/dashes/${dashId}/close`)
   }
 }
