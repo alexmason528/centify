@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import styles from './styles.module.css'
 import logoImage from 'images/centify-logo.png'
 import {Icon} from 'react-fa'
-
+import { Link } from 'react-router'
 
 class Header extends Component {
 
@@ -57,9 +57,9 @@ class Header extends Component {
                   </a>
                 </li>
                 <li className={styles.rightSideIcons}>
-                  <a className={styles.disabledLink}>
+                  <Link to="/thankyou">
                     <Icon name="cog" />
-                  </a>
+                  </Link>
                 </li>
                 <li className={styles.rightSideIcons}>
                   <a className={styles.disabledLink}>

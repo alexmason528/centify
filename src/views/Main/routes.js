@@ -18,6 +18,7 @@ import Budget from './Budget/Budget'
 import Payouts from './Payouts/Payouts'
 import AppleTVActivation from './AppleTVActivation/AppleTVActivation'
 import Signup from './Signup/Signup'
+import Thankyou from './ThankYou/ThankYou'
 
 const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DOMAIN__);
 
@@ -39,6 +40,7 @@ export const makeMainRoutes = () => {
       <Route component={LayoutContainer} onEnter={requireAuth}>
         <Route path="account-not-linked" component={AccountNotLinked} />
         <Route path="home" component={Home} />
+        <Route path="thankyou" component={Thankyou} />
         <Route path="dashes" component={Dashes} />
         <Route path="dashes/new" component={DashCreate} />
         <Route path="dashes/:dashId" component={DashEdit} />
