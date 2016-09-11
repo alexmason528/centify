@@ -13,6 +13,16 @@ class DashCreate extends Component {
     notify: React.PropTypes.func
   }
 
+  state = {
+    errors: false
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      errors: false
+    })
+  }
+
   componentDidMount() {
     const auth = this.props.auth
     if (auth) {
@@ -52,23 +62,29 @@ class DashCreate extends Component {
           this.context.notify('Failed to get dash banners from server', 'error')
         })
       }
-    }
-  }
-
-  calcEstimatedRewardAmount = (model) => {
-    let thisDash = 0
-    const { RewardTypeValue, RewardAmount, rewards } = model
-    if (RewardTypeValue == 'Multiple reward positions') {
-      const _rewards = rewards ? JSON.parse(rewards) : []
-      for(let i = 0; i < _rewards.length; i++) {
-        if (!_rewards[i].deleted) {
-          thisDash += _rewards[i].EstimatedRewardAmount ? parseInt(_rewards[i].EstimatedRewardAmount) : 0
-        }
+      // Get organization schemas
+      const {
+        loadedSchemas,
+        getSchemas,
+      } = this.props
+      if (!loadedSchemas) {
+        getSchemas(profile.centifyOrgId)
+        .catch(() => {
+          this.context.notify('Failed to get organization-wide basic filters', 'error')
+        })
       }
-    } else {
-      thisDash = RewardAmount
+      // Get game types
+      const {
+        loadedGameTypes,
+        getGameTypes,
+      } = this.props
+      if (!loadedGameTypes) {
+        getGameTypes()
+        .catch(() => {
+          this.context.notify('Failed to get organization-wide basic filters', 'error')
+        })
+      }
     }
-    return thisDash
   }
 
   initialValues() {
@@ -78,14 +94,17 @@ class DashCreate extends Component {
     return {
       Name : "",
       Type : "OverTheLine",
-      MeasureType : "Deal",
-      MeasureFilterCondition: 'data["06ry1nbzp9yn6yfj"] == "something" and data["06ry1ncypkco6lcq"] != "something else" and data["06ry1nfslir3u8uu"] < 300 and data["06ry1nfx9ax7oebn"] > 200',
-      MeasureValue : 0,
+      MeasureEventType : "",
+      MeasureEventTypeAdvanced : "",
+      MeasureFilterCondition: "",
+      MeasureFilterCondition1: "",
+      MeasureFilterConditionType: 0,
+      TargetThreshold: 0,
       StartsAt: startDate.toISOString(),
       EndsAt: endDate.toISOString(),
       RewardType : "All over the line",
       RewardAmount : 0,
-      EstimatedRewardAmount: 0,
+      TargetThreshold: 0,
       rewards: null,
       participants: null,
       todos: null,
@@ -107,11 +126,42 @@ class DashCreate extends Component {
     return list
   }
 
+  rewardsArrayCalculate = (rewards, model) => {
+    if (model.RewardType == 'Limited number of different rewards') {
+      return rewards
+    } else {
+      const newReward = {
+        Type: "Cash",
+        Description: "",
+        Position: 1,
+        EstimatedRewardAmount: parseInt(model.RewardAmount),
+        MaximumRewardAmount: parseInt(model.RewardAmount),
+        ExternalURL: "",
+        Formula: "{}",
+        saveStatus: 1,  // 0: saved, 1: new, 2: modified
+        deleted: false,
+      }
+      const newRewards = []
+      newRewards.push(newReward)
+      for(let i = 1; i < rewards.length; i++) {
+        rewards[i].deleted = true
+        newRewards.push(rewards[i])
+      }
+      return newRewards
+    }
+  }
+
   onSubmit = (model) => {
     const auth = this.props.auth
     const profile = auth.getProfile()
-    const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model
-    const _rewards = rewards ? JSON.parse(rewards) : []
+    const {
+      MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
+      MeasureCalcMethod, MeasureSumField,
+      RewardAmount, rewards, participants, todos,
+      ...modelData
+    } = model
+    const measureUnits = (MeasureCalcMethod == 'Add' || MeasureCalcMethod == 'Subtract') ? '$' : MeasureEventType + 's'
+    const _rewards = this.rewardsArrayCalculate(rewards ? JSON.parse(rewards) : [], model)
     const data = {
       Description : model.Description,
       ImageURL : "",
@@ -121,21 +171,20 @@ class DashCreate extends Component {
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : 30,
       ScoreFormula : "",
-      ScoreUnits : "string",
+      ScoreUnits : measureUnits,
       IsPublic : false,
       AreRewardsShared : false,
       AreTeamRewardsShared : false,
       MinimumParticipants : 1,
       MinimumUsersInTeam : 1,
-      EstimatedRewardAmount: this.calcEstimatedRewardAmount(model),
       Measure : {
-        Name : "string",
-        EventType : model.MeasureType,
-        FilterCondition : "string",
-        CalcMethod : "Sum",
-        SumFields : "string",
-        Units : "string",
-        "Value": 0,
+        Name : "points",
+        EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
+        FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
+        CalcMethod : MeasureCalcMethod,
+        SumField : MeasureSumField,
+        Units : measureUnits,
+        Value: 0,
       },
       IsBash : false,
       DashIdAssociatedToBash : null,
@@ -150,7 +199,9 @@ class DashCreate extends Component {
       this.context.notify('Dash created successfully', 'success')
     })
     .catch(res => {
-      this.context.notify('Failed to create dash due to errors', 'error')
+      this.setState({
+        errors: res.errors
+      })
     })
   }
 
@@ -162,10 +213,13 @@ class DashCreate extends Component {
       budgetAmount,
       loadingDashTypes, loadedDashTypes, dashtypes,
       loadingDashBanners, dashbanners,
+      loadingSchemas, schemas,
+      loadingGameTypes, gametypes,
     } = this.props
     if (loading || loadingParticipants || loadingRewards
       || loadingUsers || loadingTodos || loadingDashTypes
-      || loadingDashBanners || !loadedDashTypes) {
+      || loadingDashBanners || !loadedDashTypes
+      || loadingSchemas || loadingGameTypes) {
       return (
         <LoadingSpinner/>
       )
@@ -187,7 +241,10 @@ class DashCreate extends Component {
           todos={todos.filter(todo => !!todo.get('Status'))}
           budgetAmount={budgetAmount}
           dashtypes={dashtypes}
-          dashbanners={dashbanners} />
+          dashbanners={dashbanners}
+          schemas={schemas}
+          gametypes={gametypes}
+          errors={this.state.errors} />
       </div>
     )
   }

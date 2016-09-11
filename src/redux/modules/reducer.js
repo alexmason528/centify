@@ -10,6 +10,7 @@ import dashtypes from './dashtypes'
 import dashbanners from './dashbanners'
 import appletv from './appletv'
 import schemas from './schemas'
+import gametypes from './gametypes'
 
 export default combineReducers({
   routing: routerReducer,
@@ -22,4 +23,5 @@ export default combineReducers({
   dashbanners,
   appletv,
   schemas,
+  gametypes,
 });

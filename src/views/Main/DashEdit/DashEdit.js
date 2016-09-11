@@ -14,6 +14,16 @@ class DashEdit extends Component {
     notify: React.PropTypes.func
   }
 
+  state = {
+    errors: false
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      errors: false
+    })
+  }
+
   componentDidMount() {
     const auth = this.props.auth
     if (auth) {
@@ -60,6 +70,28 @@ class DashEdit extends Component {
           this.context.notify('Failed to get dash banners from server', 'error')
         })
       }
+      // Get organization schemas
+      const {
+        loadedSchemas,
+        getSchemas,
+      } = this.props
+      if (!loadedSchemas) {
+        getSchemas(profile.centifyOrgId)
+        .catch(() => {
+          this.context.notify('Failed to get organization-wide basic filters', 'error')
+        })
+      }
+      // Get game types
+      const {
+        loadedGameTypes,
+        getGameTypes,
+      } = this.props
+      if (!loadedGameTypes) {
+        getGameTypes()
+        .catch(() => {
+          this.context.notify('Failed to get organization-wide basic filters', 'error')
+        })
+      }
     }
   }
 
@@ -93,25 +125,36 @@ class DashEdit extends Component {
   }
 
   initialValues() {
-    const { currentDash } = this.props
+    const { currentDash, dashtypes } = this.props
     if (currentDash.get('Id')) {
       const _rewards = currentDash.get('Rewards').sortBy(reward => reward.get('Position'))
       const _participants = currentDash.get('Participants')
       const _todos = currentDash.get('ToDos')
+      const eventType = currentDash.getIn(['Measure', 'EventType'], '')
+      const filterCond = currentDash.getIn(['Measure', 'FilterCondition'], '')
+      const filterIsFirstType = (filterCond.substr(0, 4).toLowerCase() == 'data')
+      const dashTypeId = currentDash.get('DashTypeId')
+      const rewardType = dashtypes.getIn([dashTypeId, 'Name']) == 'Race' ? 'Limited number of different rewards' : 'One reward one amount'
+      const rewards = JSON.stringify(_rewards ? _rewards : [])
       return {
         Name : currentDash.get('Name'),
         Type : currentDash.get('Type'),
         DashTypeId: currentDash.get('DashTypeId'),
+        GameTypeId: currentDash.get('GameTypeId'),
         DashBannerId: currentDash.get('DashBannerId'),
-        MeasureType: currentDash.getIn(['Measure', 'EventType'], ''),
-        MeasureFilterCondition: 'data["06ry1nbzp9yn6yfj"] == "something" and data["06ry1ncypkco6lcq"] != "something else" and data["06ry1nfslir3u8uu"] < 300 and data["06ry1nfx9ax7oebn"] > 200',
-        MeasureValue: currentDash.get('TargetThreshold'),
+        MeasureEventType: eventType,
+        MeasureEventTypeAdvanced : eventType,
+        MeasureFilterCondition: filterIsFirstType ? filterCond : '',
+        MeasureFilterCondition1: filterIsFirstType ? '' : filterCond,
+        MeasureFilterConditionType: filterIsFirstType ? 0 : 1,
+        MeasureCalcMethod: currentDash.getIn(['Measure', 'CalcMethod']),
+        MeasureSumField: currentDash.getIn(['Measure', 'SumField']),
+        TargetThreshold: currentDash.get('TargetThreshold'),
         StartsAt: new Date(currentDash.get('StartsAt')).toISOString(),
         EndsAt: new Date(currentDash.get('EndsAt')).toISOString(),
-        RewardType : "All over the line",
-        RewardAmount : 0,
-        EstimatedRewardAmount: currentDash.get('EstimatedRewardAmount') ? parseInt(currentDash.get('EstimatedRewardAmount')) : 0,
-        rewards: JSON.stringify(_rewards ? _rewards : []),
+        RewardType : rewardType,
+        RewardAmount : _rewards.getIn([0, 'EstimatedRewardAmount']),
+        rewards: rewards,
         participants: JSON.stringify(_participants ? _participants : []),
         todos: JSON.stringify(this.getTodosArrayFromList(_todos ? _todos : [])),
         Description: currentDash.get('Description')
@@ -123,14 +166,17 @@ class DashEdit extends Component {
       return {
         Name : "",
         Type : "OverTheLine",
-        MeasureType : "Deal",
-        MeasureFilterCondition: 'data["06ry1nbzp9yn6yfj"] == "something" and data["06ry1ncypkco6lcq"] != "something else" and data["06ry1nfslir3u8uu"] < 300 and data["06ry1nfx9ax7oebn"] > 200',
-        MeasureValue : 0,
+        MeasureEventType : "Deal",
+        MeasureEventTypeAdvanced : "",
+        MeasureFilterCondition: "",
+        MeasureFilterCondition1: "",
+        MeasureFilterConditionType: 0,
+        TargetThreshold : 0,
         StartsAt: startDate.toISOString(),
         EndsAt: endDate.toISOString(),
         RewardType : "All over the line",
         RewardAmount : 0,
-        EstimatedRewardAmount: 0,
+        TargetThreshold: 0,
         rewards: null,
         participants: null,
         todos: null,
@@ -153,24 +199,32 @@ class DashEdit extends Component {
     return list
   }
 
-  calcEstimatedRewardAmount = (model) => {
-    let thisDash = 0
-    const { RewardTypeValue, RewardAmount, rewards } = model
-    if (RewardTypeValue == 'Multiple reward positions') {
-      const _rewards = rewards ? JSON.parse(rewards) : []
-      for(let i = 0; i < _rewards.length; i++) {
-        if (!_rewards[i].deleted) {
-          thisDash += _rewards[i].EstimatedRewardAmount ? parseInt(_rewards[i].EstimatedRewardAmount) : 0
-        }
-      }
+  rewardsArrayCalculate = (rewards, model) => {
+    if (model.RewardType == 'Limited number of different rewards') {
+      return rewards
     } else {
-      thisDash = RewardAmount
+      const newReward = {
+        Type: "Cash",
+        Description: "",
+        Position: 1,
+        EstimatedRewardAmount: parseInt(model.RewardAmount),
+        MaximumRewardAmount: parseInt(model.RewardAmount),
+        ExternalURL: "",
+        Formula: "{}",
+        saveStatus: 1,  // 0: saved, 1: new, 2: modified
+        deleted: false,
+      }
+      const newRewards = []
+      newRewards.push(newReward)
+      for(let i = 0; i < rewards.length; i++) {
+        rewards[i].deleted = true
+        newRewards.push(rewards[i])
+      }
+      return newRewards
     }
-    return thisDash
   }
 
   onSubmit = (model) => {
-    console.log('data: ', model)
     const { currentDash } = this.props
     const editable = currentDash.get('Status') && currentDash.get('Status').toLowerCase() == 'draft'
     if (!editable) {
@@ -178,8 +232,14 @@ class DashEdit extends Component {
     }
     const auth = this.props.auth
     const profile = auth.getProfile()
-    const { MeasureType, MeasureValue, rewards, participants, todos, ...modelData } = model
-    const _rewards = rewards ? JSON.parse(rewards) : []
+    const {
+      MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
+      MeasureCalcMethod, MeasureSumField,
+      RewardAmount, rewards, participants, todos,
+      ...modelData
+    } = model
+    const measureUnits = (MeasureCalcMethod == 'Add' || MeasureCalcMethod == 'Subtract') ? '$' : MeasureEventType + 's'
+    const _rewards = this.rewardsArrayCalculate(rewards ? JSON.parse(rewards) : [], model)
     const data = {
       Description : model.Description,
       ImageURL : "",
@@ -189,21 +249,20 @@ class DashEdit extends Component {
       QualifyingThreshold : 3,
       VelocityAccelTimePeriod : 30,
       ScoreFormula : "",
-      ScoreUnits : "string",
+      ScoreUnits : measureUnits,
       IsPublic : false,
       AreRewardsShared : false,
       AreTeamRewardsShared : false,
       MinimumParticipants : 1,
       MinimumUsersInTeam : 1,
-      EstimatedRewardAmount: this.calcEstimatedRewardAmount(model),
       Measure : {
-        Name : "string",
-        EventType : model.MeasureType,
-        FilterCondition : "string",
-        CalcMethod : "Sum",
-        SumFields : "string",
-        Units : "string",
-        "Value": 0,
+        Name: "points",
+        EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
+        FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
+        CalcMethod : MeasureCalcMethod,
+        SumField : MeasureSumField,
+        Units : measureUnits,
+        Value: 0,
       },
       IsBash : false,
       DashIdAssociatedToBash : null,
@@ -218,7 +277,9 @@ class DashEdit extends Component {
       this.context.notify('Dash updated successfully', 'success')
     })
     .catch(res => {
-      this.context.notify('Failed to update dash due to errors', 'error')
+      this.setState({
+        errors: res.errors
+      })
     })
   }
 
@@ -230,10 +291,13 @@ class DashEdit extends Component {
       budgetAmount,
       loadingDashTypes, loadedDashTypes, dashtypes,
       loadingDashBanners, dashbanners,
+      loadingSchemas, schemas,
+      loadingGameTypes, gametypes,
     } = this.props
     if (loading || loadingParticipants || loadingRewards
       || loadingUsers || loadingTodos || loadingDashTypes
-      || loadingDashBanners || !loadedDashTypes) {
+      || loadingDashBanners || !loadedDashTypes
+      || loadingSchemas || loadingGameTypes) {
       return (
         <LoadingSpinner/>
       )
@@ -256,7 +320,10 @@ class DashEdit extends Component {
           editable={editable}
           budgetAmount={budgetAmount}
           dashtypes={dashtypes}
-          dashbanners={dashbanners} />
+          dashbanners={dashbanners}
+          schemas={schemas}
+          gametypes={gametypes}
+          errors={this.state.errors} />
       </div>
     )
   }

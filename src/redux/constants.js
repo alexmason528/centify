@@ -40,6 +40,9 @@ export const DASHES_ACTIVATE_FAIL = 'centify/dashes/ACTIVATE_FAIL'
 export const DASHES_COMPLETE = 'centify/dashes/COMPLETE'
 export const DASHES_COMPLETE_SUCCESS = 'centify/dashes/COMPLETE_SUCCESS'
 export const DASHES_COMPLETE_FAIL = 'centify/dashes/COMPLETE_FAIL'
+export const DASHES_APPROVE = 'centify/dashes/APPROVE'
+export const DASHES_APPROVE_SUCCESS = 'centify/dashes/APPROVE_SUCCESS'
+export const DASHES_APPROVE_FAIL = 'centify/dashes/APPROVE_FAIL'
 
 export const DASHES_REWARD_CREATE = 'centify/dashes/reward/CREATE'
 export const DASHES_REWARD_CREATE_SUCCESS = 'centify/dashes/reward/CREATE_SUCCESS'
@@ -130,3 +133,9 @@ export const BASIC_FILTERS_GET_FAIL = 'centify/filters/BASIC_GET_FAIL'
 export const SCHEMAS_GET = 'centify/filters/SCHEMAS_GET'
 export const SCHEMAS_GET_SUCCESS = 'centify/filters/SCHEMAS_GET_SUCCESS'
 export const SCHEMAS_GET_FAIL = 'centify/filters/SCHEMAS_GET_FAIL'
+
+/* Game types module */
+
+export const GAME_TYPES_GET = 'centify/filters/GAME_TYPES_GET'
+export const GAME_TYPES_GET_SUCCESS = 'centify/filters/GAME_TYPES_GET_SUCCESS'
+export const GAME_TYPES_GET_FAIL = 'centify/filters/GAME_TYPES_GET_FAIL'
