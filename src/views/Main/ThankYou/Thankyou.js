@@ -61,10 +61,11 @@ class ThankYou extends Component {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi luctus tortor
         </div>
         <div className="slds-m-vertical--x-large">
-          <h3 className="slds-text-title--caps" style={{ fontSize: 18, fontWeight: 600 }}>1. Link Salesforce.com to Centify</h3>
-          <div className="slds-m-bottom--large"> Follow the app instructions on setting up</div>
+          <h3 className="slds-m-bottom--small slds-text-title--caps" style={{ fontSize: 18, fontWeight: 600 }}>
+            1. Link Salesforce.com to Centify
+          </h3>
+          <div className="slds-m-bottom--large">Follow the app instructions on setting up</div>
           <div className="slds-align--absolute-center slds-container--medium slds-m-bottom--large">
-            <h1 style={{ fontSize: 20, fontWeight: 700, textAlign: 'center' }} className="slds-m-right--large">Download <br />App Here</h1>
             <div className="slds-image">
               <img src={salesforceImage} />
             </div>
@@ -76,12 +77,12 @@ class ThankYou extends Component {
           </h3>
           <div className="slds-m-bottom--large">Reps will need to install the "Centify - Fast Fun SPIFFs" app, available from the</div>
           <div className="slds-align--absolute-center slds-container--medium slds-m-bottom--large">
-            <h1 style={{ fontSize: 20, fontWeight: 700, textAlign: 'center' }} className="slds-m-right--large">Download <br />App Here</h1>
+
             <div className="slds-image slds-m-right--large">
-              <img src={appstoreImage} />
+              <a href="https://itunes.apple.com/us/app/centify-fast-fun-spiffs/id1131699982?ls=1&mt=8" target="_blank" title="View in App Store"><img src={appstoreImage} /></a>
             </div>
             <div className="slds-image">
-              <img src={googleplayImage} />
+              <a href="https://play.google.com/store/apps/details?id=com.centify.Centify&hl=en" target="_blank" title="View in Play Store"><img src={googleplayImage} /></a>
             </div>
           </div>
         </div>
@@ -91,9 +92,8 @@ class ThankYou extends Component {
           </h3>
           <div className="slds-m-bottom--large">Start runnig SPIFFs on the big screen and install the AppleTV app</div>
           <div className="slds-align--absolute-center slds-container--medium slds-m-bottom--large">
-            <h1 style={{ fontSize: 20, fontWeight: 700, textAlign: 'center' }} className="slds-m-right--large">Download <br />App Here</h1>
             <div className="slds-image">
-              <img src={appstoreImage} />
+              <a href="https://itunes.apple.com/us/app/centify-tv-fast-fun-spiffs/id1144206024?mt=8" target="_blank" title="View in App Store"><img src={appstoreImage} /></a>
             </div>
           </div>
         </div>
