@@ -409,7 +409,7 @@ class DashForm extends Component {
     }
     return (
       <div>
-        <div className="slds-m-bottom--small">Select one or more Todos for this dash</div>
+        <div className="slds-m-bottom--small">Select one or more Todos for this SPIFF</div>
         <Checkbox
           className="slds-m-bottom--x-small"
           label='Select all'

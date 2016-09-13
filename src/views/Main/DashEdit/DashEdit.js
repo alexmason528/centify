@@ -48,7 +48,7 @@ class DashEdit extends Component {
       if (this.props.params.dashId) {
         this.props.getDash(profile.centifyOrgId, this.props.params.dashId)
         .catch(res => {
-          this.context.notify('Failed to get dash details from server', 'error')
+          this.context.notify('Failed to get SPIFF details from server', 'error')
         })
       }
       // Get budget
@@ -59,7 +59,7 @@ class DashEdit extends Component {
       if (!loadedDashTypes) {
         getDashTypes(profile.centifyOrgId)
         .catch(res => {
-          this.context.notify('Failed to get dash types from server', 'error')
+          this.context.notify('Failed to get SPIFF types from server', 'error')
         })
       }
       // Get dash banners
@@ -67,7 +67,7 @@ class DashEdit extends Component {
       if (!loadedDashBanners) {
         getDashBanners()
         .catch(res => {
-          this.context.notify('Failed to get dash banners from server', 'error')
+          this.context.notify('Failed to get SPIFF banners from server', 'error')
         })
       }
       // Get organization schemas

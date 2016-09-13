@@ -51,7 +51,7 @@ class DashCreate extends Component {
       if (!loadedDashTypes) {
         getDashTypes(profile.centifyOrgId)
         .catch(res => {
-          this.context.notify('Failed to get dash types from server', 'error')
+          this.context.notify('Failed to get SPIFF types from server', 'error')
         })
       }
       // Get dash banners
@@ -59,7 +59,7 @@ class DashCreate extends Component {
       if (!loadedDashBanners) {
         getDashBanners()
         .catch(res => {
-          this.context.notify('Failed to get dash banners from server', 'error')
+          this.context.notify('Failed to get SPIFF banners from server', 'error')
         })
       }
       // Get organization schemas

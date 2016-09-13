@@ -106,7 +106,7 @@ class TodosEdit extends Component {
       <div className={styles.root + ' slds-m-horizontal--medium slds-m-vertical--medium'}>
         <div className="slds-m-vertical--x-large">
           <h2 style={{ fontSize: 28, fontWeight: 700 }}>ToDos</h2>
-          The following are ToDos that are allowed to be selected as prerequisites for dashes.  Once they are activated you are then able to select them when creating a dash.
+          The following are ToDos that are allowed to be selected as prerequisites for SPIFFs.  Once they are activated you are then able to select them when creating a SPIFF.
         </div>
         <div className="slds-m-bottom--large slds-text-align--right">
           <Link to="/todos">
