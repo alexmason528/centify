@@ -194,15 +194,15 @@ class DashCreate extends Component {
       todos: todos ? this.todosList(JSON.parse(todos)) : [],
       ...modelData
     }
-    this.props.createDash(profile.centifyOrgId, data)
-    .then(() => {
-      this.context.notify('Dash created successfully', 'success')
-    })
-    .catch(res => {
-      this.setState({
-        errors: res.errors
+    return this.props.createDash(profile.centifyOrgId, data)
+      .then(() => {
+        this.context.notify('Dash created successfully', 'success')
       })
-    })
+      .catch(res => {
+        this.setState({
+          errors: res.errors
+        })
+      })
   }
 
   render() {
