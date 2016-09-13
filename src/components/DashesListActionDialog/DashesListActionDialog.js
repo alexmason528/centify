@@ -6,13 +6,13 @@ class DashesListActionDialog extends Component {
     if (action == 'approve') {
       return (
         <p>
-          Are you sure you want to approve the dash, no further changes will be allowed and payouts will be approved.
+          Are you sure you want to approve the SPIFF, no further changes will be allowed and payouts will be approved.
         </p>
       );
     } else {
       return (
         <p>
-          Are you sure you want to {action} the dash: {dashName}?
+          Are you sure you want to {action} the SPIFF: {dashName}?
         </p>
       );
     }

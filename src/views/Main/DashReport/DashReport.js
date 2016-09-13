@@ -229,13 +229,13 @@ class DashReport extends Component {
         actionDialogOpen: false,
         actionDialogSubmitting: false,
       })
-      this.context.notify('Successfully approved dash for payment.', 'success')
+      this.context.notify('Successfully approved SPIFF for payment.', 'success')
       
       // Refresh dash
       if (this.props.params.dashId) {
         getDash(profile.centifyOrgId, this.props.params.dashId)
         .catch(res => {
-          this.context.notify('Failed to get dashes from server', 'error')
+          this.context.notify('Failed to get SPIFFs from server', 'error')
         }) 
       }
     })
@@ -244,7 +244,7 @@ class DashReport extends Component {
         actionDialogOpen: false,
         actionDialogSubmitting: false,
       })
-      this.context.notify('Failed to approve dash for payment', 'error')
+      this.context.notify('Failed to approve SPIFFs for payment', 'error')
     })
   }
 
