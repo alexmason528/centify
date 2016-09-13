@@ -23,7 +23,7 @@ const SideNav = ({ routeName, notLinked }) => {
             <Icon fixedWidth name="dashboard"/> Dashboard
           </Link></li>
           <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
-            <Icon fixedWidth name="flag-checkered"/> Dashes
+            <Icon fixedWidth name="flag-checkered"/> SPIFFs
           </Link></li>
           <li className={styles.disabled}><Link to="/"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="folder-header">
             <Icon fixedWidth name="hand-o-right"/> ToDos
@@ -59,8 +59,8 @@ const SideNav = ({ routeName, notLinked }) => {
         <li className={routeName == 'home' ? "slds-is-active" : ""}><Link to="/home"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
           <Icon fixedWidth name="dashboard"/> Dashboard
         </Link></li>
-        <li className={routeName == 'dashes' ? "slds-is-active" : ""}><Link to="/dashes"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
-          <Icon fixedWidth name="flag-checkered"/> Dashes
+        <li className={routeName == 'spiffs' ? "slds-is-active" : ""}><Link to="/spiffs"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
+          <Icon fixedWidth name="flag-checkered"/> SPIFFs
         </Link></li>
         <li className={routeName == 'todos' ? "slds-is-active" : ""}><Link to="/todos"  className="slds-navigation-list--vertical__action slds-text-link--reset" aria-describedby="entity-header">
           <Icon fixedWidth name="hand-o-right"/> ToDos

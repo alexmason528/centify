@@ -176,7 +176,7 @@ class DashReport extends Component {
       return (
         <Button
           type="brand"
-          onClick={() => this.approvePayment()}>Approve Dash for Payment</Button>
+          onClick={() => this.approvePayment()}>Approve SPIFF for Payment</Button>
       );
     } else if (currentDash.get("Status") == "Closed"){
       return false;
@@ -184,7 +184,7 @@ class DashReport extends Component {
       return (
         <Button
           type="brand"
-          onClick={() => this.refresh()}>Refresh Dash</Button>
+          onClick={() => this.refresh()}>Refresh SPIFF</Button>
       );
     }
   }
@@ -249,7 +249,7 @@ class DashReport extends Component {
   }
 
   goToFakeIt = () => {
-    this.props.push(`/dashes/` + this.props.params.dashId + `/fakeit`)
+    this.props.push(`/spiffs/` + this.props.params.dashId + `/fakeit`)
   }
 
   componentDidMount() {

@@ -60,7 +60,7 @@ class DashForm extends Component {
                   RewardType.input.onChange('One reward one amount')
                 }
               }}>
-              <option value="">- Select dash type -</option>
+              <option value="">- Select SPIFF type -</option>
               {dashtypes.valueSeq().map((type, index) => (
                 <option key={index} value={type.get('Id')}>{type.get('Name')}</option>
               ))}
@@ -622,7 +622,7 @@ class DashForm extends Component {
             <Row cols={6} className="slds-m-top--large">
               <Col padded cols={6} className="slds-m-bottom--small">
                 <div style={errorStyle}>
-                  <h2 className={styles.fieldTitle}>Error saving dash</h2>
+                  <h2 className={styles.fieldTitle}>Error saving SPIFF</h2>
                   <ul>
                     {errors.map((error, index) => (
                       <li key={index}>{error.Message}</li>
@@ -637,7 +637,7 @@ class DashForm extends Component {
 
           <Row cols={6} className="slds-m-top--large">
             <Col padded cols={6} className="slds-m-bottom--small">
-              <h2 className={styles.fieldTitle}>Dash name</h2>
+              <h2 className={styles.fieldTitle}>SPIFF name</h2>
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}>
               <Field name="Name" component={this.nameInput}/>
@@ -754,7 +754,7 @@ class DashForm extends Component {
                     <td>Your Budget: </td><td><strong>${budgetAmount}</strong></td>
                   </tr>
                   <tr>
-                    <td>This Dash: </td><td><strong>${value}</strong></td>
+                    <td>This SPIFF: </td><td><strong>${value}</strong></td>
                   </tr>
                   <tr style={budgetAmount == 0 ? { display: 'none' } : {}}>
                     <td>Balance: </td><td><strong>${budgetAmount - value}</strong></td>
@@ -812,7 +812,7 @@ class DashForm extends Component {
                 <Link to='/dashes' style={{ marginRight: 10, display: 'inline-block' }}>
                   <Button type="neutral">Cancel</Button>
                 </Link>
-                <button type="submit" className="slds-button slds-button--brand" disabled={!editable || submitting}>Save Dash</button>
+                <button type="submit" className="slds-button slds-button--brand" disabled={!editable || submitting}>Save SPIFF</button>
               </div>
             </Col>
           </Row>

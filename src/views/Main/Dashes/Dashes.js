@@ -159,9 +159,9 @@ class Dashes extends Component {
           </ButtonGroup>
         </div>
         <div className="slds-clearfix slds-m-vertical--x-large">
-          <h2 className="slds-float--left" style={{ fontSize: 28, fontWeight: 700 }}>Dashes</h2>
+          <h2 className="slds-float--left" style={{ fontSize: 28, fontWeight: 700 }}>SPIFFs</h2>
           <div className="slds-float--right">
-            <Link className="slds-button slds-button--brand" to="/dashes/new">Add Dash</Link>
+            <Link className="slds-button slds-button--brand" to="/spiffs/new">Add SPIFF</Link>
           </div>
         </div>
         <div style={{ overflowX: 'auto', overflowY: 'hidden', paddingBottom: 85 }}>

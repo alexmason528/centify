@@ -274,7 +274,7 @@ class DashEdit extends Component {
     }
     return this.props.updateDash(profile.centifyOrgId, this.props.params.dashId, data)
       .then(() => {
-        this.context.notify('Dash updated successfully', 'success')
+        this.context.notify('SPIFF updated successfully', 'success')
       })
       .catch(res => {
         this.setState({
@@ -308,7 +308,7 @@ class DashEdit extends Component {
         <Grid className="slds-p-vertical--large">
           <Row cols={6}>
             <Col padded cols={6}>
-              <h2 className={styles.pageTitle}>Edit Dash</h2>
+              <h2 className={styles.pageTitle}>Edit SPIFF</h2>
             </Col>
           </Row>
         </Grid>

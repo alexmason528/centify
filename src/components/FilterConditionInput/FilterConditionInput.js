@@ -195,7 +195,7 @@ class FilterConditionInput extends Component {
     }
     return (
       <div>
-        What do you want to include in dash?
+        What do you want to include in SPIFF?
         <div className="slds-form-element" style={basicSelectStyle}>
           <div className="slds-form-element__control">
             <div className="slds-select_container">

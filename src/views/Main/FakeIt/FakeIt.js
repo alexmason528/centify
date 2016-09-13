@@ -277,7 +277,7 @@ class FakeIt extends Component {
               <div className="slds-p-vertical--medium slds-text-align--right">
                 {/*<Button
                   type="brand"
-                  onClick={() => this.refresh()}>Refresh Dash</Button>*/}
+                  onClick={() => this.refresh()}>Refresh SPIFF</Button>*/}
               </div>
               {this.renderJoinedParticipants()}
               {this.renderNotJoinedParticipants()}

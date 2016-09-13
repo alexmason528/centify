@@ -32,7 +32,7 @@ const requireAuth = (nextState, replace) => {
 export const makeMainRoutes = () => {
   return (
     <Route path="/" component={Container} auth={auth}>
-      <IndexRedirect to="/dashes" />
+      <IndexRedirect to="/spiffs" />
       <Route path="login" component={Login} />
       <Route path="access_token=:token" component={LoggingIn} />
       <Route path="signup/:token" component={Signup} />
@@ -41,11 +41,11 @@ export const makeMainRoutes = () => {
         <Route path="account-not-linked" component={AccountNotLinked} />
         <Route path="home" component={Home} />
         <Route path="thankyou" component={Thankyou} />
-        <Route path="dashes" component={Dashes} />
-        <Route path="dashes/new" component={DashCreate} />
-        <Route path="dashes/:dashId" component={DashEdit} />
-        <Route path="dashes/:dashId/report" component={DashReport} />
-        <Route path="dashes/:dashId/fakeit" component={FakeIt} />
+        <Route path="spiffs" component={Dashes} />
+        <Route path="spiffs/new" component={DashCreate} />
+        <Route path="spiffs/:dashId" component={DashEdit} />
+        <Route path="spiffs/:dashId/report" component={DashReport} />
+        <Route path="spiffs/:dashId/fakeit" component={FakeIt} />
         <Route path="todos" component={Todos} />
         <Route path="todos/edit" component={TodosEdit} />
         <Route path="budget" component={Budget} />

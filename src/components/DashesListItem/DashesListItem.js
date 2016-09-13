@@ -106,15 +106,15 @@ class DashesListItem extends Component {
   }
 
   editDash = (dashId) => {
-    this.props.push(`/dashes/${dashId}`)
+    this.props.push(`/spiffs/${dashId}`)
   }
 
   viewDashDetails = (dashId) => {
-    this.props.push(`/dashes/${dashId}`)
+    this.props.push(`/spiffs/${dashId}`)
   }
 
   showDashReport = (dashId) => {
-    this.props.push(`/dashes/${dashId}/report`)
+    this.props.push(`/spiffs/${dashId}/report`)
   }
 
   deleteDash = (dashId) => {
@@ -209,7 +209,7 @@ class DashesListItem extends Component {
             this.showDashReport.bind(this, id),
             "line-chart",
             iconStyle,
-            'Dash Report'
+            'SPIFF Report'
           )}
           {this.createLinkIcon(
             this.viewDashDetails.bind(this, id),
@@ -226,7 +226,7 @@ class DashesListItem extends Component {
             this.showDashReport.bind(this, id),
             "line-chart",
             iconStyle,
-            'Dash Report'
+            'SPIFF Report'
           )}
           {this.createLinkIcon(
             this.viewDashDetails.bind(this, id),
@@ -249,7 +249,7 @@ class DashesListItem extends Component {
             this.showDashReport.bind(this, id),
             "line-chart",
             iconStyle,
-            'Dash Report'
+            'SPIFF Report'
           )}
           {this.createLinkIcon(
             null,
@@ -272,7 +272,7 @@ class DashesListItem extends Component {
             this.showDashReport.bind(this, id),
             "line-chart",
             iconStyle,
-            'Dash Report'
+            'SPIFF Report'
           )}
           {this.createLinkIcon(
             this.viewDashDetails.bind(this, id),
@@ -289,7 +289,7 @@ class DashesListItem extends Component {
             this.showDashReport.bind(this, id),
             "line-chart",
             iconStyle,
-            'Dash Report'
+            'SPIFF Report'
           )}
           {this.createLinkIcon(
             this.viewDashDetails.bind(this, id),

@@ -196,7 +196,7 @@ class DashCreate extends Component {
     }
     return this.props.createDash(profile.centifyOrgId, data)
       .then(() => {
-        this.context.notify('Dash created successfully', 'success')
+        this.context.notify('SPIFF created successfully', 'success')
       })
       .catch(res => {
         this.setState({
@@ -229,7 +229,7 @@ class DashCreate extends Component {
         <Grid className="slds-p-vertical--large">
           <Row cols={6}>
             <Col padded cols={6}>
-              <h2 className={styles.pageTitle}>Create New Dash</h2>
+              <h2 className={styles.pageTitle}>Create New SPIFF</h2>
             </Col>
           </Row>
         </Grid>
