@@ -272,15 +272,15 @@ class DashEdit extends Component {
       todos: todos ? this.todosList(JSON.parse(todos)) : [],
       ...modelData
     }
-    this.props.updateDash(profile.centifyOrgId, this.props.params.dashId, data)
-    .then(() => {
-      this.context.notify('Dash updated successfully', 'success')
-    })
-    .catch(res => {
-      this.setState({
-        errors: res.errors
+    return this.props.updateDash(profile.centifyOrgId, this.props.params.dashId, data)
+      .then(() => {
+        this.context.notify('Dash updated successfully', 'success')
       })
-    })
+      .catch(res => {
+        this.setState({
+          errors: res.errors
+        })
+      })
   }
 
   render() {
