@@ -30,6 +30,11 @@ class DashForm extends Component {
     }
   }
 
+  atoi(str) {
+    console.log(str);
+    return str ? parseInt(str) : 0;
+  }
+
   nameInput = (props) => {
     return (
       <Input type="text" {...props.input}/>
@@ -169,11 +174,11 @@ class DashForm extends Component {
               <span className="slds-form-element__label" style={{ color: 'inherit' }}>
                 Value of the {fieldNamePlural}: $&nbsp;
                 <Input
-                  value={TargetThreshold.input.value}
+                  value={MeasureCalcMethod.input.value == 'Sum' ? TargetThreshold.input.value : 0}
                   style={midTextSelectStyle}
                   onChange={e => {
                     if (MeasureCalcMethod.input.value == 'Sum') {
-                      TargetThreshold.input.onChange(parseInt(e.currentTarget.value))
+                      TargetThreshold.input.onChange(this.atoi(e.currentTarget.value))
                     }
                   }} />
               </span>
@@ -194,11 +199,11 @@ class DashForm extends Component {
             <span className="slds-form-element__label" style={{ color: 'inherit' }}>
               Number of {fieldNamePlural}:&nbsp;
               <Input
-                value={TargetThreshold.input.value}
+                value={MeasureCalcMethod.input.value == 'Increment' ? TargetThreshold.input.value : 0}
                 style={midTextSelectStyle}
                 onChange={e => {
                   if (MeasureCalcMethod.input.value == 'Increment') {
-                    TargetThreshold.input.onChange(parseInt(e.currentTarget.value))
+                    TargetThreshold.input.onChange(this.atoi(e.currentTarget.value))
                   }
                 }} />
             </span>
@@ -350,8 +355,8 @@ class DashForm extends Component {
                     </td>
                     <td data-label="Reward Amount">
                       <Input type='number' defaultValue={reward.EstimatedRewardAmount} onChange={(e) => {
-                        rewards[index].EstimatedRewardAmount = parseInt(e.currentTarget.value)
-                        rewards[index].MaximumRewardAmount = parseInt(e.currentTarget.value)
+                        rewards[index].EstimatedRewardAmount = this.atoi(e.currentTarget.value)
+                        rewards[index].MaximumRewardAmount = this.atoi(e.currentTarget.value)
                         if (rewards[index].saveStatus == 0) {
                           rewards[index].saveStatus = 2
                         }
@@ -375,7 +380,7 @@ class DashForm extends Component {
       const _rewards = rewards ? JSON.parse(rewards) : []
       for(let i = 0; i < _rewards.length; i++) {
         if (!_rewards[i].deleted) {
-          thisDash += _rewards[i].EstimatedRewardAmount ? parseInt(_rewards[i].EstimatedRewardAmount) : 0
+          thisDash += _rewards[i].EstimatedRewardAmount ? this.atoi(_rewards[i].EstimatedRewardAmount) : 0
         }
       }
     } else {
