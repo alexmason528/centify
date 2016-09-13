@@ -399,7 +399,7 @@ export function createDash(orgId, model) {
         updateRewards(dispatch, orgId, res.Id, rewards)
         updateParticipants(dispatch, orgId, res.Id, participants)
         updateTodos(dispatch, orgId, res.Id, todos)
-        dispatch(push('/dashes'))
+        dispatch(push('/spiffs'))
       })
   }
 }
@@ -421,7 +421,7 @@ export function updateDash(orgId, dashId, model) {
       _updateDash(orgId, dashId, modelData)
     )
     .then(() => {
-      dispatch(push('/dashes'))
+      dispatch(push('/spiffs'))
     })
   }
 }
