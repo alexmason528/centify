@@ -67,7 +67,7 @@ class ThankYou extends Component {
           <div className="slds-m-bottom--large">Follow the app instructions on setting up</div>
           <div className="slds-align--absolute-center slds-container--medium slds-m-bottom--large">
             <div className="slds-image">
-              <img src={salesforceImage} />
+              <a href="https://appexchange.salesforce.com/listingDetail?listingId=a0N3A00000DqDQnUAN" target="_blank" title="View in AppExchange"><img src={salesforceImage} /></a>
             </div>
           </div>
         </div>
