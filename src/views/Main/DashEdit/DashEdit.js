@@ -250,7 +250,7 @@ class DashEdit extends Component {
       VelocityAccelTimePeriod : 30,
       ScoreFormula : "",
       ScoreUnits : measureUnits,
-      IsPublic : false,
+      IsPublic : true,
       AreRewardsShared : false,
       AreTeamRewardsShared : false,
       MinimumParticipants : 1,
