@@ -815,7 +815,7 @@ class DashForm extends Component {
           <Row cols={6} className="slds-m-vertical--x-large">
             <Col padded>
               <div style={{ textAlign: 'right' }}>
-                <Link to='/dashes' style={{ marginRight: 10, display: 'inline-block' }}>
+                <Link to='/spiffs' style={{ marginRight: 10, display: 'inline-block' }}>
                   <Button type="neutral">Cancel</Button>
                 </Link>
                 <button type="submit" className="slds-button slds-button--brand" disabled={!editable || submitting}>Save SPIFF</button>
