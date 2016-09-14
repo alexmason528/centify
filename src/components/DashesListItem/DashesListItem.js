@@ -139,7 +139,7 @@ class DashesListItem extends Component {
         <a href="javascript:;" onClick={onClick}>
           <Icon name={icon} style={iconStyle} />
         </a>
-        <div className={"slds-popover slds-nubbin--top " + styles.tooltip} role="dialog">
+        <div className={"slds-popover slds-nubbin--left " + styles.tooltip} role="dialog">
           <div className="slds-popover__body">
             {tooltipText}
           </div>
