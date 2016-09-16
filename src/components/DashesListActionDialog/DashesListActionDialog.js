@@ -3,7 +3,13 @@ import React, { Component } from 'react'
 class DashesListActionDialog extends Component {
 
   confirmText = (action, dashName) => {
-    let actionText = `Are you sure you want to ${action} the SPIFF: ${dashName}?`
+
+    let actionText = `Are you sure you want to ${action} the SPIFF`
+    if (dashName == undefined)
+      actionText = `Are you sure you want to ${action} the SPIFF?`
+    else
+      actionText = `Are you sure you want to ${action} the SPIFF: ${dashName}?`
+
     if (action == 'approve') {
       actionText = 'Are you sure you want to approve the SPIFF, no further changes will be allowed and payouts will be approved.'
     } else if (action == 'resend invitations') {
