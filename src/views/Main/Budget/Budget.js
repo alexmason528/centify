@@ -25,7 +25,6 @@ export class Budget extends React.Component {
     var that = this
     this.props.getBudget(profile.centifyOrgId)
     .then((response) => {
-      console.log('budget response: ', response)
       that.setState({
         budget: response.BudgetAmount
       })

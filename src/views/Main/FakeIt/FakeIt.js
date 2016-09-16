@@ -228,10 +228,6 @@ class FakeIt extends Component {
       const { getUsers, loadedUsers, getDash } = this.props
       if (!loadedUsers) {
         getUsers(profile.centifyOrgId)
-        /*.then((response) => {
-          console.log('user response: ', response)
-          that.users = response
-        })*/
         .catch(res => {
           this.context.notify('Failed to get users from server', 'error')
         })
