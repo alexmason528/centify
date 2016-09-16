@@ -289,7 +289,7 @@ class DashReport extends Component {
         actionDialogOpen: false,
         actionDialogSubmitting: false,
       })
-      this.context.notify('Failed to resent invitations', 'error')
+      this.context.notify('Failed to resend invitations', 'error')
     })
   }
 
