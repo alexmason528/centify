@@ -22,10 +22,15 @@ export class Login extends React.Component {
     const { auth } = this.props
     return (
       <div className={styles.root}>
-        <h2>Login</h2>
-        <div className={styles.toolbar}>
-          <Button type="brand" onClick={auth.login.bind(this)}>Login</Button>
-        </div>
+        <div className={styles.table} >
+            <div className={styles.cell}>
+              <div className={styles.content}>
+                <div id="loginContainer" className={styles.toolbar}>
+                  <Button type="brand" onClick={auth.login.bind(this)}>MyCentify Login</Button>
+                </div>      
+              </div>
+            </div>
+          </div>        
       </div>
     )
   }
