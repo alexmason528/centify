@@ -122,7 +122,7 @@ class Dashes extends Component {
             actionDialogOpen: false,
             actionDialogSubmitting: false,
           })
-          this.context.notify('Successfully ' + actionDialogAction + 'd dash', 'success')
+          this.context.notify('Successfully ' + actionDialogAction + 'd SPIFF', 'success')
           this.props.getDashesList(profile.centifyOrgId)
         })
         .catch(() => {
@@ -130,7 +130,7 @@ class Dashes extends Component {
             actionDialogOpen: false,
             actionDialogSubmitting: false,
           })
-          this.context.notify('Failed to ' + actionDialogAction + ' dash', 'error')
+          this.context.notify('Failed to ' + actionDialogAction + ' SPIFF', 'error')
         })
       }
     }
