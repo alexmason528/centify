@@ -73,6 +73,10 @@ import {
   DASHES_TODO_REMOVE,
   DASHES_TODO_REMOVE_SUCCESS,
   DASHES_TODO_REMOVE_FAIL,
+
+  DASHES_SEND_INVITATIONS,
+  DASHES_SEND_INVITATIONS_SUCCESS,
+  DASHES_SEND_INVITATIONS_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
@@ -486,5 +490,12 @@ export function approveDash(orgId, dashId) {
   return {
     types: [DASHES_APPROVE, DASHES_APPROVE_SUCCESS, DASHES_APPROVE_FAIL],
     promise: (client) => client.put(`/v1/${orgId}/dashes/${dashId}/close`)
+  }
+}
+
+export function resendInvitations(orgId, dashId) {
+  return {
+    types: [DASHES_SEND_INVITATIONS, DASHES_SEND_INVITATIONS_SUCCESS, DASHES_SEND_INVITATIONS_FAIL],
+    promise: (client) => client.post(`/v1/${orgId}/dashes/${dashId}/send-invitations`)
   }
 }
