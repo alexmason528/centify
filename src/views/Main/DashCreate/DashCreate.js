@@ -117,8 +117,8 @@ class DashCreate extends Component {
     todoValues.map((todoValue, index) => {
       const todoData = todos.get(index)
       const todo = { 
-        selected: todoValue.value,
-        existed: todoValue.existed,
+        selected: !!todoValue && todoValue.value,
+        existed: !!todoValue && todoValue.existed,
         ToDoId: todoData.get('Id')
       }
       list.push(todo)

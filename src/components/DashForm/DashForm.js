@@ -33,7 +33,6 @@ class DashForm extends Component {
   }
 
   atoi(str) {
-    console.log(str);
     return str ? parseInt(str) : 0;
   }
 
@@ -413,7 +412,7 @@ class DashForm extends Component {
         <Checkbox
           className="slds-m-bottom--x-small"
           label='Select all'
-          checked={selectedAllTodos}
+          checked={!!selectedAllTodos}
           onChange={(e) => {
             const selectedAll = e.currentTarget.checked
             for(let i = 0; i < allTodos.size; i++) {
@@ -432,7 +431,7 @@ class DashForm extends Component {
                 <Checkbox
                   className="slds-m-bottom--x-small"
                   label={(index + 1) + '. ' + todo.get('Name')}
-                  checked={todos[index] && !!todos[index].value}
+                  checked={!!todos[index] && !!todos[index].value}
                   onChange={(e) => {
                     todos[index] = todos[index] ? todos[index] : { value: false, existed: false }
                     todos[index].value = e.currentTarget.checked
