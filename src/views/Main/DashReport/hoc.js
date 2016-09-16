@@ -1,6 +1,6 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { getDash, approveDash } from 'redux/modules/dashes'
+import { getDash, approveDash, resendInvitations } from 'redux/modules/dashes'
 import { getUsers } from 'redux/modules/users'
 import { push } from 'react-router-redux';
 
@@ -22,7 +22,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   getDash,
   getUsers,
   push,
-  approveDash
+  approveDash,
+  resendInvitations,
 }, dispatch)
 
 export default (container) => connect(

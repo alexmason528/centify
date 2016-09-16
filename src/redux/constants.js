@@ -71,6 +71,10 @@ export const DASHES_TODO_REMOVE = 'centify/dashes/todo/UPDATE'
 export const DASHES_TODO_REMOVE_SUCCESS = 'centify/dashes/todo/UPDATE_SUCCESS'
 export const DASHES_TODO_REMOVE_FAIL = 'centify/dashes/todo/UPDATE_FAIL'
 
+export const DASHES_SEND_INVITATIONS = 'centify/dashes/SEND_INVITATIONS'
+export const DASHES_SEND_INVITATIONS_SUCCESS = 'centify/dashes/SEND_INVITATIONS_SUCCESS'
+export const DASHES_SEND_INVITATIONS_FAIL = 'centify/dashes/SEND_INVITATIONS_FAIL'
+
 /* Users module */
 
 export const USERS_GET_IDENTITY = 'centify/users/GET_IDENTITY'

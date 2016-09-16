@@ -115,6 +115,11 @@ class DashReport extends Component {
     return (
       <div className="slds-p-top--large">
         <h2 className={styles.pageTitle1 + ' slds-m-vertical--large'}>Not Joined</h2>
+        <div className="slds-m-bottom--large">
+          <Button
+            type="brand"
+            onClick={this.askResendInvitations}>Resend Invitations</Button>
+        </div>
         <table className="slds-table slds-table--bordered slds-table--cell-buffer">
           <thead>
             <tr className="slds-text-heading--label">
@@ -170,13 +175,20 @@ class DashReport extends Component {
     });
   }
 
+  askResendInvitations = () => {
+    this.setState({
+      actionDialogOpen: true,
+      actionDialogAction: 'resend invitations'
+    });
+  }
+
   renderActionButton = () => {
     const { currentDash } = this.props
     if (currentDash.get("Status") == "Review") {
       return (
         <Button
           type="brand"
-          onClick={() => this.approvePayment()}>Approve SPIFF for Payment</Button>
+          onClick={this.approvePayment}>Approve SPIFF for Payment</Button>
       );
     } else if (currentDash.get("Status") == "Closed"){
       return false;
@@ -184,7 +196,7 @@ class DashReport extends Component {
       return (
         <Button
           type="brand"
-          onClick={() => this.refresh()}>Refresh SPIFF</Button>
+          onClick={this.refresh}>Refresh SPIFF</Button>
       );
     }
   }
@@ -216,6 +228,15 @@ class DashReport extends Component {
     })
   }
 
+  onConfirmActionDialog = () => {
+    const { actionDialogAction } = this.state
+    if (actionDialogAction == 'approve') {
+      this.onApprovePayment()
+    } else if (actionDialogAction == 'resend invitations') {
+      this.onResendInvitations()
+    }
+  }
+
   onApprovePayment = () => {
     const { auth, approveDash, currentDash, getDash } = this.props
     const dashId = currentDash.get('Id')
@@ -245,6 +266,30 @@ class DashReport extends Component {
         actionDialogSubmitting: false,
       })
       this.context.notify('Failed to approve SPIFFs for payment', 'error')
+    })
+  }
+
+  onResendInvitations = () => {
+    const { auth, currentDash, resendInvitations } = this.props
+    const dashId = currentDash.get('Id')
+    const profile = auth.getProfile()
+    this.setState({
+      actionDialogSubmitting: true,
+    })
+    resendInvitations(profile.centifyOrgId, dashId)
+    .then(() => {
+      this.setState({
+        actionDialogOpen: false,
+        actionDialogSubmitting: false,
+      })
+      this.context.notify('Successfully resent invitations.', 'success')
+    })
+    .catch(() => {
+      this.setState({
+        actionDialogOpen: false,
+        actionDialogSubmitting: false,
+      })
+      this.context.notify('Failed to resent invitations', 'error')
     })
   }
 
@@ -321,7 +366,7 @@ class DashReport extends Component {
           action={actionDialogAction}
           dash={currentDash}
           onClose={this.onClose}
-          onYes={this.onApprovePayment} />
+          onYes={this.onConfirmActionDialog} />
       </div>
     )
   }
