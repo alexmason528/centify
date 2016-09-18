@@ -202,6 +202,9 @@ class DashCreate extends Component {
         this.setState({
           errors: res.errors
         })
+        setTimeout(() => {
+          window.scrollTo(0, 0)
+        }, 100)
       })
   }
 

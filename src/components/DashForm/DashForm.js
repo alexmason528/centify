@@ -624,7 +624,6 @@ class DashForm extends Component {
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
         <Grid>
-
           {
             errors ?
             <Row cols={6} className="slds-m-top--large">
