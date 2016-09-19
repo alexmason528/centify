@@ -280,7 +280,11 @@ class DashForm extends Component {
       marginLeft: 20,
     }
     return (
-      <Input type="text" {...props.input} style={rewardInputStyle}/>
+      <Input type="text" style={rewardInputStyle}
+        value={value}
+        onChange={e => {
+          props.input.onChange(parseInt(e.currentTarget.value))
+        }} />
     )
   }
 
