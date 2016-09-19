@@ -18,37 +18,23 @@ class DashesListItem extends Component {
     const gameTypeIconStyle = {
       fontSize: 22,
     }
+    const iconStyleHeight = {
+      height: 30,
+    }
     switch(column) {
       case 'Type':
         {
           const val = dash.get(column)
-          switch(val) {
-            case 'TugOfWar':
-              return <Icon name="exchange" style={typeIconStyle} />
-            case 'OverTheLine':
-              return <Icon name="long-arrow-right" style={typeIconStyle} />
-            case 'Timebomb':
-              return <Icon name="bomb" style={typeIconStyle} />
-            case 'Countdown':
-              return <Icon name="clock-o" style={typeIconStyle} />
-            case 'Race':
-              return <Icon name="flag-checkered" style={typeIconStyle} />
-            default:
-              return undefined
-          }
+          const imgSRC = dash.getIn(['DashType', 'IconURL'])
+          
+          return <img src={imgSRC} alt={val}  title={val} style={iconStyleHeight}/>
+          
         }
       case 'GameType':
         {
           const val = dash.getIn([column, 'Name'])
-          switch(val) {
-            case 'To the Moon':
-              return <Icon name="rocket" style={gameTypeIconStyle} />
-            case 'Carnival Ducks':
-              return <Icon name="bullseye" style={gameTypeIconStyle} />
-            default:
-              return undefined
-          }
-          
+          const imgSRC = dash.getIn([column, 'IconURL'])
+          return <img src={imgSRC} alt={val} title={val} style={iconStyleHeight}/>
         }
       case 'StartsAt':
       case 'EndsAt':
