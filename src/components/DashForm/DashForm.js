@@ -67,7 +67,7 @@ class DashForm extends Component {
                   RewardType.input.onChange('One reward one amount')
                 }
               }}>
-              <option value="">- Select SPIFF type -</option>
+              <option value="">- Select SPIFF competition -</option>
               {dashtypes.valueSeq().map((type, index) => (
                 <option key={index} value={type.get('Id')}>{type.get('Name')}</option>
               ))}
@@ -670,7 +670,7 @@ class DashForm extends Component {
 
           <Row cols={6} className="slds-m-top--xx-large">
             <Col padded cols={6} className="slds-m-bottom--small">
-              <h2 className={styles.fieldTitle}>Type</h2>
+              <h2 className={styles.fieldTitle}>Competition</h2>
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}>
               <Fields

@@ -46,8 +46,8 @@ class Dashes extends Component {
 
   tableColumns(filter) {
     return [
-      { label: 'Type', field: 'Type' },
-      { label: 'Game Type', field: 'GameType' },
+      { label: 'Competition', field: 'Type' },
+      { label: 'Game', field: 'GameType' },
       { label: 'Name', field: 'Name' },
       { label: 'Participants', field: 'ParticipantsJoined' },
       { label: 'Reward Amount', field: 'EstimatedRewardAmount' },
