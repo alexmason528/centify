@@ -3,7 +3,7 @@ import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import { Field, Fields, reduxForm, formValueSelector } from 'redux-form'
 import { Icon } from 'react-fa'
-import { 
+import {
   Grid, Row, Col,
   Select, Option,
   Input,
@@ -490,7 +490,7 @@ class DashForm extends Component {
             <div style={userSelectStyle}>
               <Select
                 className="slds-m-bottom--x-small"
-                defaultValue={selectedUserId} 
+                defaultValue={selectedUserId}
                 required
                 style={userSelectStyle}
                 onChange={(e) => {
