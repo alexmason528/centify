@@ -24,11 +24,9 @@ class DashesListItem extends Component {
     switch(column) {
       case 'Type':
         {
-          const val = dash.get(column)
+          const val = dash.getIn(['DashType', 'Name'])
           const imgSRC = dash.getIn(['DashType', 'IconURL'])
-          
           return <img src={imgSRC} alt={val}  title={val} style={iconStyleHeight}/>
-          
         }
       case 'GameType':
         {
