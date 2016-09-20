@@ -478,6 +478,7 @@ class DashForm extends Component {
       height: 16,
     }
     const users = this.props.users
+    const sortedUsers = users.sort((a, b) => a.get('DisplayName').localeCompare(b.get('DisplayName')))
     const { value, onChange } = props.input
     const participants = value ? JSON.parse(value) : []
     const { selectedUserId } = this.state
@@ -499,7 +500,7 @@ class DashForm extends Component {
                 }}>
                 <Option value={0}>-- Select user to add --</Option>
                 {
-                  users.valueSeq().map((user, index) => (
+                  sortedUsers.valueSeq().map((user, index) => (
                     <Option key={index} value={user.get('Id')}>{user.get('DisplayName')}</Option>
                   ))
                 }
