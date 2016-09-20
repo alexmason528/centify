@@ -172,19 +172,19 @@ class DashForm extends Component {
               <input
                 type="radio"
                 name="options"
-                checked={MeasureCalcMethod.input.value == 'Sum'}
+                checked={MeasureCalcMethod.input.value == 'add'}
                 onChange={e => {
-                  MeasureCalcMethod.input.onChange('Sum')
+                  MeasureCalcMethod.input.onChange('add')
                   MeasureSumField.input.onChange(amountFieldId)
                 }} />
               <span className="slds-radio--faux"></span>
               <span className="slds-form-element__label" style={{ color: 'inherit' }}>
                 Value of the {fieldNamePlural}: $&nbsp;
                 <Input
-                  value={MeasureCalcMethod.input.value == 'Sum' ? TargetThreshold.input.value : 0}
+                  value={MeasureCalcMethod.input.value == 'add' ? TargetThreshold.input.value : 0}
                   style={midTextSelectStyle}
                   onChange={e => {
-                    if (MeasureCalcMethod.input.value == 'Sum') {
+                    if (MeasureCalcMethod.input.value == 'add') {
                       TargetThreshold.input.onChange(this.atoi(e.currentTarget.value))
                     }
                   }} />
@@ -197,19 +197,19 @@ class DashForm extends Component {
             <input
               type="radio"
               name="options"
-              checked={MeasureCalcMethod.input.value == 'Increment'}
+              checked={MeasureCalcMethod.input.value == 'increment'}
               onChange={e => {
-                MeasureCalcMethod.input.onChange('Increment')
+                MeasureCalcMethod.input.onChange('increment')
                 MeasureSumField.input.onChange(null)
               }} />
             <span className="slds-radio--faux"></span>
             <span className="slds-form-element__label" style={{ color: 'inherit' }}>
               Number of {fieldNamePlural}:&nbsp;
               <Input
-                value={MeasureCalcMethod.input.value == 'Increment' ? TargetThreshold.input.value : 0}
+                value={MeasureCalcMethod.input.value == 'increment' ? TargetThreshold.input.value : 0}
                 style={midTextSelectStyle}
                 onChange={e => {
-                  if (MeasureCalcMethod.input.value == 'Increment') {
+                  if (MeasureCalcMethod.input.value == 'increment') {
                     TargetThreshold.input.onChange(this.atoi(e.currentTarget.value))
                   }
                 }} />
