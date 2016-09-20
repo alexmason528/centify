@@ -234,9 +234,9 @@ export function getDashesList(orgId) {
       _getDashesList(orgId)
     )
     .then((res) => {
-      res.map(dash => {
-        dispatch(getDashesListParticipants(orgId, dash.Id))
-      })
+      // res.map(dash => {
+      //   dispatch(getDashesListParticipants(orgId, dash.Id))
+      // })
     })
     .catch(res => {
       throw new SubmissionError({ _error: res.error })
