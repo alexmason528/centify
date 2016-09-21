@@ -237,7 +237,7 @@ class FakeIt extends Component {
       if (this.props.params.dashId) {
         getDash(profile.centifyOrgId, this.props.params.dashId)
         .catch(res => {
-          this.context.notify('Failed to get dashes from server', 'error')
+          this.context.notify('Failed to get SPIFFs from server', 'error')
         })
       }
     }

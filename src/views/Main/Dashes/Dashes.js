@@ -34,7 +34,7 @@ class Dashes extends Component {
       if (!loadedList) {
         getDashesList(profile.centifyOrgId)
         .catch(res => {
-          this.context.notify('Failed to get dash list from server', 'error')
+          this.context.notify('Failed to get SPIFF list from server', 'error')
         })
       }
     }
