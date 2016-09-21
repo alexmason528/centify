@@ -23,6 +23,7 @@ class FakeIt extends Component {
   }
 
   sendEvent = (user) => {
+    const { currentDash } = this.props
     var externalUserId = user.getIn(['ExternalUsers', 0, 'ExternalId'])
     if (!externalUserId) externalUserId = "0"
     var externalOrgId = user.getIn(['ExternalUsers', 0, 'ExternalOrgId'])
@@ -32,7 +33,7 @@ class FakeIt extends Component {
     var date = new Date()
     var dateStr = date.toISOString()
     var body = [{
-      "Type": "Deal",
+      "Type": currentDash.getIn(['Measure', 'EventType']),
       "EventID": "Fake-" + objectUniqueId,
       "RecordUrl": "https://test.centify.com",
       "ExternalOrgId": externalOrgId,
