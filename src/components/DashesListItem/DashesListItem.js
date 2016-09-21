@@ -300,7 +300,7 @@ class DashesListItem extends Component {
         {columns.map((column, index) => {
           const value = this.getFieldValue(dash, column.field)
           return (
-            <td data-label={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {}, column.label == 'Reward Amount' ? {textAlign: 'right'} : {} }>
+            <td data-label={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {} }>
               <div className="slds-truncate">{value}</div>
             </td>
           )
