@@ -134,7 +134,7 @@ class DashEdit extends Component {
       const filterCond = currentDash.getIn(['Measure', 'FilterCondition'], '')
       const filterIsFirstType = (filterCond.substr(0, 4).toLowerCase() == 'data')
       const dashTypeId = currentDash.get('DashTypeId')
-      const rewardType = dashtypes.getIn([dashTypeId, 'Name']) == 'Race' ? 'Limited number of different rewards' : 'One reward one amount'
+      const rewardType = dashtypes.getIn([dashTypeId, 'RewardType'])
       const rewards = JSON.stringify(_rewards ? _rewards : [])
       return {
         Name : currentDash.get('Name'),

@@ -60,12 +60,7 @@ class DashForm extends Component {
               onChange={e => {
                 const dtid = e.currentTarget.value
                 DashTypeId.input.onChange(dtid)
-                const dtname = dashtypes.getIn([dtid, 'Name'])
-                if (dtname == 'Race') {
-                  RewardType.input.onChange('Limited number of different rewards')
-                } else {
-                  RewardType.input.onChange('One reward one amount')
-                }
+                RewardType.input.onChange(dashtypes.getIn([dtid, 'RewardType']))
               }}>
               <option value="">- Select SPIFF competition -</option>
               {dashtypes.valueSeq().map((type, index) => (
