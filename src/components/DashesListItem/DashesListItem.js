@@ -45,10 +45,7 @@ class DashesListItem extends Component {
       case 'isTeamDash':
         return dash.get(column) ? 'Yes' : 'No'
       case 'ParticipantsJoined':
-        {
-          const { participantCount } = this.props
-          return dash.get('ParticipantsJoined') + ' / ' + participantCount
-        }
+        return dash.get('ParticipantsJoined')
       case 'EstimatedRewardAmount':
         {
           let amount = dash.get(column)
@@ -56,23 +53,23 @@ class DashesListItem extends Component {
           amount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
           return '$' + amount
         }
-      case 'RewardsPaid':
-        {
-          const loadedParticipants = dash.getIn(['Participants', 'loaded'])
-          if (loadedParticipants) {
-            const participants = dash.getIn(['Participants', 'items'])
-            let rewardsPaid = 0
-            participants.map(participant => {
-              const users = participant.get('Users')
-              users.map(user => {
-                rewardsPaid += user.get('RewardAmount')
-              })
-            })
-            return rewardsPaid
-          } else {
-            return '-'
-          }
-        }
+      // case 'RewardsPaid':
+      //   {
+      //     const loadedParticipants = dash.getIn(['Participants', 'loaded'])
+      //     if (loadedParticipants) {
+      //       const participants = dash.getIn(['Participants', 'items'])
+      //       let rewardsPaid = 0
+      //       participants.map(participant => {
+      //         const users = participant.get('Users')
+      //         users.map(user => {
+      //           rewardsPaid += user.get('RewardAmount')
+      //         })
+      //       })
+      //       return rewardsPaid
+      //     } else {
+      //       return '-'
+      //     }
+      //   }
       default:
         return dash.get(column)
     }
