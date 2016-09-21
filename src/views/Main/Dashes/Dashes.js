@@ -169,7 +169,7 @@ class Dashes extends Component {
               <tr className="slds-text-heading--label">
                 <th title="Actions">Actions</th>
                 {columns.map((column, index) => (
-                  <th scope="col" title={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {}}>
+                  <th scope="col" title={column.label} key={index} style={ index == 1 ? { } : {}}>
                     <div className="slds-truncate">{column.label}</div>
                   </th>
                 ))}
