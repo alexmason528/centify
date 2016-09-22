@@ -211,7 +211,7 @@ class DashEdit extends Component {
         EstimatedRewardAmount: parseInt(model.RewardAmount),
         MaximumRewardAmount: parseInt(model.RewardAmount),
         ExternalURL: "",
-        Formula: "{}",
+        Formula: "{\"Value\": " + model.RewardAmount + "}",
         saveStatus: 1,  // 0: saved, 1: new, 2: modified
         deleted: false,
       }
