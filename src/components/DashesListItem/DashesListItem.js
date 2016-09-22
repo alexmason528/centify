@@ -215,12 +215,6 @@ class DashesListItem extends Component {
             iconStyle,
             'View Details'
           )}
-          {this.createLinkIcon(
-            onComplete,
-            "check-circle",
-            { ...iconStyle, ...greenIcon },
-            'Complete'
-          )}
         </span>
       )
     } /*else if (filter == 'Completed') {
