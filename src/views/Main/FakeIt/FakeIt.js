@@ -3,22 +3,15 @@ import { Button, Grid, Row, Col } from 'react-lightning-design-system'
 
 import LoadingSpinner from 'components/LoadingSpinner/LoadingSpinner'
 import DashReportTimer from 'components/DashReportTimer/DashReportTimer'
-import DashesListActionDialog from 'components/DashesListActionDialog/DashesListActionDialog'
 import { numWithSurfix } from 'utils/formatter'
 import styles from './styles.module.css'
 import hoc from './hoc'
 
 
-class DashReport extends Component {
+class FakeIt extends Component {
 
   static contextTypes = {
     notify: React.PropTypes.func
-  }
-
-  state = {
-    actionDialogOpen: false,
-    actionDialogAction: '',
-    actionDialogSubmitting: false,
   }
 
   sumOfOneField(participant, field) {
@@ -27,6 +20,44 @@ class DashReport extends Component {
       sum += parseInt(user.get(field) ? user.get(field) : 0)
     })
     return sum
+  }
+
+  sendEvent = (user) => {
+    const { currentDash } = this.props
+    var externalUserId = user.getIn(['ExternalUsers', 0, 'ExternalId'])
+    if (!externalUserId) externalUserId = "0"
+    var externalOrgId = user.getIn(['ExternalUsers', 0, 'ExternalOrgId'])
+    if (!externalOrgId) externalOrgId = "0"
+    // console.log('external org id: ', externalOrgId)
+    var objectUniqueId = Date.now().toString()
+    var date = new Date()
+    var dateStr = date.toISOString()
+    var body = [{
+      "Type": currentDash.getIn(['Measure', 'EventType']),
+      "EventID": "Fake-" + objectUniqueId,
+      "RecordUrl": "https://test.centify.com",
+      "ExternalOrgId": externalOrgId,
+      "Data": {
+        "RegistrationStage": null,
+        "Created": dateStr,
+        "LastUpdated": dateStr,
+        "LastContacted": dateStr,
+        "SalesStage": "Sold",
+        "IsWon": true,
+        "IsClosed": true,
+        "Amount": 1,
+        "Type": "X",
+        "Owner": externalUserId,
+        "CloseDate": dateStr,
+        "Name": "Motorcycle " + objectUniqueId,
+        "ObjectId": objectUniqueId
+      }
+    }];
+    var profile = this.props.auth.getProfile();
+    this.props.sendFakeEvent(profile.centifyOrgId, body)
+    .then(() => {
+      this.context.notify('Sent event successfully', 'success')
+    })
   }
 
   renderJoinedParticipants = () => {
@@ -88,6 +119,11 @@ class DashReport extends Component {
                       </div>
                     </div>
                   </td>
+                  <td>
+                    <Button
+                      type="brand"
+                      onClick={() => this.sendEvent(user)}>Send Event</Button>
+                  </td>
                   <td data-label="Score">
                     {this.sumOfOneField(participant, 'Score')}
                   </td>
@@ -115,11 +151,6 @@ class DashReport extends Component {
     return (
       <div className="slds-p-top--large">
         <h2 className={styles.pageTitle1 + ' slds-m-vertical--large'}>Not Joined</h2>
-        <div className="slds-m-bottom--large">
-          <Button
-            type="brand"
-            onClick={this.askResendInvitations}>Resend Invitations</Button>
-        </div>
         <table className="slds-table slds-table--bordered slds-table--cell-buffer">
           <thead>
             <tr className="slds-text-heading--label">
@@ -168,39 +199,6 @@ class DashReport extends Component {
     )
   }
 
-  approvePayment = () => {
-    this.setState({
-      actionDialogOpen: true,
-      actionDialogAction: 'approve'
-    });
-  }
-
-  askResendInvitations = () => {
-    this.setState({
-      actionDialogOpen: true,
-      actionDialogAction: 'resend invitations'
-    });
-  }
-
-  renderActionButton = () => {
-    const { currentDash } = this.props
-    if (currentDash.get("Status") == "Review") {
-      return (
-        <Button
-          type="brand"
-          onClick={this.approvePayment}>Approve SPIFF for Payment</Button>
-      );
-    } else if (currentDash.get("Status") == "Closed"){
-      return false;
-    } else {
-      return (
-        <Button
-          type="brand"
-          onClick={this.refresh}>Refresh SPIFF</Button>
-      );
-    }
-  }
-
   estimatedRewardAmount = () => {
     const { currentDash } = this.props
     let amt = 0
@@ -222,83 +220,9 @@ class DashReport extends Component {
     }
   }
 
-  onClose = () => {
-    this.setState({
-      actionDialogOpen: false,
-    })
-  }
-
-  onConfirmActionDialog = () => {
-    const { actionDialogAction } = this.state
-    if (actionDialogAction == 'approve') {
-      this.onApprovePayment()
-    } else if (actionDialogAction == 'resend invitations') {
-      this.onResendInvitations()
-    }
-  }
-
-  onApprovePayment = () => {
-    const { auth, approveDash, currentDash, getDash } = this.props
-    const dashId = currentDash.get('Id')
-    const profile = auth.getProfile()
-    this.setState({
-      actionDialogSubmitting: true,
-    })
-    approveDash(profile.centifyOrgId, dashId)
-    .then(() => {
-      this.setState({
-        actionDialogOpen: false,
-        actionDialogSubmitting: false,
-      })
-      this.context.notify('Successfully approved SPIFF for payment.', 'success')
-      
-      // Refresh dash
-      if (this.props.params.dashId) {
-        getDash(profile.centifyOrgId, this.props.params.dashId)
-        .catch(res => {
-          this.context.notify('Failed to get SPIFFs from server', 'error')
-        }) 
-      }
-    })
-    .catch(() => {
-      this.setState({
-        actionDialogOpen: false,
-        actionDialogSubmitting: false,
-      })
-      this.context.notify('Failed to approve SPIFFs for payment', 'error')
-    })
-  }
-
-  onResendInvitations = () => {
-    const { auth, currentDash, resendInvitations } = this.props
-    const dashId = currentDash.get('Id')
-    const profile = auth.getProfile()
-    this.setState({
-      actionDialogSubmitting: true,
-    })
-    resendInvitations(profile.centifyOrgId, dashId)
-    .then(() => {
-      this.setState({
-        actionDialogOpen: false,
-        actionDialogSubmitting: false,
-      })
-      this.context.notify('Successfully resent invitations.', 'success')
-    })
-    .catch(() => {
-      this.setState({
-        actionDialogOpen: false,
-        actionDialogSubmitting: false,
-      })
-      this.context.notify('Failed to resend invitations', 'error')
-    })
-  }
-
-  goToFakeIt = () => {
-    this.props.push(`/spiffs/` + this.props.params.dashId + `/fakeit`)
-  }
-
   componentDidMount() {
     const auth = this.props.auth
+    var that = this;
     if (auth) {
       const profile = auth.getProfile()
       // Get users
@@ -314,14 +238,13 @@ class DashReport extends Component {
         getDash(profile.centifyOrgId, this.props.params.dashId)
         .catch(res => {
           this.context.notify('Failed to get SPIFFs from server', 'error')
-        }) 
+        })
       }
     }
   }
 
   render() {
     const { currentDash, loading, loaded, loadingParticipants, loadingRewards, loadingUsers, users } = this.props
-    const { actionDialogAction, actionDialogOpen, actionDialogSubmitting } = this.state
     if (loading || loadingParticipants || loadingRewards || loadingUsers || !loaded) {
       return (
         <LoadingSpinner/>
@@ -338,7 +261,6 @@ class DashReport extends Component {
       flexGrow: 1,
     }
     const endDate = new Date(currentDash.get('EndsAt'))
-
     return (
       <div className="slds-m-horizontal--medium slds-m-vertical--medium" style={containerStyle}>
         <Grid>
@@ -350,27 +272,19 @@ class DashReport extends Component {
                 <h2 className={styles.pageTitle1 + ' slds-text-align--right'} style={{ flexGrow: 1 }}>Estimated Reward: ${currentDash.get('EstimatedRewardAmount')}</h2>
               </div>
               <div className="slds-p-vertical--medium slds-text-align--right">
-                { this.renderActionButton() }
-                <Button
+                {/*<Button
                   type="brand"
-                  onClick={() => this.goToFakeIt()}>Fake It</Button>
+                  onClick={() => this.refresh()}>Refresh SPIFF</Button>*/}
               </div>
               {this.renderJoinedParticipants()}
               {this.renderNotJoinedParticipants()}
             </Col>
           </Row>
         </Grid>
-        <DashesListActionDialog
-          open={actionDialogOpen}
-          submitting={actionDialogSubmitting}
-          action={actionDialogAction}
-          dash={currentDash}
-          onClose={this.onClose}
-          onYes={this.onConfirmActionDialog} />
       </div>
     )
   }
 
 }
 
-export default hoc(DashReport)
+export default hoc(FakeIt)

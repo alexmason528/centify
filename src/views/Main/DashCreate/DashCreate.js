@@ -13,6 +13,16 @@ class DashCreate extends Component {
     notify: React.PropTypes.func
   }
 
+  state = {
+    errors: false
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      errors: false
+    })
+  }
+
   componentDidMount() {
     const auth = this.props.auth
     if (auth) {
@@ -41,7 +51,7 @@ class DashCreate extends Component {
       if (!loadedDashTypes) {
         getDashTypes(profile.centifyOrgId)
         .catch(res => {
-          this.context.notify('Failed to get dash types from server', 'error')
+          this.context.notify('Failed to get SPIFF types from server', 'error')
         })
       }
       // Get dash banners
@@ -49,7 +59,7 @@ class DashCreate extends Component {
       if (!loadedDashBanners) {
         getDashBanners()
         .catch(res => {
-          this.context.notify('Failed to get dash banners from server', 'error')
+          this.context.notify('Failed to get SPIFF banners from server', 'error')
         })
       }
       // Get organization schemas
@@ -77,22 +87,6 @@ class DashCreate extends Component {
     }
   }
 
-  calcEstimatedRewardAmount = (model) => {
-    let thisDash = 0
-    const { RewardTypeValue, RewardAmount, rewards } = model
-    if (RewardTypeValue == 'Multiple reward positions') {
-      const _rewards = rewards ? JSON.parse(rewards) : []
-      for(let i = 0; i < _rewards.length; i++) {
-        if (!_rewards[i].deleted) {
-          thisDash += _rewards[i].EstimatedRewardAmount ? parseInt(_rewards[i].EstimatedRewardAmount) : 0
-        }
-      }
-    } else {
-      thisDash = RewardAmount
-    }
-    return thisDash
-  }
-
   initialValues() {
     const startDate = new Date()
     const endDate = new Date()
@@ -100,7 +94,7 @@ class DashCreate extends Component {
     return {
       Name : "",
       Type : "OverTheLine",
-      MeasureEventType : "Deal",
+      MeasureEventType : "",
       MeasureEventTypeAdvanced : "",
       MeasureFilterCondition: "",
       MeasureFilterCondition1: "",
@@ -110,7 +104,7 @@ class DashCreate extends Component {
       EndsAt: endDate.toISOString(),
       RewardType : "All over the line",
       RewardAmount : 0,
-      EstimatedRewardAmount: 0,
+      QualifyingThreshold: null,
       rewards: null,
       participants: null,
       todos: null,
@@ -123,13 +117,38 @@ class DashCreate extends Component {
     todoValues.map((todoValue, index) => {
       const todoData = todos.get(index)
       const todo = { 
-        selected: todoValue.value,
-        existed: todoValue.existed,
+        selected: !!todoValue && todoValue.value,
+        existed: !!todoValue && todoValue.existed,
         ToDoId: todoData.get('Id')
       }
       list.push(todo)
     })
     return list
+  }
+
+  rewardsArrayCalculate = (rewards, model) => {
+    if (model.RewardType == 'Limited number of different rewards') {
+      return rewards
+    } else {
+      const newReward = {
+        Type: "Cash",
+        Description: "",
+        Position: 1,
+        EstimatedRewardAmount: parseInt(model.RewardAmount),
+        MaximumRewardAmount: parseInt(model.RewardAmount),
+        ExternalURL: "",
+        Formula: "{\"Value\": " + model.RewardAmount + "}",
+        saveStatus: 1,  // 0: saved, 1: new, 2: modified
+        deleted: false,
+      }
+      const newRewards = []
+      newRewards.push(newReward)
+      for(let i = 1; i < rewards.length; i++) {
+        rewards[i].deleted = true
+        newRewards.push(rewards[i])
+      }
+      return newRewards
+    }
   }
 
   onSubmit = (model) => {
@@ -138,28 +157,28 @@ class DashCreate extends Component {
     const {
       MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
       MeasureCalcMethod, MeasureSumField,
-      rewards, participants, todos,
+      RewardAmount, rewards, participants, todos,
       ...modelData
     } = model
-    const measureUnits = (MeasureCalcMethod == 'Add' || MeasureCalcMethod == 'Subtract') ? '$' : MeasureEventType + 's'
-    const _rewards = rewards ? JSON.parse(rewards) : []
+    const measureUnits = (MeasureCalcMethod == 'add' || MeasureCalcMethod == 'subtract') ? '$' : MeasureEventType + 's'
+    const _rewards = this.rewardsArrayCalculate(rewards ? JSON.parse(rewards) : [], model)
     const data = {
-      Description : model.description,
+      Description : model.Description,
       ImageURL : "",
       IsTeamDash : false,
-      GameType : "RocketLaunch",
-      QualifyingThreshold : 3,
-      VelocityAccelTimePeriod : 30,
+      GameTypeId : "08m7blbrrg7rcxtf",
+      TargetThreshold : parseInt(model.MeasureValue),
+      QualifyingThreshold : null,
+      VelocityAccelTimePeriod : 3600,
       ScoreFormula : "",
       ScoreUnits : measureUnits,
-      IsPublic : false,
+      IsPublic : true,
       AreRewardsShared : false,
       AreTeamRewardsShared : false,
       MinimumParticipants : 1,
       MinimumUsersInTeam : 1,
-      EstimatedRewardAmount: this.calcEstimatedRewardAmount(model),
       Measure : {
-        Name : "string",
+        Name : "points",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
         FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
         CalcMethod : MeasureCalcMethod,
@@ -175,21 +194,18 @@ class DashCreate extends Component {
       todos: todos ? this.todosList(JSON.parse(todos)) : [],
       ...modelData
     }
-    this.props.createDash(profile.centifyOrgId, data)
-    .then(() => {
-      this.context.notify('Dash created successfully', 'success')
-    })
-    .catch(res => {
-      let errors = (
-        <span>
-          Failed to create dash due to following errors:<br/>
-          {res.errors.map(error => (
-            <span><strong>{error.Message}</strong><br/></span>
-          ))}
-        </span>
-      )
-      this.context.notify(errors, 'error')
-    })
+    return this.props.createDash(profile.centifyOrgId, data)
+      .then(() => {
+        this.context.notify('SPIFF created successfully', 'success')
+      })
+      .catch(res => {
+        this.setState({
+          errors: res.errors
+        })
+        setTimeout(() => {
+          window.scrollTo(0, 0)
+        }, 100)
+      })
   }
 
   render() {
@@ -216,7 +232,7 @@ class DashCreate extends Component {
         <Grid className="slds-p-vertical--large">
           <Row cols={6}>
             <Col padded cols={6}>
-              <h2 className={styles.pageTitle}>Create New Dash</h2>
+              <h2 className={styles.pageTitle}>Create New SPIFF</h2>
             </Col>
           </Row>
         </Grid>
@@ -230,7 +246,8 @@ class DashCreate extends Component {
           dashtypes={dashtypes}
           dashbanners={dashbanners}
           schemas={schemas}
-          gametypes={gametypes} />
+          gametypes={gametypes}
+          errors={this.state.errors} />
       </div>
     )
   }

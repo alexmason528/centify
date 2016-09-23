@@ -2,6 +2,26 @@ import React, { Component } from 'react'
 
 class DashesListActionDialog extends Component {
 
+  confirmText = (action, dashName) => {
+
+    let actionText = `Are you sure you want to ${action} the SPIFF`
+    if (dashName == undefined)
+      actionText = `Are you sure you want to ${action} the SPIFF?`
+    else
+      actionText = `Are you sure you want to ${action} the SPIFF: ${dashName}?`
+
+    if (action == 'approve') {
+      actionText = 'Are you sure you want to approve the SPIFF, no further changes will be allowed and payouts will be approved.'
+    } else if (action == 'resend invitations') {
+      actionText = 'Are you sure you want to resend invitations to all participants that haven\'t joined?'
+    }
+    return (
+      <p>
+        {actionText}
+      </p>
+    );
+  }
+
   render() {
     const { open, submitting, action, dashName, onClose, onYes } = this.props
     return (
@@ -10,9 +30,7 @@ class DashesListActionDialog extends Component {
           <div className="slds-modal__container">
             <div className="slds-modal__content slds-p-around--medium">
               <div>
-                <p>
-                  Are you sure you want to {action} the dash: {dashName}?
-                </p>
+                {this.confirmText(action, dashName)}
               </div>
             </div>
             <div className="slds-modal__footer">

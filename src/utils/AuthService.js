@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
 import { isTokenExpired } from './jwtHelper'
 import Auth0Lock from 'auth0-lock'
-import LogoImg from 'images/centify-logo.png'
+import LogoImg from 'images/centify-auth0-logo.png'
 
 export default class AuthService extends EventEmitter {
   constructor(clientId, domain, redirectUrl) {
@@ -9,6 +9,11 @@ export default class AuthService extends EventEmitter {
     this.domain = domain
     // Configure Auth0
     this.lock = new Auth0Lock(clientId, domain, {
+
+      languageDictionary: {
+        title: "MyCentify Login"
+      },
+      container: 'loginContainer',
       theme: {
         logo: LogoImg,
         primaryColor: "green"

@@ -40,6 +40,9 @@ export const DASHES_ACTIVATE_FAIL = 'centify/dashes/ACTIVATE_FAIL'
 export const DASHES_COMPLETE = 'centify/dashes/COMPLETE'
 export const DASHES_COMPLETE_SUCCESS = 'centify/dashes/COMPLETE_SUCCESS'
 export const DASHES_COMPLETE_FAIL = 'centify/dashes/COMPLETE_FAIL'
+export const DASHES_APPROVE = 'centify/dashes/APPROVE'
+export const DASHES_APPROVE_SUCCESS = 'centify/dashes/APPROVE_SUCCESS'
+export const DASHES_APPROVE_FAIL = 'centify/dashes/APPROVE_FAIL'
 
 export const DASHES_REWARD_CREATE = 'centify/dashes/reward/CREATE'
 export const DASHES_REWARD_CREATE_SUCCESS = 'centify/dashes/reward/CREATE_SUCCESS'
@@ -68,6 +71,10 @@ export const DASHES_TODO_REMOVE = 'centify/dashes/todo/UPDATE'
 export const DASHES_TODO_REMOVE_SUCCESS = 'centify/dashes/todo/UPDATE_SUCCESS'
 export const DASHES_TODO_REMOVE_FAIL = 'centify/dashes/todo/UPDATE_FAIL'
 
+export const DASHES_SEND_INVITATIONS = 'centify/dashes/SEND_INVITATIONS'
+export const DASHES_SEND_INVITATIONS_SUCCESS = 'centify/dashes/SEND_INVITATIONS_SUCCESS'
+export const DASHES_SEND_INVITATIONS_FAIL = 'centify/dashes/SEND_INVITATIONS_FAIL'
+
 /* Users module */
 
 export const USERS_GET_IDENTITY = 'centify/users/GET_IDENTITY'
@@ -93,6 +100,9 @@ export const TODOS_SET_STATUS = 'centify/todos/SET_STATUS'
 export const BUDGET_GET = 'centify/budget/GET'
 export const BUDGET_GET_SUCCESS = 'centify/budget/GET_SUCCESS'
 export const BUDGET_GET_FAIL = 'centify/budget/GET_FAIL'
+export const BUDGET_SET = 'centify/budget/SET'
+export const BUDGET_SET_SUCCESS = 'centify/budget/SET_SUCCESS'
+export const BUDGET_SET_FAIL = 'centify/budget/SET_FAIL'
 
 /* Dash types module */
 
@@ -105,6 +115,10 @@ export const DASH_TYPES_GET_FAIL = 'centify/dashtypes/GET_FAIL'
 export const DASH_BANNERS_GET = 'centify/dashbanners/GET'
 export const DASH_BANNERS_GET_SUCCESS = 'centify/dashbanners/GET_SUCCESS'
 export const DASH_BANNERS_GET_FAIL = 'centify/dashbanners/GET_FAIL'
+
+/* FakeIt module */
+export const FAKE_IT_SUCCESS = 'centify/fakeit/FAKE_IT_SUCCESS'
+export const FAKE_IT_FAIL = 'centify/fakeit/FAKE_IT_FAIL'
 
 /* Apple TV module */
 

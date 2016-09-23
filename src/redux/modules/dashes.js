@@ -43,6 +43,9 @@ import {
   DASHES_COMPLETE,
   DASHES_COMPLETE_SUCCESS,
   DASHES_COMPLETE_FAIL,
+  DASHES_APPROVE,
+  DASHES_APPROVE_SUCCESS,
+  DASHES_APPROVE_FAIL,
 
   DASHES_REWARD_CREATE,
   DASHES_REWARD_CREATE_SUCCESS,
@@ -70,6 +73,10 @@ import {
   DASHES_TODO_REMOVE,
   DASHES_TODO_REMOVE_SUCCESS,
   DASHES_TODO_REMOVE_FAIL,
+
+  DASHES_SEND_INVITATIONS,
+  DASHES_SEND_INVITATIONS_SUCCESS,
+  DASHES_SEND_INVITATIONS_FAIL,
 } from '../constants'
 
 const initialState = Immutable.fromJS({
@@ -227,9 +234,9 @@ export function getDashesList(orgId) {
       _getDashesList(orgId)
     )
     .then((res) => {
-      res.map(dash => {
-        dispatch(getDashesListParticipants(orgId, dash.Id))
-      })
+      // res.map(dash => {
+      //   dispatch(getDashesListParticipants(orgId, dash.Id))
+      // })
     })
     .catch(res => {
       throw new SubmissionError({ _error: res.error })
@@ -396,7 +403,7 @@ export function createDash(orgId, model) {
         updateRewards(dispatch, orgId, res.Id, rewards)
         updateParticipants(dispatch, orgId, res.Id, participants)
         updateTodos(dispatch, orgId, res.Id, todos)
-        dispatch(push('/dashes'))
+        dispatch(push('/spiffs'))
       })
   }
 }
@@ -418,7 +425,7 @@ export function updateDash(orgId, dashId, model) {
       _updateDash(orgId, dashId, modelData)
     )
     .then(() => {
-      dispatch(push('/dashes'))
+      dispatch(push('/spiffs'))
     })
   }
 }
@@ -476,5 +483,19 @@ export function completeDash(orgId, dashId) {
   return {
     types: [DASHES_COMPLETE, DASHES_COMPLETE_SUCCESS, DASHES_COMPLETE_FAIL],
     promise: (client) => client.put(`/v1/${orgId}/dashes/${dashId}/complete`)
+  }
+}
+
+export function approveDash(orgId, dashId) {
+  return {
+    types: [DASHES_APPROVE, DASHES_APPROVE_SUCCESS, DASHES_APPROVE_FAIL],
+    promise: (client) => client.put(`/v1/${orgId}/dashes/${dashId}/close`)
+  }
+}
+
+export function resendInvitations(orgId, dashId) {
+  return {
+    types: [DASHES_SEND_INVITATIONS, DASHES_SEND_INVITATIONS_SUCCESS, DASHES_SEND_INVITATIONS_FAIL],
+    promise: (client) => client.post(`/v1/${orgId}/dashes/${dashId}/send-invitations`)
   }
 }

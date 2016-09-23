@@ -18,25 +18,22 @@ class DashesListItem extends Component {
     const gameTypeIconStyle = {
       fontSize: 22,
     }
+    const iconStyleHeight = {
+      height: 30,
+    }
     switch(column) {
       case 'Type':
         {
-          const val = dash.get(column)
-          switch(val) {
-            case 'TugOfWar':
-              return <Icon name="exchange" style={typeIconStyle} />
-            case 'OverTheLine':
-              return <Icon name="long-arrow-right" style={typeIconStyle} />
-            case 'Timebomb':
-              return <Icon name="bomb" style={typeIconStyle} />
-            case 'Countdown':
-              return <Icon name="clock-o" style={typeIconStyle} />
-            default:
-              return undefined
-          }
+          const val = dash.getIn(['DashType', 'Name'])
+          const imgSRC = dash.getIn(['DashType', 'IconURL'])
+          return <img src={imgSRC} alt={val}  title={val} style={iconStyleHeight}/>
         }
       case 'GameType':
-        return <Icon name="rocket" style={gameTypeIconStyle} />
+        {
+          const val = dash.getIn([column, 'Name'])
+          const imgSRC = dash.getIn([column, 'IconURL'])
+          return <img src={imgSRC} alt={val} title={val} style={iconStyleHeight}/>
+        }
       case 'StartsAt':
       case 'EndsAt':
       case 'CompletedAt':
@@ -48,10 +45,7 @@ class DashesListItem extends Component {
       case 'isTeamDash':
         return dash.get(column) ? 'Yes' : 'No'
       case 'ParticipantsJoined':
-        {
-          const { participantCount } = this.props
-          return dash.get('ParticipantsJoined') + ' / ' + participantCount
-        }
+        return dash.get('ParticipantsJoined')
       case 'EstimatedRewardAmount':
         {
           let amount = dash.get(column)
@@ -59,23 +53,23 @@ class DashesListItem extends Component {
           amount = amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
           return '$' + amount
         }
-      case 'RewardsPaid':
-        {
-          const loadedParticipants = dash.getIn(['Participants', 'loaded'])
-          if (loadedParticipants) {
-            const participants = dash.getIn(['Participants', 'items'])
-            let rewardsPaid = 0
-            participants.map(participant => {
-              const users = participant.get('Users')
-              users.map(user => {
-                rewardsPaid += user.get('RewardAmount')
-              })
-            })
-            return rewardsPaid
-          } else {
-            return '-'
-          }
-        }
+      // case 'RewardsPaid':
+      //   {
+      //     const loadedParticipants = dash.getIn(['Participants', 'loaded'])
+      //     if (loadedParticipants) {
+      //       const participants = dash.getIn(['Participants', 'items'])
+      //       let rewardsPaid = 0
+      //       participants.map(participant => {
+      //         const users = participant.get('Users')
+      //         users.map(user => {
+      //           rewardsPaid += user.get('RewardAmount')
+      //         })
+      //       })
+      //       return rewardsPaid
+      //     } else {
+      //       return '-'
+      //     }
+      //   }
       default:
         return dash.get(column)
     }
@@ -93,15 +87,15 @@ class DashesListItem extends Component {
   }
 
   editDash = (dashId) => {
-    this.props.push(`/dashes/${dashId}`)
+    this.props.push(`/spiffs/${dashId}`)
   }
 
   viewDashDetails = (dashId) => {
-    this.props.push(`/dashes/${dashId}`)
+    this.props.push(`/spiffs/${dashId}`)
   }
 
   showDashReport = (dashId) => {
-    this.props.push(`/dashes/${dashId}/report`)
+    this.props.push(`/spiffs/${dashId}/report`)
   }
 
   deleteDash = (dashId) => {
@@ -126,7 +120,7 @@ class DashesListItem extends Component {
         <a href="javascript:;" onClick={onClick}>
           <Icon name={icon} style={iconStyle} />
         </a>
-        <div className={"slds-popover slds-nubbin--top " + styles.tooltip} role="dialog">
+        <div className={"slds-popover slds-nubbin--left " + styles.tooltip} role="dialog">
           <div className="slds-popover__body">
             {tooltipText}
           </div>
@@ -147,7 +141,7 @@ class DashesListItem extends Component {
       marginRight: 7,
     }
     const id = dash.get('Id')
-    const { onActivate, onComplete, onDelete } = this.props
+    const { onActivate, onComplete, onDelete, onApprove } = this.props
     if (filter == 'Draft') {
       return (
         <span>
@@ -196,7 +190,7 @@ class DashesListItem extends Component {
             this.showDashReport.bind(this, id),
             "line-chart",
             iconStyle,
-            'Dash Report'
+            'SPIFF Report'
           )}
           {this.createLinkIcon(
             this.viewDashDetails.bind(this, id),
@@ -213,19 +207,13 @@ class DashesListItem extends Component {
             this.showDashReport.bind(this, id),
             "line-chart",
             iconStyle,
-            'Dash Report'
+            'SPIFF Report'
           )}
           {this.createLinkIcon(
             this.viewDashDetails.bind(this, id),
             "info-circle",
             iconStyle,
             'View Details'
-          )}
-          {this.createLinkIcon(
-            onComplete,
-            "check-circle",
-            { ...iconStyle, ...greenIcon },
-            'Complete'
           )}
         </span>
       )
@@ -236,7 +224,7 @@ class DashesListItem extends Component {
             this.showDashReport.bind(this, id),
             "line-chart",
             iconStyle,
-            'Dash Report'
+            'SPIFF Report'
           )}
           {this.createLinkIcon(
             null,
@@ -259,13 +247,36 @@ class DashesListItem extends Component {
             this.showDashReport.bind(this, id),
             "line-chart",
             iconStyle,
-            'Dash Report'
+            'SPIFF Report'
           )}
           {this.createLinkIcon(
             this.viewDashDetails.bind(this, id),
             "info-circle",
             iconStyle,
             'View Details'
+          )}
+        </span>
+      )
+    } else if (filter == 'Review') {
+      return (
+        <span>
+          {this.createLinkIcon(
+            this.showDashReport.bind(this, id),
+            "line-chart",
+            iconStyle,
+            'SPIFF Report'
+          )}
+          {this.createLinkIcon(
+            this.viewDashDetails.bind(this, id),
+            "info-circle",
+            iconStyle,
+            'View Details'
+          )}
+          {this.createLinkIcon(
+            onApprove,
+            "check",
+            { ...iconStyle, ...greenIcon },
+            'Approve for Payment'
           )}
         </span>
       )
@@ -283,7 +294,7 @@ class DashesListItem extends Component {
         {columns.map((column, index) => {
           const value = this.getFieldValue(dash, column.field)
           return (
-            <td data-label={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {}, column.label == 'Reward Amount' ? {textAlign: 'right'} : {} }>
+            <td data-label={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {} }>
               <div className="slds-truncate">{value}</div>
             </td>
           )

@@ -34,7 +34,7 @@ class Dashes extends Component {
       if (!loadedList) {
         getDashesList(profile.centifyOrgId)
         .catch(res => {
-          this.context.notify('Failed to get dash list from server', 'error')
+          this.context.notify('Failed to get SPIFF list from server', 'error')
         })
       }
     }
@@ -46,12 +46,11 @@ class Dashes extends Component {
 
   tableColumns(filter) {
     return [
-      { label: 'Type', field: 'Type' },
-      { label: 'Game Type', field: 'GameType' },
+      { label: 'Competition', field: 'Type' },
+      { label: 'Game', field: 'GameType' },
       { label: 'Name', field: 'Name' },
-      { label: 'Participants', field: 'ParticipantsJoined' },
+      { label: 'Joined Participants', field: 'ParticipantsJoined' },
       { label: 'Reward Amount', field: 'EstimatedRewardAmount' },
-      { label: 'Rewards Paid', field: 'RewardsPaid' },
       { label: 'Start Date', field: 'StartsAt' },
       { label: 'Completed Date', field: 'CompletedAt' },
     ]
@@ -81,6 +80,14 @@ class Dashes extends Component {
     });
   }
 
+  onApproveDash = (dash) => {
+    this.setState({
+      actionDialogOpen: true,
+      actionDialogAction: 'approve',
+      actionDialogDash: dash,
+    });
+  }
+
   onClose = () => {
     this.setState({
       actionDialogOpen: false,
@@ -94,9 +101,10 @@ class Dashes extends Component {
       actionDispatcher = this.props.activateDash
     } else if (actionDialogAction == 'complete') {
       actionDispatcher = this.props.completeDash
-    }
-    else if (actionDialogAction == 'delete') {
+    } else if (actionDialogAction == 'delete') {
       actionDispatcher = this.props.deleteDash
+    } else if (actionDialogAction == 'approve') {
+      actionDispatcher = this.props.approveDash
     }
 
     if (actionDispatcher) {
@@ -113,7 +121,7 @@ class Dashes extends Component {
             actionDialogOpen: false,
             actionDialogSubmitting: false,
           })
-          this.context.notify('Successfully ' + actionDialogAction + 'd dash', 'success')
+          this.context.notify('Successfully ' + actionDialogAction + 'd SPIFF', 'success')
           this.props.getDashesList(profile.centifyOrgId)
         })
         .catch(() => {
@@ -121,7 +129,7 @@ class Dashes extends Component {
             actionDialogOpen: false,
             actionDialogSubmitting: false,
           })
-          this.context.notify('Failed to ' + actionDialogAction + ' dash', 'error')
+          this.context.notify('Failed to ' + actionDialogAction + ' SPIFF', 'error')
         })
       }
     }
@@ -142,16 +150,17 @@ class Dashes extends Component {
           <ButtonGroup>
             <Button type={filter == 'Draft' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Draft')}>Draft</Button>
             <Button type={filter == 'Upcoming' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Upcoming')}>Upcoming</Button>
-            <Button type={filter == 'Running' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Running')}>Running</Button>
+            <Button type={filter == 'Running' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Running')}>Games</Button>
             <Button type={filter == 'Finalizing' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Finalizing')}>Finalizing</Button>
             {/*<Button type={filter == 'Completed' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Completed')}>Completed</Button>*/}
-            <Button type={filter == 'Closed' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Closed')}>Closed</Button>
+            <Button type={filter == 'Review' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Review')}>In Review</Button>
+            <Button type={filter == 'Closed' ? 'brand' : 'neutral'} onClick={this.changeFilter.bind(this, 'Closed')}>Done</Button>
           </ButtonGroup>
         </div>
         <div className="slds-clearfix slds-m-vertical--x-large">
-          <h2 className="slds-float--left" style={{ fontSize: 28, fontWeight: 700 }}>Dashes</h2>
+          <h2 className="slds-float--left" style={{ fontSize: 28, fontWeight: 700 }}>SPIFFs</h2>
           <div className="slds-float--right">
-            <Link className="slds-button slds-button--brand" to="/dashes/new">Add Dash</Link>
+            <Link className="slds-button slds-button--brand" to="/spiffs/new">Add SPIFF</Link>
           </div>
         </div>
         <div style={{ overflowX: 'auto', overflowY: 'hidden', paddingBottom: 85 }}>
@@ -160,7 +169,7 @@ class Dashes extends Component {
               <tr className="slds-text-heading--label">
                 <th title="Actions">Actions</th>
                 {columns.map((column, index) => (
-                  <th scope="col" title={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {}}>
+                  <th scope="col" title={column.label} key={index} style={ index == 1 ? { } : {}}>
                     <div className="slds-truncate">{column.label}</div>
                   </th>
                 ))}
@@ -179,7 +188,8 @@ class Dashes extends Component {
                     participantCount={participantCount ? participantCount : 0}
                     onActivate={this.onActivateDash.bind(this, dash)}
                     onDelete={this.onDeleteDash.bind(this, dash)}
-                    onComplete={this.onCompleteDash.bind(this, dash)} />
+                    onComplete={this.onCompleteDash.bind(this, dash)}
+                    onApprove={this.onApproveDash.bind(this,dash)} />
                   :
                   false
               })}

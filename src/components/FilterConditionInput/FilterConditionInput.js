@@ -51,7 +51,7 @@ class FilterConditionInput extends Component {
     } = this.props
     for(const k in basicFilters) {
       const filter = basicFilters[k]
-      filter.FilterConditionPattern = filter.FilterConditionPattern.replace(/data\[\"([A-Za-z]+)\"\]/g, (v, name) => {
+      filter.FilterConditionPattern = filter.FilterConditionPattern.replace(/Data\[\"([A-Za-z]+)\"\]/g, (v, name) => {
         let id = ''
         schemas.map(schema => {
           if (schema.get('Type') != filter.EventType) {
@@ -107,10 +107,10 @@ class FilterConditionInput extends Component {
           } else if(supportedOperators.includes(node.op)) {
             // Now a string of math ops
             state = 'expressions'
-            this.assert(node.args[0].object.name == 'data', "Left hand side must be data[]")
-            this.assert(node.args[0].index, "Left hand side must be an index into data[]")
+            this.assert(node.args[0].object.name == 'Data', "Left hand side must be Data[]")
+            this.assert(node.args[0].index, "Left hand side must be an index into Data[]")
             this.assert(node.args[0].index.dimensions.length == 1, "Must be only 1 index into array")
-            this.assert(node.args[0].index.dimensions[0].valueType == 'string', "Index into data[] must be a string")
+            this.assert(node.args[0].index.dimensions[0].valueType == 'string', "Index into Data[] must be a string")
             switch(node.args[1].valueType) {
               case 'string':
                 this.assert(supportedStringOperators.includes(node.op), "Unsupported operator for string")
@@ -155,7 +155,7 @@ class FilterConditionInput extends Component {
       if (index > 0) {
         exp += ` ${logicop} `
       }
-      exp += 'data[\"' + expitem.fieldId + '\"] ' + expitem.operator
+      exp += 'Data[\"' + expitem.fieldId + '\"] ' + expitem.operator
       if (!isNaN(expitem.value) && isFinite(expitem.value)) {
         exp += ' ' + expitem.value
       } else {
@@ -168,20 +168,20 @@ class FilterConditionInput extends Component {
 
   onChangeBasicFilterSelect = (e, onChange, advancedEventTypeProps, advancedFilterProps) => {
     onChange(e.currentTarget.value)
-    if (!advancedEventTypeProps.input.value) {
-      const defaultAdvEventType = e.currentTarget.value == 'advanced' ? 'Deal' : e.currentTarget.value
-      advancedEventTypeProps.input.onChange(defaultAdvEventType)
-      for(const k in this.convertedBasicFilters) {
-        const filter = this.convertedBasicFilters[k]
-        if (filter.EventType == defaultAdvEventType) {
-          advancedFilterProps.input.onChange(filter.FilterConditionPattern)
-          break
-        }
+    // if (!advancedEventTypeProps.input.value) {
+    const defaultAdvEventType = e.currentTarget.value == 'advanced' ? 'Deal' : e.currentTarget.value
+    advancedEventTypeProps.input.onChange(defaultAdvEventType)
+    for(const k in this.convertedBasicFilters) {
+      const filter = this.convertedBasicFilters[k]
+      if (filter.EventType == defaultAdvEventType) {
+        advancedFilterProps.input.onChange(filter.FilterConditionPattern)
+        break
       }
     }
+    // }
   }
 
-  basicFilterSelect = (props, advancedEventTypeProps, advancedFilterProps) => {
+  basicFilterSelect = (props, advancedEventTypeProps, advancedFilterProps, advancedFilterProps1) => {
     const basicSelectStyle = {
       maxWidth: 400,
       marginTop: 5,
@@ -195,7 +195,7 @@ class FilterConditionInput extends Component {
     }
     return (
       <div>
-        What do you want to include in dash?
+        What do you want to include in SPIFF?
         <div className="slds-form-element" style={basicSelectStyle}>
           <div className="slds-form-element__control">
             <div className="slds-select_container">
@@ -207,6 +207,7 @@ class FilterConditionInput extends Component {
                   advancedEventTypeProps,
                   advancedFilterProps )}
                 >
+                <Option value="">- Select filter -</Option>
                 {basicFilterOptions}
                 <Option value="advanced">Advanced...</Option>
               </Select>

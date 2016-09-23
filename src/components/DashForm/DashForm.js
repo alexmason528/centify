@@ -3,13 +3,14 @@ import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import { Field, Fields, reduxForm, formValueSelector } from 'redux-form'
 import { Icon } from 'react-fa'
-import { 
+import {
   Grid, Row, Col,
   Select, Option,
   Input,
   Checkbox, CheckboxGroup,
   Button,
   Container,
+  Textarea
 } from 'react-lightning-design-system'
 
 import { formatDate2, numWithSurfix } from 'utils/formatter'
@@ -27,7 +28,12 @@ class DashForm extends Component {
     this.state = {
       selectedAllTodos: false,
       selectedUserId: 0,
+      description: ''
     }
+  }
+
+  atoi(str) {
+    return str ? parseInt(str) : 0;
   }
 
   nameInput = (props) => {
@@ -36,18 +42,31 @@ class DashForm extends Component {
     )
   }
 
-  typeSelect = () => {
+  descriptionInput = (props) => {
+    return (
+      <Textarea {...props.input} />
+    )
+  }
+
+  typeSelect = ({ DashTypeId, RewardType }) => {
     const { dashtypes } = this.props
     return (
       <div className="slds-form-element">
         <div className="slds-form-element__control">
           <div className="slds-select_container">
-            <Field name={"DashTypeId"} component="select" className="slds-select">
-              <option value="">- Select dash type -</option>
+            <select
+              className="slds-select"
+              value={DashTypeId.input.value}
+              onChange={e => {
+                const dtid = e.currentTarget.value
+                DashTypeId.input.onChange(dtid)
+                RewardType.input.onChange(dashtypes.getIn([dtid, 'RewardType']))
+              }}>
+              <option value="">- Select SPIFF competition -</option>
               {dashtypes.valueSeq().map((type, index) => (
                 <option key={index} value={type.get('Id')}>{type.get('Name')}</option>
               ))}
-            </Field>
+            </select>
           </div>
         </div>
       </div>
@@ -148,19 +167,20 @@ class DashForm extends Component {
               <input
                 type="radio"
                 name="options"
-                value={MeasureCalcMethod.input.value == 'Sum'}
+                checked={MeasureCalcMethod.input.value == 'add'}
                 onChange={e => {
-                  MeasureCalcMethod.input.onChange('Sum')
+                  MeasureCalcMethod.input.onChange('add')
                   MeasureSumField.input.onChange(amountFieldId)
                 }} />
               <span className="slds-radio--faux"></span>
               <span className="slds-form-element__label" style={{ color: 'inherit' }}>
                 Value of the {fieldNamePlural}: $&nbsp;
                 <Input
+                  value={MeasureCalcMethod.input.value == 'add' ? TargetThreshold.input.value : 0}
                   style={midTextSelectStyle}
                   onChange={e => {
-                    if (MeasureCalcMethod.input.value == 'Sum') {
-                      TargetThreshold.input.onChange(e.currentTarget.value)
+                    if (MeasureCalcMethod.input.value == 'add') {
+                      TargetThreshold.input.onChange(this.atoi(e.currentTarget.value))
                     }
                   }} />
               </span>
@@ -172,19 +192,20 @@ class DashForm extends Component {
             <input
               type="radio"
               name="options"
-              value={MeasureCalcMethod.input.value == 'Increment'}
+              checked={MeasureCalcMethod.input.value == 'increment'}
               onChange={e => {
-                MeasureCalcMethod.input.onChange('Increment')
+                MeasureCalcMethod.input.onChange('increment')
                 MeasureSumField.input.onChange(null)
               }} />
             <span className="slds-radio--faux"></span>
             <span className="slds-form-element__label" style={{ color: 'inherit' }}>
               Number of {fieldNamePlural}:&nbsp;
               <Input
+                value={MeasureCalcMethod.input.value == 'increment' ? TargetThreshold.input.value : 0}
                 style={midTextSelectStyle}
                 onChange={e => {
-                  if (MeasureCalcMethod.input.value == 'Increment') {
-                    TargetThreshold.input.onChange(e.currentTarget.value)
+                  if (MeasureCalcMethod.input.value == 'increment') {
+                    TargetThreshold.input.onChange(this.atoi(e.currentTarget.value))
                   }
                 }} />
             </span>
@@ -228,23 +249,23 @@ class DashForm extends Component {
     )
   }
 
-  rewardTypeSelect = () => {
-    return (
-      <div className="slds-form-element">
-        <div className="slds-form-element__control">
-          <div className="slds-select_container">
-            <Field name="RewardType" component="select" className="slds-select">
-              <option value="">- Select Reward Type -</option>
-              <option value="All over the line">All participants must be over the line to win the reward</option>
-              <option value="Any over the line">Any participants over the line to win the reward</option>
-              <option value="One reward only">Only one winner</option>
-              <option value="Multiple reward positions">Specify the rewards for each winning position</option>
-            </Field>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // rewardTypeSelect = () => {
+  //   return (
+  //     <div className="slds-form-element">
+  //       <div className="slds-form-element__control">
+  //         <div className="slds-select_container">
+  //           <Field name="RewardType" component="select" className="slds-select">
+  //             <option value="">- Select Reward Type -</option>
+  //             <option value="All over the line">All participants must be over the line to win the reward</option>
+  //             <option value="Any over the line">Any participants over the line to win the reward</option>
+  //             <option value="One reward only">Only one winner</option>
+  //             <option value="Multiple reward positions">Specify the rewards for each winning position</option>
+  //           </Field>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   rewardInput = (props) => {
     const value = props.input.value ? props.input.value : 0
@@ -254,7 +275,11 @@ class DashForm extends Component {
       marginLeft: 20,
     }
     return (
-      <Input type="text" {...props.input} style={rewardInputStyle}/>
+      <Input type="text" style={rewardInputStyle}
+        value={value}
+        onChange={e => {
+          props.input.onChange(parseInt(e.currentTarget.value))
+        }} />
     )
   }
 
@@ -273,7 +298,7 @@ class DashForm extends Component {
             EstimatedRewardAmount: 0,
             MaximumRewardAmount: 0,
             ExternalURL: "",
-            Formula: "{}",
+            Formula: "{\"Value\": 0}",
             saveStatus: 1,  // 0: saved, 1: new, 2: modified
             deleted: false,
           })
@@ -336,8 +361,9 @@ class DashForm extends Component {
                     </td>
                     <td data-label="Reward Amount">
                       <Input type='number' defaultValue={reward.EstimatedRewardAmount} onChange={(e) => {
-                        rewards[index].EstimatedRewardAmount = parseInt(e.currentTarget.value)
-                        rewards[index].MaximumRewardAmount = parseInt(e.currentTarget.value)
+                        rewards[index].Formula = "{\"Value\": " + this.atoi(e.currentTarget.value) + "}"
+                        rewards[index].EstimatedRewardAmount = this.atoi(e.currentTarget.value)
+                        rewards[index].MaximumRewardAmount = this.atoi(e.currentTarget.value)
                         if (rewards[index].saveStatus == 0) {
                           rewards[index].saveStatus = 2
                         }
@@ -356,12 +382,12 @@ class DashForm extends Component {
 
   calcEstimatedRewardAmount = () => {
     let thisDash = 0
-    const { RewardTypeValue, RewardAmount, rewards } = this.props
-    if (RewardTypeValue == 'Multiple reward positions') {
+    const { RewardType, RewardAmount, rewards } = this.props
+    if (RewardType == 'Limited number of different rewards') {
       const _rewards = rewards ? JSON.parse(rewards) : []
       for(let i = 0; i < _rewards.length; i++) {
         if (!_rewards[i].deleted) {
-          thisDash += _rewards[i].EstimatedRewardAmount ? parseInt(_rewards[i].EstimatedRewardAmount) : 0
+          thisDash += _rewards[i].EstimatedRewardAmount ? this.atoi(_rewards[i].EstimatedRewardAmount) : 0
         }
       }
     } else {
@@ -382,14 +408,13 @@ class DashForm extends Component {
     }
     return (
       <div>
-        <div className="slds-m-bottom--small">Select one or more Todos for this dash</div>
+        <div className="slds-m-bottom--small">Select one or more Todos for this SPIFF</div>
         <Checkbox
           className="slds-m-bottom--x-small"
           label='Select all'
-          checked={selectedAllTodos}
+          checked={!!selectedAllTodos}
           onChange={(e) => {
             const selectedAll = e.currentTarget.checked
-            console.log(selectedAll)
             for(let i = 0; i < allTodos.size; i++) {
               todos[i] = todos[i] ? todos[i] : { value: false, existed: false }
               todos[i].value = selectedAll
@@ -406,7 +431,7 @@ class DashForm extends Component {
                 <Checkbox
                   className="slds-m-bottom--x-small"
                   label={(index + 1) + '. ' + todo.get('Name')}
-                  checked={todos[index] && !!todos[index].value}
+                  checked={!!todos[index] && !!todos[index].value}
                   onChange={(e) => {
                     todos[index] = todos[index] ? todos[index] : { value: false, existed: false }
                     todos[index].value = e.currentTarget.checked
@@ -449,6 +474,7 @@ class DashForm extends Component {
       height: 16,
     }
     const users = this.props.users
+    const sortedUsers = users.sort((a, b) => a.get('DisplayName').localeCompare(b.get('DisplayName')))
     const { value, onChange } = props.input
     const participants = value ? JSON.parse(value) : []
     const { selectedUserId } = this.state
@@ -460,7 +486,7 @@ class DashForm extends Component {
             <div style={userSelectStyle}>
               <Select
                 className="slds-m-bottom--x-small"
-                defaultValue={selectedUserId} 
+                defaultValue={selectedUserId}
                 required
                 style={userSelectStyle}
                 onChange={(e) => {
@@ -470,7 +496,7 @@ class DashForm extends Component {
                 }}>
                 <Option value={0}>-- Select user to add --</Option>
                 {
-                  users.valueSeq().map((user, index) => (
+                  sortedUsers.valueSeq().map((user, index) => (
                     <Option key={index} value={user.get('Id')}>{user.get('DisplayName')}</Option>
                   ))
                 }
@@ -589,16 +615,36 @@ class DashForm extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, RewardTypeValue, RewardAmount, editable, budgetAmount, MeasureEventType } = this.props
+    const { handleSubmit, submitting, RewardType, RewardAmount, editable, budgetAmount, description, MeasureEventType, errors } = this.props
     const { schemas } = this.props
     const value = this.calcEstimatedRewardAmount()
+    const errorStyle = {
+      color: '#ff5d07'
+    }
     return (
       <form onSubmit={handleSubmit} style={{ maxWidth: 1030 }}>
         <Grid>
+          {
+            errors ?
+            <Row cols={6} className="slds-m-top--large">
+              <Col padded cols={6} className="slds-m-bottom--small">
+                <div style={errorStyle}>
+                  <h2 className={styles.fieldTitle}>Error saving SPIFF</h2>
+                  <ul>
+                    {errors.map((error, index) => (
+                      <li key={index}>{error.Message}</li>
+                    ))}
+                  </ul>
+                </div>
+              </Col>
+            </Row>
+            :
+            undefined
+          }
 
           <Row cols={6} className="slds-m-top--large">
             <Col padded cols={6} className="slds-m-bottom--small">
-              <h2 className={styles.fieldTitle}>Dash name</h2>
+              <h2 className={styles.fieldTitle}>SPIFF name</h2>
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}>
               <Field name="Name" component={this.nameInput}/>
@@ -607,12 +653,28 @@ class DashForm extends Component {
             </Col>
           </Row>
 
-          <Row cols={6} className="slds-m-top--xx-large">
+          <Row cols={6} className="slds-m-top--large">
             <Col padded cols={6} className="slds-m-bottom--small">
-              <h2 className={styles.fieldTitle}>Type</h2>
+              <h2 className={styles.fieldTitle}>Description</h2>
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={2}>
-              {this.typeSelect()}
+              <Field name="Description" component={this.descriptionInput} />
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={4}>
+            </Col>
+          </Row>
+
+          <Row cols={6} className="slds-m-top--xx-large">
+            <Col padded cols={6} className="slds-m-bottom--small">
+              <h2 className={styles.fieldTitle}>Competition</h2>
+            </Col>
+            <Col padded cols={6} colsSmall={3} colsMedium={2}>
+              <Fields
+                names={[
+                  'DashTypeId',
+                  'RewardType',
+                ]}
+                component={this.typeSelect} />
             </Col>
             <Col padded cols={6} colsSmall={3} colsMedium={4}></Col>
           </Row>
@@ -699,21 +761,20 @@ class DashForm extends Component {
             </Col>
           </Row>
 
-          <Row cols={6} className="slds-m-top--xx-large" style={budgetAmount == 0 ? { display: 'none' } : {}}>
+          <Row cols={6} className="slds-m-top--xx-large">
             <Col padded cols={6} className="slds-m-bottom--medium">
               <h2 className={styles.fieldTitle}>Rewards</h2>
-            </Col>
-            <Col padded cols={6} colsMedium={4}>
-              {this.rewardTypeSelect()}
             </Col>
             <Col padded cols={6} colsMedium={2}>
               <table>
                 <tbody>
-                  <tr>
+                  <tr style={budgetAmount == 0 ? { display: 'none' } : {}}>
                     <td>Your Budget: </td><td><strong>${budgetAmount}</strong></td>
-                  </tr><tr>
-                    <td>This Dash: </td><td><strong>${value}</strong></td>
-                  </tr><tr>
+                  </tr>
+                  <tr>
+                    <td>This SPIFF: </td><td><strong>${value}</strong></td>
+                  </tr>
+                  <tr style={budgetAmount == 0 ? { display: 'none' } : {}}>
                     <td>Balance: </td><td><strong>${budgetAmount - value}</strong></td>
                   </tr>
                 </tbody>
@@ -721,7 +782,7 @@ class DashForm extends Component {
             </Col>
             <Col padded cols={6} className="slds-m-top--small">
               {
-                RewardTypeValue == 'Multiple reward positions' ?
+                RewardType == 'Limited number of different rewards' ?
                 <Field name="rewards" component={this.rewardList} />
                 :
                 <div>
@@ -750,22 +811,13 @@ class DashForm extends Component {
             </Col>
           </Row>
 
-          <Row cols={6} className="slds-m-top--large">
-            <Col padded cols={6} className="slds-m-bottom--small">
-              <h2 className={styles.fieldTitle}>Description</h2>
-            </Col>
-            <Col padded cols={6}>
-              <Field name="description" component="textarea" />
-            </Col>
-          </Row>
-
           <Row cols={6} className="slds-m-vertical--x-large">
             <Col padded>
               <div style={{ textAlign: 'right' }}>
-                <Link to='/dashes' style={{ marginRight: 10, display: 'inline-block' }}>
+                <Link to='/spiffs' style={{ marginRight: 10, display: 'inline-block' }}>
                   <Button type="neutral">Cancel</Button>
                 </Link>
-                <button type="submit" className="slds-button slds-button--brand" disabled={!editable || submitting}>Save Dash</button>
+                <button type="submit" className="slds-button slds-button--brand" disabled={!editable || submitting}>Save SPIFF</button>
               </div>
             </Col>
           </Row>
@@ -786,10 +838,11 @@ _DashForm = connect(
   state => {
     return {
       DashTypeId: selector(state, 'DashTypeId'),
-      RewardTypeValue: selector(state, 'RewardType'),
+      RewardType: selector(state, 'RewardType'),
       RewardAmount: selector(state, 'RewardAmount'),
       rewards: selector(state, 'rewards'),
       MeasureEventType: selector(state, 'MeasureEventType'),
+      description: selector(state, 'Description')
     }
   }
 )(_DashForm)
