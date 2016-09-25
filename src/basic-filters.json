@@ -2,31 +2,31 @@
     "0001": {
         "Name": "Deals Won",
         "EventType": "Deal",
-        "FilterConditionPattern": "Data[\"IsWon\"] == true",
+        "FilterConditionPattern": "Data[\"IsWon\"] == \"true\"",
         "HasValue": true
     },
     "0002": {
         "Name": "Cases Closed",
         "EventType": "Case",
-        "FilterConditionPattern": "Data[\"IsClosed\"] == true",
+        "FilterConditionPattern": "Data[\"IsClosed\"] == \"true\"",
         "HasValue": false
     },
     "0003": {
         "Name": "Calls Made",
         "EventType": "Call",
-        "FilterConditionPattern": "Data[\"IsClosed\"] == true",
+        "FilterConditionPattern": "Data[\"IsClosed\"] == \"true\"",
         "HasValue": false
     },
     "0004": {
         "Name": "Emails Sent",
         "EventType": "Email",
-        "FilterConditionPattern": "Data[\"IsClosed\"] == true",
+        "FilterConditionPattern": "Data[\"IsClosed\"] == \"true\"",
         "HasValue": false
     },
     "0005": {
         "Name": "Leads Qualified",
         "EventType": "Lead",
-        "FilterConditionPattern": "Data[\"IsQualified\"] == true",
+        "FilterConditionPattern": "Data[\"IsQualified\"] == \"true\"",
         "HasValue": false
     },
     "0006": {

@@ -152,6 +152,7 @@ class DashCreate extends Component {
   }
 
   onSubmit = (model) => {
+    console.log(model); return; ///
     const auth = this.props.auth
     const profile = auth.getProfile()
     const {

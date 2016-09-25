@@ -83,40 +83,51 @@ class FilterConditionInput extends Component {
   }
 
   parse = (expression) => {
-    if (!expression) {
-      return {
-        matching: 'all',
-        expressions: emptyExpression,
-      }
-    }
-    let matching // All or Any - starts undefined
-    let state = 'init' // State machine starts in init
-    let expressions = [] // Expressions to store
-    let rootNode = math.parse(expression)
-    rootNode.traverse((node, path, parent) => {
+    var matching // All or Any - starts undefined
+    var state = 'init' // State machine starts in init
+    var expressions = [] // Expressions to store
+    var rootNode = math.parse(expression)
+    rootNode.traverse(function (node, path, parent) {
       switch (node.type) {
         case 'OperatorNode':
           if(node.op == 'and') {
-            this.assert(state == 'init', "Unexpected AND - No nested logic permitted")
-            this.assert(!matching || (matching === 'all'), "Unexpected AND - Must be all ANDs or all ORs")
+            assert(state == 'init', "Unexpected AND - No nested logic permitted")
+            assert(!matching || (matching === 'all'), "Unexpected AND - Must be all ANDs or all ORs")
             matching = 'all'
           } else if(node.op == 'or') {
-            this.assert(state == 'init', "Unexpected OR - No nested logic permitted")
-            this.assert(!matching || (matching === 'any'), "Unexpected OR - Must be all ANDs or all ORs")
+            assert(state == 'init', "Unexpected OR - No nested logic permitted")
+            assert(!matching || (matching === 'any'), "Unexpected OR - Must be all ANDs or all ORs")
             matching = 'any'
           } else if(supportedOperators.includes(node.op)) {
             // Now a string of math ops
             state = 'expressions'
-            this.assert(node.args[0].object.name == 'Data', "Left hand side must be Data[]")
-            this.assert(node.args[0].index, "Left hand side must be an index into Data[]")
-            this.assert(node.args[0].index.dimensions.length == 1, "Must be only 1 index into array")
-            this.assert(node.args[0].index.dimensions[0].valueType == 'string', "Index into Data[] must be a string")
+
+            if ('object' in node.args[0].object) {
+              // We are dealing with nested array, so we need to validate
+              var nested = node.args[0].object
+
+              assert(nested.index.dimensions.length == 1, "Must be only 1 index into array")
+              assert(nested.index.dimensions[0].start, "Invalid array notion")
+              assert(nested.index.dimensions[0].end, "Invalid array notion")
+
+              assert(nested.object.name, "Left hand side must be Data[]")
+
+              assert(nested.object.index.dimensions.length == 1, "Must be only 1 index into array")
+              assert(nested.object.index.dimensions[0].value == "Products", "Lack of Products subarray")
+            } else {
+              assert(node.args[0].object.name == 'Data', "Left hand side must be Data[]")
+            }
+
+            assert(node.args[0].index, "Left hand side must be an index into Data[]")
+            assert(node.args[0].index.dimensions.length == 1, "Must be only 1 index into array")
+            assert(node.args[0].index.dimensions[0].valueType == 'string', "Index into Data[] must be a string")
+
             switch(node.args[1].valueType) {
               case 'string':
-                this.assert(supportedStringOperators.includes(node.op), "Unsupported operator for string")
+                assert(supportedStringOperators.includes(node.op), "Unsupported operator for string")
                 break
               case 'number':
-                this.assert(supportedNumberOperators.includes(node.op), "Unsupported operator for number")
+                assert(supportedNumberOperators.includes(node.op), "Unsupported operator for number")
                 break
               default:
                 throw("Unsupported value - only strings and numbers are supported")
@@ -124,28 +135,25 @@ class FilterConditionInput extends Component {
             expressions.push({
               'fieldId': node.args[0].index.dimensions[0].value,
               'operator': node.op,
-              'value': node.args[1].value 
+              'value': node.args[1].value
             })
           } else {
             throw("Unsupported operator " + node.op)
           }
           break
-        case 'ConstantNode':
-          break;
-        case 'SymbolNode':
-          break;
-        case 'IndexNode':
-          break;
-        case 'AccessorNode':
-          break;
+        case 'ConstantNode':; break
+        case 'SymbolNode':; break
+        case 'IndexNode':; break
+        case 'AccessorNode':; break
+        case 'RangeNode':; break
         default:
           throw("Unexpected element " + node.type)
       }
-    });
+    })
     return {
       'matching': matching,
       'expressions': expressions
-    };
+    }
   }
 
   compose = (parsedExp) => {
@@ -349,7 +357,6 @@ class FilterConditionInput extends Component {
     const midTextSelectStyle = {
       display: 'inline-block',
       maxWidth: 100,
-      margin: '0 10px',
     }
     const ruleSelectStyle = {
       display: 'inline-block',
@@ -357,13 +364,31 @@ class FilterConditionInput extends Component {
       marginRight: 15,
     }
     const ruleStyle = {
-      padding: '5px 0',
+      paddingTop: 20,
     }
     const ruleButtonStyle = {
       width: 30,
       marginLeft: 5,
       padding: 0,
       textAlign: 'center',
+    }
+    const allanyStyle = {
+      display: 'inline-block',
+      marginLeft: 25,
+    }
+    const allanyRadioStyle = {
+      marginRight: 15,
+    }
+    const ruleSepStyle = {
+      marginTop: 15,
+      position: 'relative',
+    }
+    const ruleLineStyle = {
+      margin: 0,
+      position: 'absolute',
+      left: 30,
+      top: 10,
+      right: 0,
     }
     const {
       schemas
@@ -377,37 +402,39 @@ class FilterConditionInput extends Component {
     const parsedExp2 = this.parseSecondType(props1.input.value)
     return (
       <div className="slds-m-top--medium">
-        <div className="slds-form-element">
-          <div className="slds-form-element__control">
-            <label className="slds-radio">
-              <input
-                type="radio"
-                checked={!filterConditionTypeProps.input.value}
-                onChange={e => filterConditionTypeProps.input.onChange(0)} />
-              <span className="slds-radio--faux"></span>
-              <span className="slds-form-element__label">
-                Include
-                <Select
-                  style={midTextSelectStyle}
-                  value={advancedFilterEventTypeProps.input.value}
-                  onChange={advancedFilterEventTypeProps.input.onChange}>
-                  {schemas.valueSeq().map((schema, index) => (
-                    <Option key={index} value={schema.get('Type')}>{schema.get('Type')}</Option>
-                  ))}
-                </Select>
-                matching
-                <Select style={midTextSelectStyle} value={parsedExpression.matching}
-                  onChange={e => this.onAdvancedFilterOperatorChange(e.currentTarget.value, props.input.value, props.input.onChange)}>
-                  <Option value="all">All</Option>
-                  <Option value="any">Any</Option>
-                </Select>
-                of the following values:
-              </span>
-            </label>
+        <div style={{ marginTop: 20, marginBottom: 10 }}>What type of record do you want to include?</div>
+        <Select
+          style={midTextSelectStyle}
+          value={advancedFilterEventTypeProps.input.value}
+          onChange={advancedFilterEventTypeProps.input.onChange}>
+          {schemas.valueSeq().map((schema, index) => (
+            <Option key={index} value={schema.get('Type')}>{schema.get('Type')}</Option>
+          ))}
+        </Select>
+        {/*<Select style={midTextSelectStyle} value={parsedExpression.matching}
+          onChange={e => this.onAdvancedFilterOperatorChange(e.currentTarget.value, props.input.value, props.input.onChange)}>
+          <Option value="all">All</Option>
+          <Option value="any">Any</Option>
+        </Select>*/}
+        <div className="slds-form-element" style={{ display: 'inline-block' }}>
+          <div className="slds-form-element__control" style={{ display: 'inline-block' }}>
+            <span className="slds-radio" style={allanyStyle}>
+              <input type="radio" id="all" name="all" checked="" />
+              <label className="slds-radio__label" htmlFor="all">
+                <span className="slds-radio--faux" style={allanyRadioStyle}></span>
+                <span className="slds-form-element__label">Matching all</span>
+              </label>
+            </span>
+            <span className="slds-radio" style={allanyStyle}>
+              <input type="radio" id="any" name="any" />
+              <label className="slds-radio__label" htmlFor="any">
+                <span className="slds-radio--faux" style={allanyRadioStyle}></span>
+                <span className="slds-form-element__label">Matching any</span>
+              </label>
+            </span>
           </div>
         </div>
-        <div style={{ paddingLeft: 35, maxWidth: 700 }}>
-          <hr style={{ margin: '20px 0 10px' }} />
+        <div style={{ maxWidth: 700 }}>
           {expressions.map((expression, index) => {
             return (
               <div style={ruleStyle} key={index}>
@@ -451,12 +478,49 @@ class FilterConditionInput extends Component {
                     ''
                   }
                 </div>
+                {
+                  index < expressions.length - 1 ?
+                  <div style={ruleSepStyle}>
+                    <div>and</div>
+                    <hr style={ruleLineStyle} />
+                  </div>
+                  :
+                  ''
+                }
               </div>
             )
           })}
-          <hr style={{ margin: '10px 0 20px' }} />
         </div>
-        <div className="slds-form-element">
+        <div clasName="slds-m-top--large">
+          {/* Deal product filter */}
+          <div style={{ marginTop: 20, marginBottom: 10 }}>What type of record do you want to include?</div>
+            <Select
+              style={midTextSelectStyle}
+              value={advancedFilterEventTypeProps.input.value}
+              onChange={advancedFilterEventTypeProps.input.onChange}>
+              <Option value={true}>Yes</Option>
+              <Option value={false}>No</Option>
+            </Select>
+            <div className="slds-form-element" style={{ display: 'inline-block' }}>
+              <div className="slds-form-element__control" style={{ display: 'inline-block' }}>
+                <span className="slds-radio" style={allanyStyle}>
+                  <input type="radio" id="all" name="all" checked="" />
+                  <label className="slds-radio__label" htmlFor="all">
+                    <span className="slds-radio--faux" style={allanyRadioStyle}></span>
+                    <span className="slds-form-element__label">Matching all</span>
+                  </label>
+                </span>
+                <span className="slds-radio" style={allanyStyle}>
+                  <input type="radio" id="any" name="any" />
+                  <label className="slds-radio__label" htmlFor="any">
+                    <span className="slds-radio--faux" style={allanyRadioStyle}></span>
+                    <span className="slds-form-element__label">Matching any</span>
+                  </label>
+                </span>
+              </div>
+            </div>
+        </div>
+        {/*<div className="slds-form-element">
           <div className="slds-form-element__control">
             <label className="slds-radio">
               <input
@@ -528,7 +592,7 @@ class FilterConditionInput extends Component {
               onChange={e => this.onAdvancedFilterSecondTypeValueChange({ value: e.currentTarget.value }, props1)} />
           </div>
           <hr style={{ margin: '10px 0 20px' }} />
-        </div>
+        </div>*/}
       </div>
     )
   }
