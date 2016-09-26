@@ -95,7 +95,7 @@ class DashCreate extends Component {
       Name : "",
       Type : "OverTheLine",
       MeasureEventType : "Deal",
-      MeasureEventTypeAdvanced : "",
+      MeasureEventTypeAdvanced : "Deal",
       MeasureFilterCondition: "",
       TargetThreshold: 0,
       StartsAt: startDate.toISOString(),

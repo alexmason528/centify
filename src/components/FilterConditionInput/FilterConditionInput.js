@@ -20,7 +20,7 @@ const emptyExpression = [{
   value: 'something',
 }]
 const emptyExpression2 = [{
-  fieldId: '06ry1nfhxnabawkv',
+  fieldId: '0',
   operator: '==',
   value: 'something',
 }]
@@ -45,10 +45,12 @@ class FilterConditionInput extends Component {
   componentWillMount() {
     this.convertBasicFilters()
     const { MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition } = this.props
-    for(const k in this.convertedBasicFilters) {
-      const filter = this.convertedBasicFilters[k]
-      if (filter.EventType == MeasureEventType.input.value && filter.FilterConditionPattern != MeasureFilterCondition.input.value) {
-        MeasureEventType.input.onChange('advanced')
+    if (MeasureFilterCondition.input.value) {
+      for(const k in this.convertedBasicFilters) {
+        const filter = this.convertedBasicFilters[k]
+        if (filter.EventType == MeasureEventType.input.value && filter.FilterConditionPattern != MeasureFilterCondition.input.value) {
+          MeasureEventType.input.onChange('advanced')
+        }
       }
     }
   }
