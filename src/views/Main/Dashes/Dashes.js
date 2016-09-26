@@ -34,7 +34,7 @@ class Dashes extends Component {
       if (!loadedList) {
         getDashesList(profile.centifyOrgId)
         .catch(res => {
-          this.context.notify('Failed to get dash list from server', 'error')
+          this.context.notify('Failed to get SPIFF list from server', 'error')
         })
       }
     }
@@ -49,9 +49,8 @@ class Dashes extends Component {
       { label: 'Competition', field: 'Type' },
       { label: 'Game', field: 'GameType' },
       { label: 'Name', field: 'Name' },
-      { label: 'Participants', field: 'ParticipantsJoined' },
+      { label: 'Joined Participants', field: 'ParticipantsJoined' },
       { label: 'Reward Amount', field: 'EstimatedRewardAmount' },
-      { label: 'Rewards Paid', field: 'RewardsPaid' },
       { label: 'Start Date', field: 'StartsAt' },
       { label: 'Completed Date', field: 'CompletedAt' },
     ]
@@ -170,7 +169,7 @@ class Dashes extends Component {
               <tr className="slds-text-heading--label">
                 <th title="Actions">Actions</th>
                 {columns.map((column, index) => (
-                  <th scope="col" title={column.label} key={index} style={ index == 1 ? { textAlign: 'center' } : {}}>
+                  <th scope="col" title={column.label} key={index} style={ index == 1 ? { } : {}}>
                     <div className="slds-truncate">{column.label}</div>
                   </th>
                 ))}

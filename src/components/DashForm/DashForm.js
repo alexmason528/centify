@@ -60,12 +60,7 @@ class DashForm extends Component {
               onChange={e => {
                 const dtid = e.currentTarget.value
                 DashTypeId.input.onChange(dtid)
-                const dtname = dashtypes.getIn([dtid, 'Name'])
-                if (dtname == 'Race') {
-                  RewardType.input.onChange('Limited number of different rewards')
-                } else {
-                  RewardType.input.onChange('One reward one amount')
-                }
+                RewardType.input.onChange(dashtypes.getIn([dtid, 'RewardType']))
               }}>
               <option value="">- Select SPIFF competition -</option>
               {dashtypes.valueSeq().map((type, index) => (
@@ -301,7 +296,7 @@ class DashForm extends Component {
             EstimatedRewardAmount: 0,
             MaximumRewardAmount: 0,
             ExternalURL: "",
-            Formula: "{}",
+            Formula: "{\"Value\": 0}",
             saveStatus: 1,  // 0: saved, 1: new, 2: modified
             deleted: false,
           })
@@ -364,6 +359,7 @@ class DashForm extends Component {
                     </td>
                     <td data-label="Reward Amount">
                       <Input type='number' defaultValue={reward.EstimatedRewardAmount} onChange={(e) => {
+                        rewards[index].Formula = "{\"Value\": " + this.atoi(e.currentTarget.value) + "}"
                         rewards[index].EstimatedRewardAmount = this.atoi(e.currentTarget.value)
                         rewards[index].MaximumRewardAmount = this.atoi(e.currentTarget.value)
                         if (rewards[index].saveStatus == 0) {
