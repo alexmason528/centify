@@ -719,7 +719,7 @@ class DashForm extends Component {
                 component={FilterConditionInput}
                 props={{ schemas }} />
             </Col>
-            <Col padded cols={6} className="slds-m-top--large">
+            <Col padded cols={6} className="slds-m-top--x-large">
               <Fields
                 names={[
                   'MeasureCalcMethod',

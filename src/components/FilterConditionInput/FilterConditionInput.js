@@ -42,35 +42,8 @@ class FilterConditionInput extends Component {
     this.convertBasicFilters()
   }
 
-  convertBasicFilters() {
-    if (this.convertedBasicFilters) {
-      return
-    }
-    const {
-      schemas,
-    } = this.props
-    for(const k in basicFilters) {
-      const filter = basicFilters[k]
-      filter.FilterConditionPattern = filter.FilterConditionPattern.replace(/Data\[\"([A-Za-z]+)\"\]/g, (v, name) => {
-        let id = ''
-        schemas.map(schema => {
-          if (schema.get('Type') != filter.EventType) {
-            return
-          }
-          const fields = schema.get('Fields')
-          if (fields) {
-            fields.map(field => {
-              if (field.get('Name') == name) {
-                id = field.get('Id')
-              }
-            })
-          }
-        })
-        return v.replace(name, id)
-      })
-    }
-    this.convertedBasicFilters = basicFilters
-  }
+
+  /* Parser engine */
 
   assert = (condition, message) => {
     if (!condition) {
@@ -83,51 +56,80 @@ class FilterConditionInput extends Component {
   }
 
   parse = (expression) => {
+    let firstPart = null
+    let secondPart = null
+    const regexp = /\((.*)\)\sand\sany\((.*)\)/g;
+    expression.replace(regexp, function(exp, param1, param2) {
+      firstPart = param1
+      secondPart = param2
+      return exp
+    })
+    if (!firstPart) {
+      firstPart = expression
+    }
+    console.log(firstPart)
+    console.log(secondPart)
+    if (secondPart) {
+      // secondPart = secondPart.replace(/Data.Products\[0:\]/g, 'data')
+    }
+    console.log(secondPart)
+    return {
+      firstPart: this.parseExpression(firstPart),
+      a: 1,
+      b: 2,
+      c: 3,
+      secondPart: secondPart ? this.parseExpression(secondPart) : '',
+    }
+  }
+
+  parseExpression = (expression) => {
     var matching // All or Any - starts undefined
     var state = 'init' // State machine starts in init
     var expressions = [] // Expressions to store
     var rootNode = math.parse(expression)
-    rootNode.traverse(function (node, path, parent) {
+    rootNode.traverse((node, path, parent) => {
       switch (node.type) {
         case 'OperatorNode':
           if(node.op == 'and') {
-            assert(state == 'init', "Unexpected AND - No nested logic permitted")
-            assert(!matching || (matching === 'all'), "Unexpected AND - Must be all ANDs or all ORs")
+            this.assert(state == 'init', "Unexpected AND - No nested logic permitted")
+            this.assert(!matching || (matching === 'all'), "Unexpected AND - Must be all ANDs or all ORs")
             matching = 'all'
           } else if(node.op == 'or') {
-            assert(state == 'init', "Unexpected OR - No nested logic permitted")
-            assert(!matching || (matching === 'any'), "Unexpected OR - Must be all ANDs or all ORs")
+            this.assert(state == 'init', "Unexpected OR - No nested logic permitted")
+            this.assert(!matching || (matching === 'any'), "Unexpected OR - Must be all ANDs or all ORs")
             matching = 'any'
           } else if(supportedOperators.includes(node.op)) {
             // Now a string of math ops
             state = 'expressions'
 
-            if ('object' in node.args[0].object) {
-              // We are dealing with nested array, so we need to validate
-              var nested = node.args[0].object
+            if (node.args[0].object) {
+              if ('object' in node.args[0].object) {
+                // We are dealing with nested array, so we need to validate
+                var nested = node.args[0].object
 
-              assert(nested.index.dimensions.length == 1, "Must be only 1 index into array")
-              assert(nested.index.dimensions[0].start, "Invalid array notion")
-              assert(nested.index.dimensions[0].end, "Invalid array notion")
+                this.assert(nested.index.dimensions.length == 1, "Must be only 1 index into array")
+                this.assert(nested.index.dimensions[0].start, "Invalid array notion")
+                this.assert(nested.index.dimensions[0].end, "Invalid array notion")
 
-              assert(nested.object.name, "Left hand side must be Data[]")
+                this.assert(nested.object.name, "Left hand side must be Data[]")
 
-              assert(nested.object.index.dimensions.length == 1, "Must be only 1 index into array")
-              assert(nested.object.index.dimensions[0].value == "Products", "Lack of Products subarray")
-            } else {
-              assert(node.args[0].object.name == 'Data', "Left hand side must be Data[]")
+                this.assert(nested.object.index.dimensions.length == 1, "Must be only 1 index into array")
+                this.assert(nested.object.index.dimensions[0].value == "Products", "Lack of Products subarray")
+              } else {
+                this.assert(node.args[0].object.name == 'Data', "Left hand side must be Data[]")
+              }
             }
 
-            assert(node.args[0].index, "Left hand side must be an index into Data[]")
-            assert(node.args[0].index.dimensions.length == 1, "Must be only 1 index into array")
-            assert(node.args[0].index.dimensions[0].valueType == 'string', "Index into Data[] must be a string")
+            this.assert(node.args[0].index, "Left hand side must be an index into Data[]")
+            this.assert(node.args[0].index.dimensions.length == 1, "Must be only 1 index into array")
+            this.assert(node.args[0].index.dimensions[0].valueType == 'string', "Index into Data[] must be a string")
 
             switch(node.args[1].valueType) {
               case 'string':
-                assert(supportedStringOperators.includes(node.op), "Unsupported operator for string")
+                this.assert(supportedStringOperators.includes(node.op), "Unsupported operator for string")
                 break
               case 'number':
-                assert(supportedNumberOperators.includes(node.op), "Unsupported operator for number")
+                this.assert(supportedNumberOperators.includes(node.op), "Unsupported operator for number")
                 break
               default:
                 throw("Unsupported value - only strings and numbers are supported")
@@ -157,6 +159,15 @@ class FilterConditionInput extends Component {
   }
 
   compose = (parsedExp) => {
+    let exp = this.composeFirstType(parsedExp.firstPart)
+    if (parsedExp.secondPart) {
+      let exp2 = this.composeSecondType(parsedExp.secondPart)
+      exp = `(${exp}) and any(${exp2})`
+    }
+    return exp
+  }
+
+  composeFirstType = (parsedExp) => {
     let exp = ''
     const logicop = parsedExp.matching == 'all' ? 'and' : 'or'
     parsedExp.expressions.forEach((expitem, index) => {
@@ -172,6 +183,57 @@ class FilterConditionInput extends Component {
       
     })
     return exp
+  }
+
+  composeSecondType = (value) => {
+    /*let exp = ''
+    exp += 'Data.Products[0:]["'
+    exp += value.field
+    exp += '"] '
+    exp += value.operator
+    exp += ' "'
+    exp += value.value
+    exp += '"'
+    if (value.func == 'total') {
+      exp = 'total(' + exp + ') >= ' + value.count
+    } else {
+      exp = 'any(' + exp + ')'
+    }
+    return exp*/
+    return ''
+  }
+
+
+  /* Basic filter select */
+
+  convertBasicFilters() {
+    if (this.convertedBasicFilters) {
+      return
+    }
+    const {
+      schemas,
+    } = this.props
+    for(const k in basicFilters) {
+      const filter = basicFilters[k]
+      filter.FilterConditionPattern = filter.FilterConditionPattern.replace(/Data\[\"([A-Za-z]+)\"\]/g, (v, name) => {
+        let id = ''
+        schemas.map(schema => {
+          if (schema.get('Type') != filter.EventType) {
+            return
+          }
+          const fields = schema.get('Fields')
+          if (fields) {
+            fields.map(field => {
+              if (field.get('Name') == name) {
+                id = field.get('Id')
+              }
+            })
+          }
+        })
+        return v.replace(name, id)
+      })
+    }
+    this.convertedBasicFilters = basicFilters
   }
 
   onChangeBasicFilterSelect = (e, onChange, advancedEventTypeProps, advancedFilterProps) => {
@@ -226,42 +288,47 @@ class FilterConditionInput extends Component {
     )
   }
 
+
+  /* Advanced filter select */
+
   onAdvancedFilterOperatorChange = (op, value, onChange) => {
     const parsedExpression = this.parse(value)
-    parsedExpression.matching = (op == 'all' ? 'and' : 'or')
+    console.log(parsedExpression)
+    parsedExpression.firstPart.matching = (op == 'all' ? 'and' : 'or')
     onChange(this.compose(parsedExpression))
   }
 
   onAdvancedFilterAddItem = (index, value, onChange) => {
     const parsedExpression = this.parse(value)
-    parsedExpression.expressions.splice(index + 1, 0, parsedExpression.expressions[index])
+    parsedExpression.firstPart.expressions.splice(index + 1, 0, parsedExpression.expressions[index])
     onChange(this.compose(parsedExpression))
   }
 
   onAdvancedFilterRemoveItem = (index, value, onChange) => {
     const parsedExpression = this.parse(value)
-    parsedExpression.expressions.splice(index, 1)
+    parsedExpression.firstPart.expressions.splice(index, 1)
     onChange(this.compose(parsedExpression))
   }
 
   onAdvancedFilterItemFieldChange = (index, fieldId, value, onChange) => {
     const parsedExpression = this.parse(value)
-    parsedExpression.expressions[index].fieldId = fieldId
+    parsedExpression.firstPart.expressions[index].fieldId = fieldId
     onChange(this.compose(parsedExpression))
   }
 
   onAdvancedFilterItemOperatorChange = (index, opr, value, onChange) => {
     const parsedExpression = this.parse(value)
-    parsedExpression.expressions[index].operator = opr
+    parsedExpression.firstPart.expressions[index].operator = opr
     onChange(this.compose(parsedExpression))
   }
 
   onAdvancedFilterItemValueChange = (index, expvalue, value, onChange) => {
     const parsedExpression = this.parse(value)
-    parsedExpression.expressions[index].value = expvalue
+    parsedExpression.firstPart.expressions[index].value = expvalue
     onChange(this.compose(parsedExpression))
   }
 
+  /*
   parseSecondType = (value) => {
     // let parsedExp = {
     //   func: 'total',
@@ -326,23 +393,7 @@ class FilterConditionInput extends Component {
     }
     return parsedExp
   }
-
-  composeSecondType = (value) => {
-    let exp = ''
-    exp += 'Data.Products[0:]["'
-    exp += value.field
-    exp += '"] '
-    exp += value.operator
-    exp += ' "'
-    exp += value.value
-    exp += '"'
-    if (value.func == 'total') {
-      exp = 'total(' + exp + ') >= ' + value.count
-    } else {
-      exp = 'any(' + exp + ')'
-    }
-    return exp
-  }
+  */
 
   onAdvancedFilterSecondTypeValueChange = (newValues, props) => {
     const expValues = this.parseSecondType(props.input.value)
@@ -354,6 +405,8 @@ class FilterConditionInput extends Component {
 
   advancedFilterSelect = (basicFilterProps, advancedFilterEventTypeProps, props, props1, filterConditionTypeProps) => {
     const parsedExpression = this.parse(props.input.value)
+    const { firstPart, secondPart } = parsedExpression
+    console.log(firstPart)
     const midTextSelectStyle = {
       display: 'inline-block',
       maxWidth: 100,
@@ -394,12 +447,11 @@ class FilterConditionInput extends Component {
       schemas
     } = this.props
     const expressions = (
-      parsedExpression.expressions.length > 0 ?
-      parsedExpression.expressions
+      firstPart.expressions.length > 0 ?
+      firstPart.expressions
       :
       emptyExpression
     )
-    const parsedExp2 = this.parseSecondType(props1.input.value)
     return (
       <div className="slds-m-top--medium">
         <div style={{ marginTop: 20, marginBottom: 10 }}>What type of record do you want to include?</div>
@@ -419,14 +471,27 @@ class FilterConditionInput extends Component {
         <div className="slds-form-element" style={{ display: 'inline-block' }}>
           <div className="slds-form-element__control" style={{ display: 'inline-block' }}>
             <span className="slds-radio" style={allanyStyle}>
-              <input type="radio" id="all" name="all" checked="" />
+              <input type="radio" id="all" name="all"
+                checked={firstPart.matching != 'any'}
+                onChange={e => {
+                  if (e.currentTarget.value == 'on') {
+                    this.onAdvancedFilterOperatorChange('all', props.input.value, props.input.onChange)
+                  }
+                }} />
               <label className="slds-radio__label" htmlFor="all">
                 <span className="slds-radio--faux" style={allanyRadioStyle}></span>
                 <span className="slds-form-element__label">Matching all</span>
               </label>
             </span>
             <span className="slds-radio" style={allanyStyle}>
-              <input type="radio" id="any" name="any" />
+              <input type="radio" id="any" name="any"
+                checked={firstPart.matching == 'any'}
+                onChange={e => {
+                  console.log(e.currentTarget.value)
+                  if (e.currentTarget.value == 'on') {
+                    this.onAdvancedFilterOperatorChange('any', props.input.value, props.input.onChange)
+                  }
+                }} />
               <label className="slds-radio__label" htmlFor="any">
                 <span className="slds-radio--faux" style={allanyRadioStyle}></span>
                 <span className="slds-form-element__label">Matching any</span>
@@ -491,9 +556,9 @@ class FilterConditionInput extends Component {
             )
           })}
         </div>
-        <div clasName="slds-m-top--large">
+        <div className="slds-m-top--x-large">
           {/* Deal product filter */}
-          <div style={{ marginTop: 20, marginBottom: 10 }}>What type of record do you want to include?</div>
+          <div style={{ marginTop: 20, marginBottom: 10 }}>Do you want to require products associated on the deal?</div>
             <Select
               style={midTextSelectStyle}
               value={advancedFilterEventTypeProps.input.value}
@@ -532,7 +597,7 @@ class FilterConditionInput extends Component {
                 Include <strong>deals</strong> with
                 <Select
                   style={midTextSelectStyle}
-                  value={parsedExp2.func}
+                  value={secondPart.func}
                   onChange={e => this.onAdvancedFilterSecondTypeValueChange({ func: e.currentTarget.value }, props1)}
                   >
                   <Option value="total">at least</Option>
@@ -541,7 +606,7 @@ class FilterConditionInput extends Component {
                 <Input
                   type="number"
                   style={midTextSelectStyle}
-                  value={parsedExp2.count}
+                  value={secondPart.count}
                   onChange={e => this.onAdvancedFilterSecondTypeValueChange({ count: e.currentTarget.value }, props1)} />
                 products matching the following rule:
               </span>
@@ -553,7 +618,7 @@ class FilterConditionInput extends Component {
           <div style={ruleStyle}>
             <Select
               style={ruleSelectStyle}
-              value={parsedExp2.field}
+              value={secondPart.field}
               onChange={e => this.onAdvancedFilterSecondTypeValueChange({ field: e.currentTarget.value }, props1)}
               >
               {
@@ -578,7 +643,7 @@ class FilterConditionInput extends Component {
             </Select>
             <Select
               style={ruleSelectStyle}
-              value={parsedExp2.operator}
+              value={secondPart.operator}
               onChange={e => this.onAdvancedFilterSecondTypeValueChange({ operator: e.currentTarget.value }, props1)} >
               <Option value="==">is</Option>
               <Option value="!=">is not</Option>
@@ -588,7 +653,7 @@ class FilterConditionInput extends Component {
             <Input
               type="text"
               style={ruleSelectStyle}
-              value={parsedExp2.value}
+              value={secondPart.value}
               onChange={e => this.onAdvancedFilterSecondTypeValueChange({ value: e.currentTarget.value }, props1)} />
           </div>
           <hr style={{ margin: '10px 0 20px' }} />

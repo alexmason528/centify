@@ -94,9 +94,9 @@ class DashCreate extends Component {
     return {
       Name : "",
       Type : "OverTheLine",
-      MeasureEventType : "",
-      MeasureEventTypeAdvanced : "",
-      MeasureFilterCondition: "",
+      MeasureEventType : "advanced",
+      MeasureEventTypeAdvanced : "Deal",
+      MeasureFilterCondition: '(Data["06ry1nbzp9yn6yfj"] == "200" AND Data["06ry1ne1n4dgw773"] == "300") and any(Data["Products"][0:]["06ry1nfhxnabawkv"] == "X" AND Data["Products"][0:]["06ry1nfslir3u8uu"] == 50)',
       MeasureFilterCondition1: "",
       MeasureFilterConditionType: 0,
       TargetThreshold: 0,
