@@ -28,7 +28,6 @@ class FakeIt extends Component {
     if (!externalUserId) externalUserId = "0"
     var externalOrgId = user.getIn(['ExternalUsers', 0, 'ExternalOrgId'])
     if (!externalOrgId) externalOrgId = "0"
-    // console.log('external org id: ', externalOrgId)
     var objectUniqueId = Date.now().toString()
     var date = new Date()
     var dateStr = date.toISOString()

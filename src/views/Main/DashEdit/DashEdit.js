@@ -125,7 +125,7 @@ class DashEdit extends Component {
   }
 
   initialValues() {
-    const { currentDash, dashtypes } = this.props
+    const { currentDash, dashtypes, schemas } = this.props
     if (currentDash.get('Id')) {
       const _rewards = currentDash.get('Rewards').sortBy(reward => reward.get('Position'))
       const _participants = currentDash.get('Participants')

@@ -44,6 +44,13 @@ class FilterConditionInput extends Component {
 
   componentWillMount() {
     this.convertBasicFilters()
+    const { MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition } = this.props
+    for(const k in this.convertedBasicFilters) {
+      const filter = this.convertedBasicFilters[k]
+      if (filter.EventType == MeasureEventType.input.value && filter.FilterConditionPattern != MeasureFilterCondition.input.value) {
+        MeasureEventType.input.onChange('advanced')
+      }
+    }
   }
 
 
@@ -519,7 +526,7 @@ class FilterConditionInput extends Component {
                         schemas.get('Deal') ?
                         schemas.getIn(['Deal', 'Fields']).valueSeq().map((field, index) => {
                           let name = field.get('Name')
-                          if (name.substr(0, 9).toLowerCase() == 'products.') {
+                          if (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type') != 'Datetime') {
                             name = name.substr(9)
                             return (
                               <Option key={index} value={field.get('Id')}>{name}</Option>
