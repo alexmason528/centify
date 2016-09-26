@@ -94,11 +94,9 @@ class DashCreate extends Component {
     return {
       Name : "",
       Type : "OverTheLine",
-      MeasureEventType : "advanced",
-      MeasureEventTypeAdvanced : "Deal",
-      MeasureFilterCondition: '(Data["06ry1nbzp9yn6yfj"] == "200" AND Data["06ry1ne1n4dgw773"] == "300") and any(Data["Products"][0:]["06ry1nfhxnabawkv"] == "X" AND Data["Products"][0:]["06ry1nfslir3u8uu"] == 50)',
-      MeasureFilterCondition1: "",
-      MeasureFilterConditionType: 0,
+      MeasureEventType : "Deal",
+      MeasureEventTypeAdvanced : "",
+      MeasureFilterCondition: "",
       TargetThreshold: 0,
       StartsAt: startDate.toISOString(),
       EndsAt: endDate.toISOString(),
@@ -152,11 +150,10 @@ class DashCreate extends Component {
   }
 
   onSubmit = (model) => {
-    console.log(model); return; ///
     const auth = this.props.auth
     const profile = auth.getProfile()
     const {
-      MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
+      MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition,
       MeasureCalcMethod, MeasureSumField,
       RewardAmount, rewards, participants, todos,
       ...modelData
@@ -181,7 +178,7 @@ class DashCreate extends Component {
       Measure : {
         Name : "points",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
-        FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
+        FilterCondition: MeasureFilterCondition,
         CalcMethod : MeasureCalcMethod,
         SumField : MeasureSumField,
         Units : measureUnits,
