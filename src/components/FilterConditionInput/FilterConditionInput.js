@@ -113,10 +113,8 @@ class FilterConditionInput extends Component {
             if ('name' in node.args[1]) { // Most probably a boolean
               valueType = 'boolean'
               value = node.args[1].name === 'true'
-              node.args[1].value = value
-              node.args[1].valueType = valueType
             }
-            
+
             if ('object' in node.args[0].object) {
               // We are dealing with nested array, so we need to validate
               var nested = node.args[0].object
@@ -137,7 +135,7 @@ class FilterConditionInput extends Component {
             this.assert(node.args[0].index.dimensions.length == 1, "Must be only 1 index into array")
             this.assert(node.args[0].index.dimensions[0].valueType == 'string', "Index into Data[] must be a string")
 
-            switch(node.args[1].valueType) {
+            switch(valueType) {
               case 'string':
                 this.assert(supportedStringOperators.includes(node.op), "Unsupported operator for string")
                 break
@@ -153,7 +151,7 @@ class FilterConditionInput extends Component {
             expressions.push({
               'fieldId': node.args[0].index.dimensions[0].value,
               'operator': node.op,
-              'value': node.args[1].value
+              'value': value
             })
           } else {
             throw("Unsupported operator " + node.op)
