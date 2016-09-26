@@ -14,6 +14,8 @@ import basicFilters from 'basic-filters.json'
 const supportedStringOperators = ['==', '!=', '>', '<']
 const supportedNumberOperators = ['==', '!=', '>', '<']
 const supportedOperators = ['==', '!=', '>', '<']
+const supportedBooleans = ['true', 'false']
+
 const emptyExpression = [{
   fieldId: '0',
   operator: '==',
@@ -105,23 +107,30 @@ class FilterConditionInput extends Component {
           } else if(supportedOperators.includes(node.op)) {
             // Now a string of math ops
             state = 'expressions'
+            var valueType = node.args[1].valueType
+            var value = node.args[1].value
 
-            if (node.args[0].object) {
-              if ('object' in node.args[0].object) {
-                // We are dealing with nested array, so we need to validate
-                var nested = node.args[0].object
+            if ('name' in node.args[1]) { // Most probably a boolean
+              valueType = 'boolean'
+              value = node.args[1].name === 'true'
+              node.args[1].value = value
+              node.args[1].valueType = valueType
+            }
+            
+            if ('object' in node.args[0].object) {
+              // We are dealing with nested array, so we need to validate
+              var nested = node.args[0].object
 
-                this.assert(nested.index.dimensions.length == 1, "Must be only 1 index into array")
-                this.assert(nested.index.dimensions[0].start, "Invalid array notion")
-                this.assert(nested.index.dimensions[0].end, "Invalid array notion")
+              this.assert(nested.index.dimensions.length == 1, "Must be only 1 index into array")
+              this.assert(nested.index.dimensions[0].start, "Invalid array notion")
+              this.assert(nested.index.dimensions[0].end, "Invalid array notion")
 
-                this.assert(nested.object.name, "Left hand side must be Data[]")
+              this.assert(nested.object.name, "Left hand side must be Data[]")
 
-                this.assert(nested.object.index.dimensions.length == 1, "Must be only 1 index into array")
-                this.assert(nested.object.index.dimensions[0].value == "Products", "Lack of Products subarray")
-              } else {
-                this.assert(node.args[0].object.name == 'Data', "Left hand side must be Data[]")
-              }
+              this.assert(nested.object.index.dimensions.length == 1, "Must be only 1 index into array")
+              this.assert(nested.object.index.dimensions[0].value == "Products", "Lack of Products subarray")
+            } else {
+              this.assert(node.args[0].object.name == 'Data', "Left hand side must be Data[]")
             }
 
             this.assert(node.args[0].index, "Left hand side must be an index into Data[]")
@@ -135,8 +144,11 @@ class FilterConditionInput extends Component {
               case 'number':
                 this.assert(supportedNumberOperators.includes(node.op), "Unsupported operator for number")
                 break
+              case 'boolean':
+                this.assert(supportedBooleans.includes(node.args[1].name), 'Unsupported value for boolean')
+                break
               default:
-                throw("Unsupported value - only strings and numbers are supported")
+                throw("Unsupported value - only strings, numbers and boolean values are supported")
             }
             expressions.push({
               'fieldId': node.args[0].index.dimensions[0].value,
