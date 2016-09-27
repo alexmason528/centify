@@ -351,7 +351,7 @@ class FilterConditionInput extends Component {
     const { firstPart, secondPart } = parsedExpression
     const midTextSelectStyle = {
       display: 'inline-block',
-      maxWidth: 100,
+      maxWidth: 160,
     }
     const ruleSelectStyle = {
       display: 'inline-block',
