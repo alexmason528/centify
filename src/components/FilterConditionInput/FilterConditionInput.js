@@ -190,13 +190,18 @@ class FilterConditionInput extends Component {
   composeExpression = (parsedExp, lefthand = 'Data') => {
     let exp = ''
     const logicop = parsedExp.matching == 'all' ? 'and' : 'or'
+    const { schemas, MeasureEventTypeAdvanced } = this.props
+    const fields = schemas.getIn([MeasureEventTypeAdvanced.input.value, 'Fields'])
     parsedExp.expressions.forEach((expitem, index) => {
       if (index > 0) {
         exp += ` ${logicop} `
       }
+      const fieldType = fields.getIn([expitem.fieldId, 'Type'])
       exp += lefthand + '[\"' + expitem.fieldId + '\"] ' + expitem.operator
-      if (!isNaN(expitem.value) && isFinite(expitem.value)) {
+      if (!isNaN(expitem.value) && isFinite(expitem.value) && fieldType == 'Number') {
         exp += ' ' + expitem.value
+      } else if(fieldType == 'Boolean') {
+        exp += ' ' + (expitem.value.toString().toLowerCase() == "true")
       } else {
         exp += ' \"' + expitem.value + '\"'
       }
