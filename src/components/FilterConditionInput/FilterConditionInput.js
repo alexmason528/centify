@@ -351,7 +351,7 @@ class FilterConditionInput extends Component {
     const { firstPart, secondPart } = parsedExpression
     const midTextSelectStyle = {
       display: 'inline-block',
-      maxWidth: 100,
+      maxWidth: 160,
     }
     const ruleSelectStyle = {
       display: 'inline-block',
@@ -538,7 +538,7 @@ class FilterConditionInput extends Component {
                         schemas.get('Deal') ?
                         schemas.getIn(['Deal', 'Fields']).valueSeq().map((field, index) => {
                           let name = field.get('Name')
-                          if (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type') != 'Datetime') {
+                          if (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type') != 'datetime') {
                             name = name.substr(9)
                             return (
                               <Option key={index} value={field.get('Id')}>{name}</Option>
