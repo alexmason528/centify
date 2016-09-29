@@ -413,7 +413,6 @@ class FilterConditionInput extends Component {
       }
     }
     parsedExpression[fsIndex].expressions[index].value = newvalue
-    console.log(this.compose(parsedExpression))
     onChange(this.compose(parsedExpression))
   }
 
