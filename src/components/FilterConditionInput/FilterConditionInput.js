@@ -211,6 +211,63 @@ class FilterConditionInput extends Component {
   }
 
 
+  /* Validate current filter condition expression */
+
+  validateExpression = (fields, parsedExp) => {
+    const firstFieldId = fields.keySeq().first()
+    const firstFieldType = fields.getIn([firstFieldType, 'Type'])
+    parsedExp.expressions.map(exp => {
+      const fieldId = fields.getIn([exp.fieldId, 'Id'])
+      if (!fieldId) {
+        exp.fieldId = firstFieldId
+        if (firstFieldType == "Number") {
+          exp.value = 0
+        } else if (firstFieldType == "Boolean") {
+          exp.value = false
+        } else {
+          exp.value = "Something"
+        }
+      }
+    })
+    return parsedExp
+  }
+
+  validateFilterCondition = () => {
+    const { MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition } = this.props
+    if (MeasureEventType.input.value != 'advanced') {     // Basic filter validate
+      for(const k in this.convertedBasicFilters) {
+        const filter = this.convertedBasicFilters[k]
+        if (filter.EventType == MeasureEventType.input.value && filter.FilterConditionPattern != MeasureFilterCondition.input.value) {
+          MeasureFilterCondition.input.onChange(filter.FilterConditionPattern)
+          break
+        }
+      }
+    } else {    // Advanced filter validate
+      const parsedExpression = this.parse(MeasureFilterCondition.input.value)
+      const { schemas, MeasureEventTypeAdvanced } = this.props
+      const fields = schemas.getIn([MeasureEventTypeAdvanced.input.value, 'Fields'])
+      parsedExpression.firstPart = this.validateExpression(
+        fields.filter(field => {
+          const name = field.get('Name')
+          return (name.indexOf('.') == -1 && field.get('Type').toLowerCase() != 'Datetime')
+        }),
+        parsedExpression.firstPart
+      )
+      parsedExpression.secondPart = 
+        MeasureEventTypeAdvanced.input.value == 'Deal' && !!parsedExpression.secondPart ?
+        this.validateExpression(
+          fields.filter(field => {
+            const name = field.get('Name')
+            return (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type') != 'Datetime')
+          }),
+          parsedExpression.secondPart)
+        :
+        null
+      MeasureFilterCondition.input.onChange(this.compose(parsedExpression))
+    }
+  }
+
+
   /* Basic filter select */
 
   convertBasicFilters() {
@@ -255,6 +312,9 @@ class FilterConditionInput extends Component {
         break
       }
     }
+    // setTimeout(() => {
+    //   this.validateFilterCondition()
+    // }, 10)
     // }
   }
 
@@ -422,6 +482,9 @@ class FilterConditionInput extends Component {
           onChange={e => {
             advancedFilterEventTypeProps.input.onChange(e)
             this.onAdvancedFilterToggleSecondPart(false, props.input.value, props.input.onChange)
+            setTimeout(() => {
+              this.validateFilterCondition()
+            }, 10)
           }}>
           {schemas.valueSeq().map((schema, index) => (
             <Option key={index} value={schema.get('Type')}>{schema.get('Type')}</Option>
@@ -463,7 +526,7 @@ class FilterConditionInput extends Component {
                     schemas.get(advancedFilterEventTypeProps.input.value) ?
                     schemas.getIn([advancedFilterEventTypeProps.input.value, 'Fields']).valueSeq().map((field, index) => {
                       const name = field.get('Name')
-                      if (name.indexOf('.') == -1 && field.get('Type').toLowerCase() != 'datetime') {
+                      if (name.indexOf('.') == -1 && field.get('Type').toLowerCase() != 'Datetime') {
                         return (
                           <Option key={index} value={field.get('Id')}>{name}</Option>
                         )
@@ -518,7 +581,12 @@ class FilterConditionInput extends Component {
           <Select
             style={midTextSelectStyle}
             value={parsedExpression.secondPart ? 'yes' : 'no'}
-            onChange={e => this.onAdvancedFilterToggleSecondPart(e.currentTarget.value, props.input.value, props.input.onChange)}
+            onChange={e => {
+              this.onAdvancedFilterToggleSecondPart(e.currentTarget.value, props.input.value, props.input.onChange)
+              setTimeout(() => {
+                this.validateFilterCondition()
+              }, 10)
+            }}
             >
             <Option value="yes">Yes</Option>
             <Option value="no">No</Option>
@@ -561,7 +629,7 @@ class FilterConditionInput extends Component {
                         schemas.get('Deal') ?
                         schemas.getIn(['Deal', 'Fields']).valueSeq().map((field, index) => {
                           let name = field.get('Name')
-                          if (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type') != 'datetime') {
+                          if (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type') != 'Datetime') {
                             name = name.substr(9)
                             return (
                               <Option key={index} value={field.get('Id')}>{name}</Option>
