@@ -198,10 +198,11 @@ class FilterConditionInput extends Component {
       }
       const fieldType = fields.getIn([expitem.fieldId, 'Type'])
       exp += lefthand + '[\"' + expitem.fieldId + '\"] ' + expitem.operator
-      if (!isNaN(expitem.value) && isFinite(expitem.value) && fieldType == 'Number') {
+      if (!isNaN(expitem.value) && isFinite(expitem.value) && fieldType == 'number') {
         exp += ' ' + expitem.value
-      } else if(fieldType == 'Boolean') {
-        exp += ' ' + (expitem.value.toString().toLowerCase() == "true")
+// THIS WILL SET BOOLEANS AS STRINGS BUT LET YOU CHANGE THEM.
+//      } else if(fieldType == 'boolean') {
+//        exp += ' ' + (expitem.value.toString().toLowerCase() == "true")
       } else {
         exp += ' \"' + expitem.value + '\"'
       }
@@ -220,9 +221,9 @@ class FilterConditionInput extends Component {
       const fieldId = fields.getIn([exp.fieldId, 'Id'])
       if (!fieldId) {
         exp.fieldId = firstFieldId
-        if (firstFieldType == "Number") {
+        if (firstFieldType == "number") {
           exp.value = 0
-        } else if (firstFieldType == "Boolean") {
+        } else if (firstFieldType == "boolean") {
           exp.value = false
         } else {
           exp.value = ""
@@ -249,7 +250,7 @@ class FilterConditionInput extends Component {
       parsedExpression.firstPart = this.validateExpression(
         fields.filter(field => {
           const name = field.get('Name')
-          return (name.indexOf('.') == -1 && field.get('Type').toLowerCase() != 'Datetime')
+          return (name.indexOf('.') == -1 && field.get('Type').toLowerCase() != 'datetime')
         }),
         parsedExpression.firstPart
       )
@@ -258,7 +259,7 @@ class FilterConditionInput extends Component {
         this.validateExpression(
           fields.filter(field => {
             const name = field.get('Name')
-            return (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type') != 'Datetime')
+            return (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type').toLowerCase() != 'datetime')
           }),
           parsedExpression.secondPart)
         :
@@ -400,9 +401,9 @@ class FilterConditionInput extends Component {
     const fieldType = fields.getIn([parsedExpression[fsIndex].expressions[index].fieldId, 'Type'])
     let newvalue = expvalue
     if (!newvalue) {
-      if (fieldType == "Number") {
+      if (fieldType == "number") {
         newvalue = 0
-      } else if (fieldType == "Boolean") {
+      } else if (fieldType == "boolean") {
         newvalue = false
       } else {
         newvalue = ""
@@ -525,7 +526,7 @@ class FilterConditionInput extends Component {
                     schemas.get(advancedFilterEventTypeProps.input.value) ?
                     schemas.getIn([advancedFilterEventTypeProps.input.value, 'Fields']).valueSeq().map((field, index) => {
                       const name = field.get('Name')
-                      if (name.indexOf('.') == -1 && field.get('Type').toLowerCase() != 'Datetime') {
+                      if (name.indexOf('.') == -1 && field.get('Type').toLowerCase() != 'datetime') {
                         return (
                           <Option key={index} value={field.get('Id')}>{name}</Option>
                         )
@@ -542,7 +543,7 @@ class FilterConditionInput extends Component {
                   <Option value=">">is greater than</Option>
                   <Option value="<">is less than</Option>
                 </Select>
-                <Input type="text" style={ruleSelectStyle} value={expression.value}
+                <Input type="text" style={ruleSelectStyle} value={expression.value} id={"txt" + index}
                   onChange={e => this.onAdvancedFilterItemValueChange(index, e.currentTarget.value, props.input.value, props.input.onChange)} />
                 <div className="slds-float--right">
                   <Button type="icon-border" icon="add"
@@ -628,7 +629,7 @@ class FilterConditionInput extends Component {
                         schemas.get('Deal') ?
                         schemas.getIn(['Deal', 'Fields']).valueSeq().map((field, index) => {
                           let name = field.get('Name')
-                          if (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type') != 'Datetime') {
+                          if (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type').toLowerCase != 'datetime') {
                             name = name.substr(9)
                             return (
                               <Option key={index} value={field.get('Id')}>{name}</Option>
