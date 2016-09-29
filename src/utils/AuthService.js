@@ -119,10 +119,14 @@ export default class AuthService extends EventEmitter {
   handleState(state) {
     // Handles any state passed in. For Signup, redirect to Thankyou page
     if(state) {
-      let stateData = JSON.parse(state.split('?')[0]) // For some reason I'm getting ?k= on the end of state - remove it
-      console.log('stateData', stateData)
-      if(stateData.process === 'signup') {
-        localStorage.setItem('returnUrl', "thankyou")
+      try {
+        let stateData = JSON.parse(state.split('?')[0]) // For some reason I'm getting ?k= on the end of state - remove it
+        console.log('stateData', stateData)
+        if(stateData.process === 'signup') {
+          localStorage.setItem('returnUrl', "thankyou")
+        }
+      } catch(e) {
+        console.log('state was not JSON:', e)
       }
     }
   }
