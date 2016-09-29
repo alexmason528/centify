@@ -94,8 +94,8 @@ class DashCreate extends Component {
     return {
       Name : "",
       Type : "OverTheLine",
-      MeasureEventType : "Deal",
-      MeasureEventTypeAdvanced : "Deal",
+      MeasureEventType : "",
+      MeasureEventTypeAdvanced : "",
       MeasureFilterCondition: "",
       TargetThreshold: 0,
       StartsAt: startDate.toISOString(),
@@ -150,7 +150,6 @@ class DashCreate extends Component {
   }
 
   onSubmit = (model) => {
-    console.log(model); return; ///
     const auth = this.props.auth
     const profile = auth.getProfile()
     const {
