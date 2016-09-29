@@ -46,6 +46,7 @@ export default class AuthService extends EventEmitter {
 
   _doAuthentication(authResult) {
     this.setToken(authResult.idToken)
+    this.handleState(authResult.state)
     // Async loads the user profile data
     this.lock.getProfile(authResult.idToken, (error, profile) => {
       if (error) {
@@ -113,6 +114,21 @@ export default class AuthService extends EventEmitter {
   setToken(idToken) {
     // Saves user token to localStorage
     localStorage.setItem('id_token', idToken)
+  }
+
+  handleState(state) {
+    // Handles any state passed in. For Signup, redirect to Thankyou page
+    if(state) {
+      try {
+        let stateData = JSON.parse(state.split('?')[0]) // For some reason I'm getting ?k= on the end of state - remove it
+        console.log('stateData', stateData)
+        if(stateData.process === 'signup') {
+          localStorage.setItem('returnUrl', "thankyou")
+        }
+      } catch(e) {
+        console.log('state was not JSON:', e)
+      }
+    }
   }
 
   getToken() {
