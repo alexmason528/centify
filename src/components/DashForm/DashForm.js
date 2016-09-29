@@ -142,12 +142,10 @@ class DashForm extends Component {
     return id
   }
 
-  measureTargetInput = ({ MeasureCalcMethod, MeasureSumField, TargetThreshold, MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterConditionType }) => {
+  measureTargetInput = ({ MeasureCalcMethod, MeasureSumField, TargetThreshold, MeasureEventType, MeasureEventTypeAdvanced }) => {
     let fieldName = 'Deal'
     if (MeasureEventType.input.value == 'advanced') {
-      if (!MeasureFilterConditionType.input.value) {
-        fieldName = MeasureEventTypeAdvanced.input.value
-      }
+      fieldName = MeasureEventTypeAdvanced.input.value
     } else {
       fieldName = MeasureEventType.input.value
     }
@@ -709,13 +707,11 @@ class DashForm extends Component {
                   'MeasureEventType',
                   'MeasureEventTypeAdvanced',
                   'MeasureFilterCondition',
-                  'MeasureFilterCondition1',
-                  'MeasureFilterConditionType',
                 ]}
                 component={FilterConditionInput}
                 props={{ schemas }} />
             </Col>
-            <Col padded cols={6} className="slds-m-top--large">
+            <Col padded cols={6} className="slds-m-top--xx-large">
               <Fields
                 names={[
                   'MeasureCalcMethod',
@@ -723,7 +719,6 @@ class DashForm extends Component {
                   'TargetThreshold',
                   'MeasureEventType',
                   'MeasureEventTypeAdvanced',
-                  'MeasureFilterConditionType',
                 ]}
                 component={this.measureTargetInput} />
             </Col>

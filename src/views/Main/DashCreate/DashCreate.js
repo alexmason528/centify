@@ -97,8 +97,6 @@ class DashCreate extends Component {
       MeasureEventType : "",
       MeasureEventTypeAdvanced : "",
       MeasureFilterCondition: "",
-      MeasureFilterCondition1: "",
-      MeasureFilterConditionType: 0,
       TargetThreshold: 0,
       StartsAt: startDate.toISOString(),
       EndsAt: endDate.toISOString(),
@@ -155,7 +153,7 @@ class DashCreate extends Component {
     const auth = this.props.auth
     const profile = auth.getProfile()
     const {
-      MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
+      MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition,
       MeasureCalcMethod, MeasureSumField,
       RewardAmount, rewards, participants, todos,
       ...modelData
@@ -180,7 +178,7 @@ class DashCreate extends Component {
       Measure : {
         Name : "points",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
-        FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
+        FilterCondition: MeasureFilterCondition,
         CalcMethod : MeasureCalcMethod,
         SumField : MeasureSumField,
         Units : measureUnits,

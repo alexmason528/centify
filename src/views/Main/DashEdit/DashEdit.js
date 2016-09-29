@@ -125,7 +125,7 @@ class DashEdit extends Component {
   }
 
   initialValues() {
-    const { currentDash, dashtypes } = this.props
+    const { currentDash, dashtypes, schemas } = this.props
     if (currentDash.get('Id')) {
       const _rewards = currentDash.get('Rewards').sortBy(reward => reward.get('Position'))
       const _participants = currentDash.get('Participants')
@@ -144,9 +144,7 @@ class DashEdit extends Component {
         DashBannerId: currentDash.get('DashBannerId'),
         MeasureEventType: eventType,
         MeasureEventTypeAdvanced : eventType,
-        MeasureFilterCondition: filterIsFirstType ? filterCond : '',
-        MeasureFilterCondition1: filterIsFirstType ? '' : filterCond,
-        MeasureFilterConditionType: filterIsFirstType ? 0 : 1,
+        MeasureFilterCondition: filterCond,
         MeasureCalcMethod: currentDash.getIn(['Measure', 'CalcMethod']),
         MeasureSumField: currentDash.getIn(['Measure', 'SumField']),
         TargetThreshold: currentDash.get('TargetThreshold'),
@@ -170,8 +168,6 @@ class DashEdit extends Component {
         MeasureEventType : "Deal",
         MeasureEventTypeAdvanced : "",
         MeasureFilterCondition: "",
-        MeasureFilterCondition1: "",
-        MeasureFilterConditionType: 0,
         TargetThreshold : 0,
         StartsAt: startDate.toISOString(),
         EndsAt: endDate.toISOString(),
@@ -234,7 +230,7 @@ class DashEdit extends Component {
     const auth = this.props.auth
     const profile = auth.getProfile()
     const {
-      MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition, MeasureFilterCondition1, MeasureFilterConditionType,
+      MeasureEventType, MeasureEventTypeAdvanced, MeasureFilterCondition,
       MeasureCalcMethod, MeasureSumField,
       RewardAmount, rewards, participants, todos,
       ...modelData
@@ -259,7 +255,7 @@ class DashEdit extends Component {
       Measure : {
         Name: "points",
         EventType: MeasureEventType == 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType,
-        FilterCondition: MeasureFilterConditionType ? MeasureFilterCondition1 : MeasureFilterCondition,
+        FilterCondition: MeasureFilterCondition,
         CalcMethod : MeasureCalcMethod,
         SumField : MeasureSumField,
         Units : measureUnits,
