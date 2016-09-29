@@ -58,7 +58,6 @@ class ThankYou extends Component {
       <div className={styles.root + ' slds-m-horizontal--medium slds-m-vertical--medium'}>
         <div className="slds-m-vertical--x-large">
           <h2 className="slds-m-bottom--small" style={{ fontSize: 28, fontWeight: 700 }}>Thank you - Signup Completed</h2>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi luctus tortor
         </div>
         <div className="slds-m-vertical--x-large">
           <h3 className="slds-m-bottom--small slds-text-title--caps" style={{ fontSize: 18, fontWeight: 600 }}>
