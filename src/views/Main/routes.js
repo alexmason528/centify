@@ -1,6 +1,5 @@
 import React from 'react'
 import {Route, IndexRedirect} from 'react-router'
-import AuthService from 'utils/AuthService'
 import Container from './Container'
 import LayoutContainer from './LayoutContainer/LayoutContainer'
 import Home from './Home/Home'
@@ -21,11 +20,11 @@ import Signup from './Signup/Signup'
 import Thankyou from './ThankYou/ThankYou'
 
 
-const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DOMAIN__);
+let _auth = null;
 
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
-  if (!auth.loggedIn()) {
+  if (!_auth.loggedIn()) {
     localStorage.setItem('returnUrl', nextState.location.pathname)
     replace({ pathname: '/login' })
   } else if (localStorage.getItem('returnUrl')) {
@@ -41,11 +40,13 @@ const captureReturnUrl = (nextState, replace) => {
   }
 }
 
-export const makeMainRoutes = () => {
+function makeMainRoutes(auth) {
+  _auth = auth
   return (
     <Route path="/" component={Container} auth={auth}>
       <IndexRedirect to="/home" />
       <Route path="login" component={Login} onEnter={captureReturnUrl}/>
+      <Route path="login/:reason" component={Login} />
       <Route path="access_token=:token" component={LoggingIn} />
       <Route path="signup/:token" component={Signup} />
 

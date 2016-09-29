@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import createStore from 'redux/create';
+import AuthService from 'utils/AuthService'
 import ApiClient from 'utils/ApiClient';
 
 import 'font-awesome/css/font-awesome.css'
@@ -13,10 +14,11 @@ import './app.css'
 
 import makeRoutes from './routes'
 
-const client = new ApiClient();
+const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DOMAIN__);
+const client = new ApiClient(auth);
 const store = createStore(hashHistory, client);
 const history = syncHistoryWithStore(hashHistory, store);
-const routes = makeRoutes()
+const routes = makeRoutes(auth);
 
 const mountNode = document.querySelector('#root');
 
