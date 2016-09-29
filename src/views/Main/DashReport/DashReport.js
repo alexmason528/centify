@@ -351,9 +351,9 @@ class DashReport extends Component {
               </div>
               <div className="slds-p-vertical--medium slds-text-align--right">
                 { this.renderActionButton() }
-                <Button
+                {/*<Button
                   type="brand"
-                  onClick={() => this.goToFakeIt()}>Fake It</Button>
+                  onClick={() => this.goToFakeIt()}>Fake It</Button>*/}
               </div>
               {this.renderJoinedParticipants()}
               {this.renderNotJoinedParticipants()}
