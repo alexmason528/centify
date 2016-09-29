@@ -176,7 +176,7 @@ class Dashes extends Component {
               </tr>
             </thead>
             <tbody>
-              {dashesList.valueSeq().map((dash, index) => {
+              {dashesList.valueSeq().sortBy(dash => dash.get('StartsAt')).map((dash, index) => {
                 const id = dash.get('Id')
                 const participantCount = dash.get('ParticipantCount')
                 return filter == '' || dash.get('Status') == filter ?
