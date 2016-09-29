@@ -19,12 +19,12 @@ const supportedBooleans = ['true', 'false']
 const emptyExpression = [{
   fieldId: '0',
   operator: '==',
-  value: 'something',
+  value: '',
 }]
 const emptyExpression2 = [{
   fieldId: '0',
   operator: '==',
-  value: 'something',
+  value: '',
 }]
 
 class FilterConditionInput extends Component {
@@ -225,7 +225,7 @@ class FilterConditionInput extends Component {
         } else if (firstFieldType == "Boolean") {
           exp.value = false
         } else {
-          exp.value = "Something"
+          exp.value = ""
         }
       }
     })
