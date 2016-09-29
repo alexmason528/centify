@@ -135,7 +135,7 @@ class FilterConditionInput extends Component {
             this.assert(node.args[0].index.dimensions.length == 1, "Must be only 1 index into array")
             this.assert(node.args[0].index.dimensions[0].valueType == 'string', "Index into Data[] must be a string")
 
-            switch(valueType) {
+            switch(valueType.toLowerCase()) {
               case 'string':
                 this.assert(supportedStringOperators.includes(node.op), "Unsupported operator for string")
                 break
@@ -196,7 +196,7 @@ class FilterConditionInput extends Component {
       if (index > 0) {
         exp += ` ${logicop} `
       }
-      const fieldType = fields.getIn([expitem.fieldId, 'Type'])
+      const fieldType = fields.getIn([expitem.fieldId, 'Type']).toLowerCase()
       exp += lefthand + '[\"' + expitem.fieldId + '\"] ' + expitem.operator
       if (!isNaN(expitem.value) && isFinite(expitem.value) && fieldType == 'number') {
         exp += ' ' + expitem.value
@@ -216,7 +216,7 @@ class FilterConditionInput extends Component {
 
   validateExpression = (fields, parsedExp) => {
     const firstFieldId = fields.keySeq().first()
-    const firstFieldType = fields.getIn([firstFieldType, 'Type'])
+    const firstFieldType = fields.getIn([firstFieldType, 'Type']).toLowerCase()
     parsedExp.expressions.map(exp => {
       const fieldId = fields.getIn([exp.fieldId, 'Id'])
       if (!fieldId) {
@@ -398,7 +398,7 @@ class FilterConditionInput extends Component {
     const parsedExpression = this.parse(value)
     const { schemas, MeasureEventTypeAdvanced } = this.props
     const fields = schemas.getIn([MeasureEventTypeAdvanced.input.value, 'Fields'])
-    const fieldType = fields.getIn([parsedExpression[fsIndex].expressions[index].fieldId, 'Type'])
+    const fieldType = fields.getIn([parsedExpression[fsIndex].expressions[index].fieldId, 'Type']).toLowerCase()
     let newvalue = expvalue
     if (!newvalue) {
       if (fieldType == "number") {
@@ -409,7 +409,7 @@ class FilterConditionInput extends Component {
         newvalue = ""
       }
     } else {
-      if (fieldType == "Boolean") {
+      if (fieldType == "boolean") {
         newvalue = (expvalue != "false" && !!expvalue)
       }
     }
@@ -629,7 +629,7 @@ class FilterConditionInput extends Component {
                         schemas.get('Deal') ?
                         schemas.getIn(['Deal', 'Fields']).valueSeq().map((field, index) => {
                           let name = field.get('Name')
-                          if (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type').toLowerCase != 'datetime') {
+                          if (name.substr(0, 9).toLowerCase() == 'products.' && field.get('Type').toLowerCase() != 'datetime') {
                             name = name.substr(9)
                             return (
                               <Option key={index} value={field.get('Id')}>{name}</Option>
