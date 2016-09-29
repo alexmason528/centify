@@ -6,7 +6,8 @@ import styles from './styles.module.css'
 
 export class Login extends React.Component {
   static contextTypes = {
-    router: T.object
+    router: T.object,
+    notify: React.PropTypes.func,
   }
 
   static propTypes = {
@@ -15,7 +16,14 @@ export class Login extends React.Component {
   }
 
   componentDidMount() {
-    this.props.auth.login()
+    setTimeout(() => {
+      this.props.auth.login()
+    }, 50)
+    if (this.props.params.reason == 'tokenexpired') {
+      setTimeout(() => {
+        this.context.notify('Token has expired. You must relogin.', 'error')
+      }, 100)
+    }
   }
 
   render() {

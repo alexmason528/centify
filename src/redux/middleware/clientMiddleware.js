@@ -1,3 +1,12 @@
+import { push } from 'react-router-redux';
+
+function checkTokenExpired(auth, dispatch) {
+  if (auth.isExpired()) {
+    console.log('Token expired')
+    dispatch(push('/login/tokenexpired'));
+  }
+}
+
 export default function clientMiddleware(client) {
   return ({dispatch, getState}) => {
     return next => action => {
@@ -19,12 +28,12 @@ export default function clientMiddleware(client) {
           return next({...rest, result, type: SUCCESS})
         },
         (error) => {
-          //console.error('MIDDLEWARE RESOLVED ERROR:', error);
+          checkTokenExpired(client.getAuth(), dispatch)
           throw error;
           return next({...rest, error, type: FAILURE})
         }
       ).catch((error)=> {
-        // console.error('MIDDLEWARE ERROR:', error);
+        checkTokenExpired(client.getAuth(), dispatch)
         throw error;
         next({...rest, error, type: FAILURE});
       });

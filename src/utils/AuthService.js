@@ -83,6 +83,14 @@ export default class AuthService extends EventEmitter {
     return !!token && !isTokenExpired(token)
   }
 
+  isExpired = () => {
+    /// for testing
+    if (window.localStorage.getItem('exp') == 'a') {
+      return true;
+    }
+    return isTokenExpired(this.getToken())
+  }
+
   setProfile(profile) {
     // Saves profile data to localStorage
     localStorage.setItem('profile', JSON.stringify(profile))
