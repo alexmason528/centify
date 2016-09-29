@@ -84,10 +84,6 @@ export default class AuthService extends EventEmitter {
   }
 
   isExpired = () => {
-    /// for testing
-    if (window.localStorage.getItem('exp') == 'a') {
-      return true;
-    }
     return isTokenExpired(this.getToken())
   }
 
