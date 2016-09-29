@@ -16,13 +16,14 @@ export class Login extends React.Component {
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      this.props.auth.login()
-    }, 50)
     if (this.props.params.reason == 'tokenexpired') {
       setTimeout(() => {
         this.context.notify('Token has expired. You must relogin.', 'error')
       }, 100)
+    } else {
+      setTimeout(() => {
+        this.props.auth.login()
+      }, 50)
     }
   }
 
