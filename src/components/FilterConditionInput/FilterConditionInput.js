@@ -335,7 +335,25 @@ class FilterConditionInput extends Component {
 
   onAdvancedFilterItemValueChange = (index, expvalue, value, onChange, fsIndex = 'firstPart') => {
     const parsedExpression = this.parse(value)
-    parsedExpression[fsIndex].expressions[index].value = expvalue
+    const { schemas, MeasureEventTypeAdvanced } = this.props
+    const fields = schemas.getIn([MeasureEventTypeAdvanced.input.value, 'Fields'])
+    const fieldType = fields.getIn([parsedExpression[fsIndex].expressions[index].fieldId, 'Type'])
+    let newvalue = expvalue
+    if (!newvalue) {
+      if (fieldType == "Number") {
+        newvalue = 0
+      } else if (fieldType == "Boolean") {
+        newvalue = false
+      } else {
+        newvalue = ""
+      }
+    } else {
+      if (fieldType == "Boolean") {
+        newvalue = (expvalue != "false" && !!expvalue)
+      }
+    }
+    parsedExpression[fsIndex].expressions[index].value = newvalue
+    console.log(this.compose(parsedExpression))
     onChange(this.compose(parsedExpression))
   }
 
