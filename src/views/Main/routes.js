@@ -20,19 +20,25 @@ import AppleTVActivation from './AppleTVActivation/AppleTVActivation'
 import Signup from './Signup/Signup'
 import Thankyou from './ThankYou/ThankYou'
 
+
 const auth = new AuthService(__AUTH0_CLIENT_ID__, __AUTH0_DOMAIN__, __DOMAIN__);
+var previousPath = null
 
 // onEnter callback to validate authentication in private routes
 const requireAuth = (nextState, replace) => {
   if (!auth.loggedIn()) {
+    localStorage.setItem('previousPath', nextState.location.pathname)
     replace({ pathname: '/login' })
+  } else if (localStorage.getItem('previousPath')) {
+    replace({ pathname: localStorage.getItem('previousPath') })
+    localStorage.removeItem('previousPath')
   }
 }
 
 export const makeMainRoutes = () => {
   return (
     <Route path="/" component={Container} auth={auth}>
-      <IndexRedirect to="/spiffs" />
+      <IndexRedirect to="/home" />
       <Route path="login" component={Login} />
       <Route path="access_token=:token" component={LoggingIn} />
       <Route path="signup/:token" component={Signup} />
