@@ -158,7 +158,7 @@ class DashCreate extends Component {
       RewardAmount, rewards, participants, todos,
       ...modelData
     } = model
-    const measureUnits = (MeasureCalcMethod == 'add' || MeasureCalcMethod == 'subtract') ? '$' : MeasureEventType + 's'
+    const measureUnits = (MeasureCalcMethod === 'add' || MeasureCalcMethod === 'subtract') ? '$' : (MeasureEventType === 'advanced' ? MeasureEventTypeAdvanced : MeasureEventType) + 's'
     const _rewards = this.rewardsArrayCalculate(rewards ? JSON.parse(rewards) : [], model)
     const data = {
       Description : model.Description,
