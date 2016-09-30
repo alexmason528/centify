@@ -196,13 +196,17 @@ class FilterConditionInput extends Component {
       if (index > 0) {
         exp += ` ${logicop} `
       }
-      const fieldType = fields.getIn([expitem.fieldId, 'Type']).toLowerCase()
       exp += lefthand + '[\"' + expitem.fieldId + '\"] ' + expitem.operator
-      if (!isNaN(expitem.value) && isFinite(expitem.value) && fieldType == 'number') {
-        exp += ' ' + expitem.value
-// THIS WILL SET BOOLEANS AS STRINGS BUT LET YOU CHANGE THEM.
-//      } else if(fieldType == 'boolean') {
-//        exp += ' ' + (expitem.value.toString().toLowerCase() == "true")
+      const field = fields.get(expitem.fieldId)
+      if (field) {
+        const fieldType = field.get('Type').toLowerCase()
+        if (!isNaN(expitem.value) && isFinite(expitem.value) && fieldType == 'number') {
+          exp += ' ' + expitem.value
+        } else if(fieldType == 'boolean') {
+          exp += ' ' + (expitem.value.toString().toLowerCase() == "true")
+        } else {
+          exp += ' \"' + expitem.value + '\"'
+        }
       } else {
         exp += ' \"' + expitem.value + '\"'
       }
@@ -216,7 +220,7 @@ class FilterConditionInput extends Component {
 
   validateExpression = (fields, parsedExp) => {
     const firstFieldId = fields.keySeq().first()
-    const firstFieldType = fields.getIn([firstFieldType, 'Type']).toLowerCase()
+    const firstFieldType = fields.getIn([firstFieldId, 'Type']).toLowerCase()
     parsedExp.expressions.map(exp => {
       const fieldId = fields.getIn([exp.fieldId, 'Id'])
       if (!fieldId) {
@@ -427,6 +431,9 @@ class FilterConditionInput extends Component {
       }
     }
     onChange(this.compose(parsedExpression))
+    setTimeout(() => {
+      this.validateFilterCondition()
+    }, 10)
   }
 
   advancedFilterSelect = (basicFilterProps, advancedFilterEventTypeProps, props) => {
@@ -473,6 +480,7 @@ class FilterConditionInput extends Component {
     } = this.props
     const expressions = firstPart.expressions
     const expressions2 = secondPart ? secondPart.expressions : null
+    const fields = schemas.getIn([advancedFilterEventTypeProps.input.value, 'Fields'])
     return (
       <div className="slds-m-top--x-large">
         <div style={{ marginBottom: 10 }}>What type of record do you want to include?</div>
@@ -524,7 +532,7 @@ class FilterConditionInput extends Component {
                   onChange={e => this.onAdvancedFilterItemFieldChange(index, e.currentTarget.value, props.input.value, props.input.onChange)}>
                   {
                     schemas.get(advancedFilterEventTypeProps.input.value) ?
-                    schemas.getIn([advancedFilterEventTypeProps.input.value, 'Fields']).valueSeq().map((field, index) => {
+                    fields.valueSeq().map((field, index) => {
                       const name = field.get('Name')
                       if (name.indexOf('.') == -1 && field.get('Type').toLowerCase() != 'datetime') {
                         return (
@@ -543,8 +551,19 @@ class FilterConditionInput extends Component {
                   <Option value=">">is greater than</Option>
                   <Option value="<">is less than</Option>
                 </Select>
-                <Input type="text" style={ruleSelectStyle} value={expression.value} id={"txt" + index}
-                  onChange={e => this.onAdvancedFilterItemValueChange(index, e.currentTarget.value, props.input.value, props.input.onChange)} />
+                {
+                  fields && fields.get(expression.fieldId) && fields.getIn([expression.fieldId, 'Type']).toLowerCase() == 'boolean' ?
+                  <Select
+                    style={ruleSelectStyle}
+                    value={expression.value}
+                    onChange={e => this.onAdvancedFilterItemValueChange(index, e.currentTarget.value, props.input.value, props.input.onChange)}>
+                    <Option value={true}>true</Option>
+                    <Option value={false}>false</Option>
+                  </Select>
+                  :
+                  <Input type="text" style={ruleSelectStyle} value={expression.value} id={"txt" + index}
+                    onChange={e => this.onAdvancedFilterItemValueChange(index, e.currentTarget.value, props.input.value, props.input.onChange)} />
+                }
                 <div className="slds-float--right">
                   <Button type="icon-border" icon="add"
                     onClick={() => {
@@ -647,8 +666,19 @@ class FilterConditionInput extends Component {
                       <Option value=">">is greater than</Option>
                       <Option value="<">is less than</Option>
                     </Select>
-                    <Input type="text" style={ruleSelectStyle} value={expression.value}
-                      onChange={e => this.onAdvancedFilterItemValueChange(index, e.currentTarget.value, props.input.value, props.input.onChange, 'secondPart')} />
+                    {
+                      fields && fields.get(expression.fieldId) && fields.getIn([expression.fieldId, 'Type']).toLowerCase() == 'boolean' ?
+                      <Select
+                        style={ruleSelectStyle}
+                        value={expression.value}
+                        onChange={e => this.onAdvancedFilterItemValueChange(index, e.currentTarget.value, props.input.value, props.input.onChange, 'secondPart')}>
+                        <Option value={true}>true</Option>
+                        <Option value={false}>false</Option>
+                      </Select>
+                      :
+                      <Input type="text" style={ruleSelectStyle} value={expression.value}
+                        onChange={e => this.onAdvancedFilterItemValueChange(index, e.currentTarget.value, props.input.value, props.input.onChange, 'secondPart')} />
+                    }
                     <div className="slds-float--right">
                       <Button type="icon-border" icon="add"
                         onClick={() => {
