@@ -785,6 +785,12 @@ class DashForm extends Component {
                   <Field name="RewardAmount" component={this.rewardInput} />
                 </div>
               }
+              {
+                budgetAmount > 0 && budgetAmount - value < 0 ?
+                <div style={{...errorStyle, marginTop: 5}}>The reward amount is higher than your budget</div>
+                :
+                ''
+              }
             </Col>
           </Row>
 
