@@ -552,7 +552,7 @@ class FilterConditionInput extends Component {
                   <Option value="<">is less than</Option>
                 </Select>
                 {
-                  fields && fields.getIn(expression.fieldId) && fields.getIn([expression.fieldId, 'Type']).toLowerCase() == 'boolean' ?
+                  fields && fields.get(expression.fieldId) && fields.getIn([expression.fieldId, 'Type']).toLowerCase() == 'boolean' ?
                   <Select
                     style={ruleSelectStyle}
                     value={expression.value}
@@ -667,7 +667,7 @@ class FilterConditionInput extends Component {
                       <Option value="<">is less than</Option>
                     </Select>
                     {
-                      fields && fields.getIn(expression.fieldId) && fields.getIn([expression.fieldId, 'Type']).toLowerCase() == 'boolean' ?
+                      fields && fields.get(expression.fieldId) && fields.getIn([expression.fieldId, 'Type']).toLowerCase() == 'boolean' ?
                       <Select
                         style={ruleSelectStyle}
                         value={expression.value}
