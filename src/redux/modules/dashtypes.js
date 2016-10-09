@@ -26,11 +26,9 @@ export default function dashtypes(state = initialState, action) {
     case DASH_TYPES_GET_SUCCESS:
       return state.withMutations((map) => {
         const types = action.result ? action.result : {}
-        for(const Id in types) {
-          const type = types[Id]
-          type.Id = Id
-          map.setIn(['dashtypes', Id], Immutable.fromJS(type))
-        }
+        types.map((type) => {
+          map.setIn(['dashtypes', type.Id], Immutable.fromJS(type))
+        })
         map.set('loading', false)
         map.set('loaded', true)
       })
