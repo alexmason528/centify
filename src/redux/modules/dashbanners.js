@@ -1,22 +1,20 @@
-import { push } from 'react-router-redux'
 import Immutable from 'immutable'
-import { SubmissionError } from 'redux-form'
 
 import {
   INIT,
   REDUX_INIT,
   DASH_BANNERS_GET,
   DASH_BANNERS_GET_SUCCESS,
-  DASH_BANNERS_GET_FAIL,
+  DASH_BANNERS_GET_FAIL
 } from '../constants'
 
 const initialState = Immutable.fromJS({
   dashbanners: {},
   loading: false,
-  loaded: false,
+  loaded: false
 })
 
-export default function dashbanners(state = initialState, action) {
+export default function dashbanners (state = initialState, action) {
   switch (action.type) {
     case INIT:
     case REDUX_INIT:
@@ -26,7 +24,7 @@ export default function dashbanners(state = initialState, action) {
     case DASH_BANNERS_GET_SUCCESS:
       return state.withMutations((map) => {
         const banners = action.result ? action.result : {}
-        banners.map(banner => {
+        banners.map((banner) => {
           map.setIn(['dashbanners', banner.Id], Immutable.fromJS(banner))
         })
         map.set('loading', false)
@@ -42,9 +40,7 @@ export default function dashbanners(state = initialState, action) {
   }
 }
 
-/* Get budget */
-
-export function getDashBanners() {
+export function getDashBanners () {
   return {
     types: [DASH_BANNERS_GET, DASH_BANNERS_GET_SUCCESS, DASH_BANNERS_GET_FAIL],
     promise: (client) => client.get('/v1/dashes/banners')

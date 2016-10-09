@@ -1,22 +1,20 @@
-import { push } from 'react-router-redux'
 import Immutable from 'immutable'
-import { SubmissionError } from 'redux-form'
 
 import {
   INIT,
   REDUX_INIT,
   DASH_TYPES_GET,
   DASH_TYPES_GET_SUCCESS,
-  DASH_TYPES_GET_FAIL,
+  DASH_TYPES_GET_FAIL
 } from '../constants'
 
 const initialState = Immutable.fromJS({
   dashtypes: {},
   loading: false,
-  loaded: false,
+  loaded: false
 })
 
-export default function dashtypes(state = initialState, action) {
+export default function dashtypes (state = initialState, action) {
   switch (action.type) {
     case INIT:
     case REDUX_INIT:
@@ -44,7 +42,7 @@ export default function dashtypes(state = initialState, action) {
 
 /* Get budget */
 
-export function getDashTypes(orgId) {
+export function getDashTypes (orgId) {
   return {
     types: [DASH_TYPES_GET, DASH_TYPES_GET_SUCCESS, DASH_TYPES_GET_FAIL],
     promise: (client) => client.get(`/v1/${orgId}/dash-types`)
