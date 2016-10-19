@@ -55,6 +55,7 @@ class DashForm extends Component {
         <div className="slds-form-element__control">
           <div className="slds-select_container">
             <select
+              name="TypeId"
               className="slds-select"
               value={DashTypeId.input.value}
               onChange={e => {
